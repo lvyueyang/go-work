@@ -1,0 +1,46 @@
+# 运行环境
+env = "development"
+
+# 端口
+port = 4002
+
+# 文件上传路径
+file_upload_dir="E:/project/go/uploadfile"
+
+# 日志
+[log]
+output = "/Users/lyy/code/project/goserver/logs"
+
+# 用户认证
+[auth]
+tokenSecret = "ajax2023"
+adminTokenSecret = "ajaxadmin2023"
+
+[db]
+#host = "47.100.38.198"
+#user  = "lvyueyang"
+#password = "ciErDe5GF92cCbh"
+#port = 5433
+#dbname = "db41ff70fd53de4812ab44957ce5ddeb95cms_dev"
+
+#host = "localhost"
+#user  = "postgres"
+#password = "123456"
+#port = 5432
+#dbname = "cms_dev"
+
+host = "localhost"
+user  = "lvyueyang"
+password = "Lv12345678"
+port = 3306
+dbname = "cms_dev"
+
+
+# 邮箱配置信息
+[email]
+host="smtp.163.com"
+port=25
+secure=true
+user=""
+password=""
+from="" # 发件人邮箱

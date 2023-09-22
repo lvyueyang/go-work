@@ -1,0 +1,13 @@
+.idea
+.settings/
+.vscode/
+bin/
+**/.DS_Store
+main
+temp/
+temp.yaml
+bin
+logs/**/*.log
+server*
+goserver*
+config/config.prod.toml

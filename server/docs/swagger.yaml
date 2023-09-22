@@ -1,0 +1,1194 @@
+definitions:
+  api.AdminUserUpdateRolesBodyDto:
+    properties:
+      role_ids:
+        description: 角色 ID
+        items:
+          type: integer
+        type: array
+      user_id:
+        description: 用户 ID
+        type: integer
+    required:
+    - role_ids
+    - user_id
+    type: object
+  api.CreateAdminRoleBodyDto:
+    properties:
+      code:
+        description: 用户名
+        type: string
+      desc:
+        description: 描述
+        type: string
+      name:
+        description: 姓名
+        type: string
+    required:
+    - code
+    - name
+    type: object
+  api.CreateAdminUserBodyDto:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      email:
+        description: 邮箱
+        type: string
+      name:
+        description: 姓名
+        type: string
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    required:
+    - email
+    - name
+    - password
+    - username
+    type: object
+  api.CreateCaptchaBodyDto:
+    properties:
+      captcha_key:
+        description: 图形验证码的key
+        type: string
+      captcha_value:
+        description: 输入的图形验证码
+        type: string
+      scenes:
+        allOf:
+        - $ref: '#/definitions/consts.CaptchaScenes'
+        description: 使用场景， 1-注册 2-忘记密码 3-修改手机 4-修改邮箱
+      type:
+        allOf:
+        - $ref: '#/definitions/consts.CaptchaType'
+        description: 验证码类型， 1-手机 2-邮箱
+      value:
+        description: 手机/邮箱账号
+        type: string
+    required:
+    - captcha_key
+    - captcha_value
+    - scenes
+    - type
+    - value
+    type: object
+  api.CreateNewsBodyDto:
+    properties:
+      content:
+        type: string
+      cover:
+        type: string
+      desc:
+        type: string
+      push_date:
+        description: 发布日期 YYYY-MM-DD HH:mm:ss
+        type: string
+      recommend:
+        description: 推荐等级 0 为不推荐，数值越大越靠前
+        type: integer
+      title:
+        type: string
+    required:
+    - title
+    type: object
+  api.ResetPasswordAdminUserBodyDto:
+    properties:
+      password:
+        description: 密码
+        type: string
+    required:
+    - password
+    type: object
+  api.UpdateAdminRoleBodyDto:
+    properties:
+      code:
+        description: 用户名
+        type: string
+      desc:
+        description: 描述
+        type: string
+      id:
+        description: 角色 ID
+        type: integer
+      name:
+        description: 姓名
+        type: string
+    required:
+    - code
+    - id
+    - name
+    type: object
+  api.UpdateAdminRolePermissionBodyDto:
+    properties:
+      codes:
+        description: 权限码
+        items:
+          type: string
+        type: array
+      id:
+        description: 角色 ID
+        type: integer
+    required:
+    - id
+    type: object
+  api.UpdateAdminUserBodyDto:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      name:
+        description: 姓名
+        type: string
+    required:
+    - name
+    type: object
+  api.UpdateAdminUserStatusBodyDto:
+    properties:
+      status:
+        allOf:
+        - $ref: '#/definitions/consts.AdminUserStatus'
+        description: 状态 1-解封 2-封禁
+        enum:
+        - -1
+        - 1
+    required:
+    - status
+    type: object
+  api.UpdateNewsBodyDto:
+    properties:
+      content:
+        type: string
+      cover:
+        type: string
+      desc:
+        type: string
+      id:
+        description: 角色 ID
+        type: integer
+      push_date:
+        description: 发布日期 YYYY-MM-DD HH:mm:ss
+        type: string
+      recommend:
+        description: 推荐等级 0 为不推荐，数值越大越靠前
+        type: integer
+      title:
+        type: string
+    required:
+    - id
+    - title
+    type: object
+  api.adminInitRootUserBodyDto:
+    properties:
+      email:
+        description: 邮箱
+        type: string
+      name:
+        description: 昵称
+        type: string
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    required:
+    - email
+    - name
+    - password
+    - username
+    type: object
+  api.adminUserForgetPasswordBodyDto:
+    properties:
+      captcha:
+        description: 邮箱验证码
+        type: string
+      email:
+        description: 邮箱
+        type: string
+      password:
+        description: 密码
+        type: string
+    required:
+    - captcha
+    - email
+    - password
+    type: object
+  api.adminUserLoginBodyDto:
+    properties:
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    type: object
+  api.adminUserLoginSuccessResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  api.loginBodyDto:
+    properties:
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    type: object
+  api.loginSuccessResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  api.registerBodyDto:
+    properties:
+      captcha:
+        description: 邮箱验证码
+        type: string
+      email:
+        description: 邮箱
+        type: string
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  cli.CreateModuleBody:
+    properties:
+      name:
+        description: 模块名称
+        type: string
+    type: object
+  consts.AdminUserStatus:
+    enum:
+    - 1
+    - -1
+    type: integer
+    x-enum-comments:
+      AdminUserStatusLocked: 锁定
+      AdminUserStatusNormal: 正常
+    x-enum-varnames:
+    - AdminUserStatusNormal
+    - AdminUserStatusLocked
+  consts.CaptchaScenes:
+    enum:
+    - 1
+    - 2
+    - 3
+    - 4
+    type: integer
+    x-enum-comments:
+      CaptchaScenesForgetPassword: 密码重置
+      CaptchaScenesRegister: 注册
+      CaptchaScenesUpdateEmail: 更新邮箱
+      CaptchaScenesUpdatePhone: 更新手机号
+    x-enum-varnames:
+    - CaptchaScenesRegister
+    - CaptchaScenesForgetPassword
+    - CaptchaScenesUpdatePhone
+    - CaptchaScenesUpdateEmail
+  consts.CaptchaType:
+    enum:
+    - 1
+    - 2
+    type: integer
+    x-enum-comments:
+      CaptchaTypeEmail: 邮箱
+      CaptchaTypePhone: 手机号
+    x-enum-varnames:
+    - CaptchaTypePhone
+    - CaptchaTypeEmail
+  model.AdminRole:
+    properties:
+      code:
+        description: 角色编号
+        type: string
+      created_at:
+        type: string
+      desc:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      permission_codes:
+        description: 权限码
+        items:
+          type: string
+        type: array
+      updated_at:
+        type: string
+      users:
+        items:
+          $ref: '#/definitions/model.AdminUser'
+        type: array
+    type: object
+  model.AdminUser:
+    properties:
+      avatar:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      is_root:
+        description: 是否是超级管理员
+        type: boolean
+      name:
+        type: string
+      news:
+        items:
+          $ref: '#/definitions/model.News'
+        type: array
+      roles:
+        items:
+          $ref: '#/definitions/model.AdminRole'
+        type: array
+      status:
+        $ref: '#/definitions/consts.AdminUserStatus'
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+  model.News:
+    properties:
+      author_id:
+        description: 作者
+        type: integer
+      content:
+        type: string
+      cover:
+        description: 封面
+        type: string
+      created_at:
+        type: string
+      desc:
+        type: string
+      id:
+        type: integer
+      push_date:
+        description: 发布日期
+        type: string
+      recommend:
+        description: 推荐等级
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  permission.LabelType:
+    properties:
+      label:
+        type: string
+    type: object
+  resp.RList:
+    properties:
+      list:
+        items: {}
+        type: array
+      total:
+        type: integer
+    type: object
+  resp.Result:
+    properties:
+      code:
+        type: integer
+      data: {}
+      msg:
+        type: string
+    type: object
+info:
+  contact: {}
+  title: 男生自用 API 接口文档
+  version: "1.0"
+paths:
+  /api/admin/auth/forget-password:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.adminUserForgetPasswordBodyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 忘记密码
+      tags:
+      - 管理后台-用户认证
+  /api/admin/auth/init-root-user:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.adminInitRootUserBodyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.adminUserLoginSuccessResponse'
+              type: object
+      summary: 初始化超级管理员用户
+      tags:
+      - 管理后台-用户认证
+  /api/admin/auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.adminUserLoginBodyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.adminUserLoginSuccessResponse'
+              type: object
+      summary: 用户登录
+      tags:
+      - 管理后台-用户认证
+  /api/admin/news:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - default: 1
+        description: 当前页
+        in: query
+        name: current
+        type: number
+      - default: 20
+        description: 每页条数
+        in: query
+        name: page_size
+        type: number
+      - description: 需要排序的列
+        in: query
+        name: order_key
+        type: string
+      - description: 排序方式
+        enum:
+        - ase
+        - desc
+        in: query
+        name: order_type
+        type: string
+      - description: 按名称或ID搜索
+        in: query
+        name: keyword
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/resp.RList'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/model.News'
+                        type: array
+                    type: object
+              type: object
+      summary: 新闻列表
+      tags:
+      - 管理后台-新闻
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.CreateNewsBodyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 新增新闻
+      tags:
+      - 管理后台-新闻
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.UpdateNewsBodyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 修改新闻
+      tags:
+      - 管理后台-新闻
+  /api/admin/news/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 删除新闻
+      tags:
+      - 管理后台-新闻
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.News'
+              type: object
+      summary: 新闻详情
+      tags:
+      - 管理后台-新闻
+  /api/admin/role:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - default: 1
+        description: 当前页
+        in: query
+        name: current
+        type: number
+      - default: 20
+        description: 每页条数
+        in: query
+        name: page_size
+        type: number
+      - description: 需要排序的列
+        in: query
+        name: order_key
+        type: string
+      - description: 排序方式
+        enum:
+        - ase
+        - desc
+        in: query
+        name: order_type
+        type: string
+      - description: 按用户名搜索
+        in: query
+        name: keyword
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/resp.RList'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/model.AdminRole'
+                        type: array
+                    type: object
+              type: object
+      summary: 管理员角色列表
+      tags:
+      - 管理后台-管理员角色
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 管理员信息
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.CreateAdminRoleBodyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 新增管理员角色
+      tags:
+      - 管理后台-管理员角色
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 管理员信息
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.UpdateAdminRoleBodyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 修改管理员角色
+      tags:
+      - 管理后台-管理员角色
+  /api/admin/role/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 角色 ID
+        in: path
+        name: id
+        required: true
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 删除角色
+      tags:
+      - 管理后台-管理员角色
+  /api/admin/role/permission/codes:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  additionalProperties:
+                    $ref: '#/definitions/permission.LabelType'
+                  type: object
+              type: object
+      summary: 管理后台权限码列表
+      tags:
+      - 管理后台-管理员角色
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 管理员信息
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.UpdateAdminRolePermissionBodyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 修改管理员角色权限
+      tags:
+      - 管理后台-管理员角色
+  /api/admin/user:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - default: 1
+        description: 当前页
+        in: query
+        name: current
+        type: number
+      - default: 20
+        description: 每页条数
+        in: query
+        name: page_size
+        type: number
+      - description: 需要排序的列
+        in: query
+        name: order_key
+        type: string
+      - description: 排序方式
+        enum:
+        - ase
+        - desc
+        in: query
+        name: order_type
+        type: string
+      - description: 按用户名搜索
+        in: query
+        name: keyword
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/resp.RList'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/model.AdminUser'
+                        type: array
+                    type: object
+              type: object
+      summary: 管理员列表
+      tags:
+      - 管理后台-管理员用户
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 管理员信息
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.CreateAdminUserBodyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 新增管理员
+      tags:
+      - 管理后台-管理员用户
+  /api/admin/user/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 管理员ID
+        in: path
+        name: id
+        required: true
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 删除管理员
+      tags:
+      - 管理后台-管理员用户
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 管理员信息
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.UpdateAdminUserBodyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 修改管理员信息
+      tags:
+      - 管理后台-管理员用户
+  /api/admin/user/current:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 用户详情
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.AdminUser'
+              type: object
+      summary: 当前登陆者信息
+      tags:
+      - 管理后台-用户认证
+  /api/admin/user/list:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            type: string
+      summary: 用户列表
+      tags:
+      - 管理后台-用户
+  /api/admin/user/reset-password/{id}:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 管理员信息
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.ResetPasswordAdminUserBodyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 重置管理员密码
+      tags:
+      - 管理后台-管理员用户
+  /api/admin/user/role:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: req
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.AdminUserUpdateRolesBodyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 为管理用户更新角色
+      tags:
+      - 管理后台-管理员用户
+  /api/admin/user/status/{id}:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 管理员ID
+        in: path
+        name: id
+        required: true
+        type: number
+      - description: 用户状态
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.UpdateAdminUserStatusBodyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 修改管理员状态(封禁/解封)
+      tags:
+      - 管理后台-管理员用户
+  /api/admin/user/upload:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 文件地址
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 文件上传
+      tags:
+      - 管理后台-通用接口
+  /api/auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.loginBodyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.loginSuccessResponse'
+              type: object
+      summary: 用户登录
+      tags:
+      - 用户
+  /api/auth/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.registerBodyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.loginSuccessResponse'
+              type: object
+      summary: 用户注册
+      tags:
+      - 用户
+  /api/captcha:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.CreateCaptchaBodyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 验证码 ID
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      summary: 发送验证码
+      tags:
+      - 验证码
+  /api/captcha/clear:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Authentication token
+        in: header
+        name: X-Auth-Token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 请求结果
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 清除过期验证码
+      tags:
+      - 验证码
+  /api/captcha/image:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 验证码图片的key
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 获取图片验证码的 key
+      tags:
+      - 验证码
+  /api/captcha/image/{key}:
+    get:
+      consumes:
+      - image/png
+      parameters:
+      - description: 图片验证码 key
+        in: path
+        name: key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 图片文件流
+          schema:
+            type: string
+      summary: 获取验证码图片
+      tags:
+      - 验证码
+  /api/cli/module/create:
+    post:
+      consumes:
+      - application/json
+      description: get string by ID
+      parameters:
+      - description: 模块名称
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/cli.CreateModuleBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  type: boolean
+              type: object
+        "500":
+          description: resp
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 创建模块
+      tags:
+      - cli
+swagger: "2.0"
