@@ -26,6 +26,11 @@ type EmailConfig struct {
 	From     string // 发件人邮箱
 }
 
+type WxMpConfig struct {
+	AppID     string `mapstructure:"appid"`
+	AppSecret string `mapstructure:"appsecret"`
+}
+
 type Result struct {
 	Env           string      //  环境
 	IsDev         bool        //  是否是开发环境
@@ -36,4 +41,5 @@ type Result struct {
 	Db            DBConfig    //  数据库配置
 	Email         EmailConfig //  邮箱配置
 	FileUploadDir string      `mapstructure:"file_upload_dir"` //  文件上传路径
+	WxMp          WxMpConfig  `mapstructure:"wxmp"`            //  微信小程序配置
 }

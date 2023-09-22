@@ -8,6 +8,7 @@ import (
 	"server/dal/dao"
 	"server/dal/model"
 	"server/lib/errs"
+	"server/lib/wx_mp"
 	"server/utils"
 )
 
@@ -90,6 +91,45 @@ func (s *AuthService) UsernameAndPasswordLogin(username string, password string)
 	token, err := utils.CreateUserToken(*userinfo, info.Type, config.Config.Auth.TokenSecret)
 	if err != nil {
 		return "", errs.CreateServerError("Token 生成失败", err, nil)
+	}
+	return token, nil
+}
+
+// WxMpOpenidLogin 使用微信小程序 code 登陆
+func (s *AuthService) WxMpOpenidLogin(code string) (string, error) {
+	fmt.Println("code: ", code)
+	wxClient := wx_mp.WxMp{
+		AppID:  config.Config.WxMp.AppID,
+		Secret: config.Config.WxMp.AppSecret,
+	}
+	res, err := wxClient.Login(code)
+	if err != nil {
+		return "", errs.CreateServerError("请求微信登陆接口失败", err, code)
+	}
+	fmt.Printf("微信返回的信息: %+v\n", res)
+	var userinfo *model.User
+	if account, qerr := dao.Account.Where(dao.Account.Type.Eq(uint(consts.WxMpAccountType)), dao.Account.WxOpenId.Eq(res.Openid)).Take(); qerr != nil {
+		// 不存在则注册一个
+		fmt.Println("openid 未注册，注册中")
+		user, aerr := s.accountService.CreateWxMp(res.Openid)
+		if aerr != nil {
+			return "", errs.CreateServerError("注册失败", aerr, res)
+		}
+		userinfo = user
+	} else {
+		fmt.Println("openid 已注册，查询中")
+		user, berr := dao.User.FindByID(account.UserID)
+		if berr != nil {
+			return "", errs.CreateServerError("用户不存在", berr, account)
+		}
+		userinfo = user
+	}
+	if userinfo.Status != consts.UserStatusNormal {
+		return "", errs.CreateServerError("用户状态非法，禁止登陆", nil, *userinfo)
+	}
+	token, terr := utils.CreateUserToken(*userinfo, consts.WxMpAccountType, config.Config.Auth.TokenSecret)
+	if terr != nil {
+		return "", errs.CreateServerError("Token 生成失败", terr, nil)
 	}
 	return token, nil
 }

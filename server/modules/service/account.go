@@ -31,7 +31,8 @@ func (s *AccountService) CreateNormal(userID uint, username, password string) (m
 // CreateEmail 创建邮箱账号，邮箱用户名和密码
 func (s *AccountService) CreateEmail(username, email, password string) (model.User, error) {
 	userInfo := model.User{
-		Email: email,
+		Email:  email,
+		Status: consts.UserStatusNormal,
 	}
 	accountInfo := model.Account{
 		Type:     consts.EmailAccountType,
@@ -47,16 +48,18 @@ func (s *AccountService) CreateEmail(username, email, password string) (model.Us
 }
 
 // CreateWxMp 创建微信小程序账号，openid
-func (s *AccountService) CreateWxMp(openid string) (model.User, error) {
-	userInfo := model.User{}
+func (s *AccountService) CreateWxMp(openid string) (*model.User, error) {
+	userInfo := model.User{
+		Status: consts.UserStatusNormal,
+	}
 	accountInfo := model.Account{
 		Type:     consts.WxMpAccountType,
 		WxOpenId: openid,
 	}
 	if err := createUserAccount(&userInfo, &accountInfo); err != nil {
-		return model.User{}, err
+		return &userInfo, err
 	}
-	return userInfo, nil
+	return &userInfo, nil
 }
 
 // UseEmailFindOne 使用邮箱查账号

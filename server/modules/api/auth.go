@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"server/lib/valid"
@@ -18,6 +19,7 @@ func NewAuthController(e *gin.Engine) {
 	}
 	router := e.Group("/api/auth")
 	router.POST("/login", c.Login)
+	router.POST("/wxmp/login", c.WxMpLogin)
 	router.POST("/register", c.Register)
 }
 
@@ -31,7 +33,7 @@ func NewAuthController(e *gin.Engine) {
 // Login
 //
 //	@Summary	用户登录
-//	@Tags		用户
+//	@Tags		前台-用户
 //	@Accept		json
 //	@Produce	json
 //	@Param		req	body		loginBodyDto							true	"body"
@@ -54,7 +56,7 @@ func (c *AuthController) Login(ctx *gin.Context) {
 // Register
 //
 //	@Summary	用户注册
-//	@Tags		用户
+//	@Tags		前台-用户
 //	@Accept		json
 //	@Produce	json
 //	@Param		req	body		registerBodyDto							true	"body"
@@ -75,9 +77,37 @@ func (c *AuthController) Register(ctx *gin.Context) {
 	}
 }
 
+// WxMpLogin
+//
+//	@Summary	微信小程序登录
+//	@Tags		前台-用户
+//	@Accept		json
+//	@Produce	json
+//	@Param		req	body		wxMpLoginBodyDto						true	"body"
+//	@Success	200	{object}	resp.Result{data=loginSuccessResponse}	"resp"
+//	@Router		/api/auth/wxmp/login [post]
+func (c *AuthController) WxMpLogin(ctx *gin.Context) {
+	var body = new(wxMpLoginBodyDto)
+	if err := ctx.ShouldBindBodyWith(body, binding.JSON); err != nil {
+		fmt.Println(err)
+		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
+		return
+	}
+	token, err := c.service.WxMpOpenidLogin(body.Code)
+	if err != nil {
+		ctx.JSON(resp.ParseErr(err))
+	} else {
+		ctx.JSON(resp.Success(loginSuccessResponse{Token: token}, "登录成功"))
+	}
+}
+
 type loginBodyDto struct {
 	Username string `json:"username"` // 用户名
 	Password string `json:"password"` // 密码
+}
+
+type wxMpLoginBodyDto struct {
+	Code string `json:"code" binding:"required"` // code
 }
 
 type registerBodyDto struct {

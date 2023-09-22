@@ -265,12 +265,34 @@ definitions:
     - password
     - username
     type: object
+  api.wxMpLoginBodyDto:
+    properties:
+      code:
+        description: code
+        type: string
+    required:
+    - code
+    type: object
   cli.CreateModuleBody:
     properties:
       name:
         description: 模块名称
         type: string
     type: object
+  consts.AccountType:
+    enum:
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-comments:
+      EmailAccountType: 邮箱账户
+      NormalAccountType: 普通账户,使用用户名和密码登录
+      WxMpAccountType: 微信小程序账户
+    x-enum-varnames:
+    - NormalAccountType
+    - EmailAccountType
+    - WxMpAccountType
   consts.AdminUserStatus:
     enum:
     - 1
@@ -310,6 +332,38 @@ definitions:
     x-enum-varnames:
     - CaptchaTypePhone
     - CaptchaTypeEmail
+  consts.UserStatus:
+    enum:
+    - 1
+    - -1
+    type: integer
+    x-enum-comments:
+      UserStatusLocked: 锁定
+      UserStatusNormal: 正常
+    x-enum-varnames:
+    - UserStatusNormal
+    - UserStatusLocked
+  model.Account:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      type:
+        $ref: '#/definitions/consts.AccountType'
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+      username:
+        type: string
+      wx_open_id:
+        type: string
+      wx_union_id:
+        type: string
+    type: object
   model.AdminRole:
     properties:
       code:
@@ -389,6 +443,29 @@ definitions:
         type: integer
       title:
         type: string
+      updated_at:
+        type: string
+    type: object
+  model.User:
+    properties:
+      account:
+        items:
+          $ref: '#/definitions/model.Account'
+        type: array
+      age:
+        type: integer
+      avatar:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      status:
+        $ref: '#/definitions/consts.UserStatus'
       updated_at:
         type: string
     type: object
@@ -911,20 +988,6 @@ paths:
       summary: 当前登陆者信息
       tags:
       - 管理后台-用户认证
-  /api/admin/user/list:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: resp
-          schema:
-            type: string
-      summary: 用户列表
-      tags:
-      - 管理后台-用户
   /api/admin/user/reset-password/{id}:
     put:
       consumes:
@@ -1043,7 +1106,7 @@ paths:
               type: object
       summary: 用户登录
       tags:
-      - 用户
+      - 前台-用户
   /api/auth/register:
     post:
       consumes:
@@ -1069,7 +1132,33 @@ paths:
               type: object
       summary: 用户注册
       tags:
-      - 用户
+      - 前台-用户
+  /api/auth/wxmp/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.wxMpLoginBodyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.loginSuccessResponse'
+              type: object
+      summary: 微信小程序登录
+      tags:
+      - 前台-用户
   /api/captcha:
     post:
       consumes:
@@ -1191,4 +1280,23 @@ paths:
       summary: 创建模块
       tags:
       - cli
+  /api/user/current:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 用户详情
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      summary: 当前登陆者信息
+      tags:
+      - 前台-用户
 swagger: "2.0"

@@ -35,7 +35,6 @@ password = "Lv12345678"
 port = 3306
 dbname = "cms_dev"
 
-
 # 邮箱配置信息
 [email]
 host="smtp.163.com"
@@ -44,3 +43,8 @@ secure=true
 user=""
 password=""
 from="" # 发件人邮箱
+
+# 微信小程序
+[wxmp]
+appid=""
+appsecret=""

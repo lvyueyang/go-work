@@ -760,28 +760,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/user/list": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "管理后台-用户"
-                ],
-                "summary": "用户列表",
-                "responses": {
-                    "200": {
-                        "description": "resp",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "/api/admin/user/reset-password/{id}": {
             "put": {
                 "consumes": [
@@ -1002,7 +980,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户"
+                    "前台-用户"
                 ],
                 "summary": "用户登录",
                 "parameters": [
@@ -1047,7 +1025,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户"
+                    "前台-用户"
                 ],
                 "summary": "用户注册",
                 "parameters": [
@@ -1058,6 +1036,51 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/api.registerBodyDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "resp",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/resp.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/api.loginSuccessResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/wxmp/login": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "前台-用户"
+                ],
+                "summary": "微信小程序登录",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.wxMpLoginBodyDto"
                         }
                     }
                 ],
@@ -1279,6 +1302,40 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/current": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "前台-用户"
+                ],
+                "summary": "当前登陆者信息",
+                "responses": {
+                    "200": {
+                        "description": "用户详情",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/resp.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.User"
                                         }
                                     }
                                 }
@@ -1673,6 +1730,18 @@ const docTemplate = `{
                 }
             }
         },
+        "api.wxMpLoginBodyDto": {
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "code": {
+                    "description": "code",
+                    "type": "string"
+                }
+            }
+        },
         "cli.CreateModuleBody": {
             "type": "object",
             "properties": {
@@ -1681,6 +1750,24 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "consts.AccountType": {
+            "type": "integer",
+            "enum": [
+                1,
+                2,
+                3
+            ],
+            "x-enum-comments": {
+                "EmailAccountType": "邮箱账户",
+                "NormalAccountType": "普通账户,使用用户名和密码登录",
+                "WxMpAccountType": "微信小程序账户"
+            },
+            "x-enum-varnames": [
+                "NormalAccountType",
+                "EmailAccountType",
+                "WxMpAccountType"
+            ]
         },
         "consts.AdminUserStatus": {
             "type": "integer",
@@ -1732,6 +1819,53 @@ const docTemplate = `{
                 "CaptchaTypePhone",
                 "CaptchaTypeEmail"
             ]
+        },
+        "consts.UserStatus": {
+            "type": "integer",
+            "enum": [
+                1,
+                -1
+            ],
+            "x-enum-comments": {
+                "UserStatusLocked": "锁定",
+                "UserStatusNormal": "正常"
+            },
+            "x-enum-varnames": [
+                "UserStatusNormal",
+                "UserStatusLocked"
+            ]
+        },
+        "model.Account": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "type": {
+                    "$ref": "#/definitions/consts.AccountType"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "wx_open_id": {
+                    "type": "string"
+                },
+                "wx_union_id": {
+                    "type": "string"
+                }
+            }
         },
         "model.AdminRole": {
             "type": "object",
@@ -1848,6 +1982,41 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.User": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Account"
+                    }
+                },
+                "age": {
+                    "type": "integer"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/consts.UserStatus"
                 },
                 "updated_at": {
                     "type": "string"
