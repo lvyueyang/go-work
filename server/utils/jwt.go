@@ -10,8 +10,8 @@ import (
 )
 
 type User struct {
-	Id          uint               `json:"id"`
-	AccountType consts.AccountType `json:"account_type"`
+	Id          uint             `json:"id"`
+	AccountType consts.LoginType `json:"account_type"`
 }
 
 type UserClaims struct {
@@ -19,7 +19,7 @@ type UserClaims struct {
 	jwt.RegisteredClaims
 }
 
-func CreateUserToken(user model.User, accountType consts.AccountType, secret string) (string, error) {
+func CreateUserToken(user model.User, accountType consts.LoginType, secret string) (string, error) {
 	now := time.Now()
 	expireTime := now.Add(7 * 24 * time.Hour)
 	userClaims := UserClaims{

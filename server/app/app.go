@@ -20,7 +20,6 @@ func New(r *gin.Engine) {
 	api.NewHomeController(r)
 
 	api.NewUserController(r)
-	api.NewAccountController(r)
 	api.NewAuthController(r)
 	api.NewCaptchaController(r)
 

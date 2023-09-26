@@ -17,7 +17,6 @@ import (
 
 var (
 	Q         = new(Query)
-	Account   *account
 	AdminRole *adminRole
 	AdminUser *adminUser
 	Captcha   *captcha
@@ -27,7 +26,6 @@ var (
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
-	Account = &Q.Account
 	AdminRole = &Q.AdminRole
 	AdminUser = &Q.AdminUser
 	Captcha = &Q.Captcha
@@ -38,7 +36,6 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:        db,
-		Account:   newAccount(db, opts...),
 		AdminRole: newAdminRole(db, opts...),
 		AdminUser: newAdminUser(db, opts...),
 		Captcha:   newCaptcha(db, opts...),
@@ -50,7 +47,6 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 type Query struct {
 	db *gorm.DB
 
-	Account   account
 	AdminRole adminRole
 	AdminUser adminUser
 	Captcha   captcha
@@ -63,7 +59,6 @@ func (q *Query) Available() bool { return q.db != nil }
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:        db,
-		Account:   q.Account.clone(db),
 		AdminRole: q.AdminRole.clone(db),
 		AdminUser: q.AdminUser.clone(db),
 		Captcha:   q.Captcha.clone(db),
@@ -83,7 +78,6 @@ func (q *Query) WriteDB() *Query {
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:        db,
-		Account:   q.Account.replaceDB(db),
 		AdminRole: q.AdminRole.replaceDB(db),
 		AdminUser: q.AdminUser.replaceDB(db),
 		Captcha:   q.Captcha.replaceDB(db),
@@ -93,7 +87,6 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 }
 
 type queryCtx struct {
-	Account   IAccountDo
 	AdminRole IAdminRoleDo
 	AdminUser IAdminUserDo
 	Captcha   ICaptchaDo
@@ -103,7 +96,6 @@ type queryCtx struct {
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		Account:   q.Account.WithContext(ctx),
 		AdminRole: q.AdminRole.WithContext(ctx),
 		AdminUser: q.AdminUser.WithContext(ctx),
 		Captcha:   q.Captcha.WithContext(ctx),

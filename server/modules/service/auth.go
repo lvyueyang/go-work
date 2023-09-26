@@ -13,14 +13,12 @@ import (
 )
 
 type AuthService struct {
-	accountService *AccountService
-	userService    *UserService
+	userService *UserService
 }
 
 func NewAuthService() *AuthService {
 	return &AuthService{
-		accountService: NewAccountService(),
-		userService:    NewUserService(),
+		userService: NewUserService(),
 	}
 }
 
@@ -42,13 +40,12 @@ func (s *AuthService) UsernameAndPasswordRegister(email, username, password stri
 		"username": username,
 		"password": password,
 	}
-	fmt.Println("accountService", s.accountService)
 
 	// 验证用户名和邮箱是否已被使用
-	if _, err := dao.Account.Where(dao.Account.Email.Eq(email)).Take(); err == nil {
+	if _, err := dao.User.Where(dao.User.Email.Eq(email)).Take(); err == nil {
 		return "", &errs.ClientError{Msg: "邮箱已存在", Info: nil}
 	}
-	if _, err := dao.Account.Where(dao.Account.Username.Eq(username)).Take(); err == nil {
+	if _, err := dao.User.Where(dao.User.Username.Eq(username)).Take(); err == nil {
 		return "", &errs.ClientError{Msg: "用户名已存在", Info: nil}
 	}
 
@@ -62,13 +59,13 @@ func (s *AuthService) UsernameAndPasswordRegister(email, username, password stri
 
 	var userInfo model.User
 	// 创建账号
-	if result, err := s.accountService.CreateEmail(username, email, string(hashPassword)); err != nil {
+	if result, err := s.userService.UseEmailCreate(username, email, string(hashPassword)); err != nil {
 		return "", &errs.ServerError{Msg: "账号创建失败", Err: err, Info: opt}
 	} else {
-		userInfo = result
+		userInfo = *result
 	}
 
-	token, err := utils.CreateUserToken(userInfo, consts.EmailAccountType, config.Config.Auth.TokenSecret)
+	token, err := utils.CreateUserToken(userInfo, consts.EmailLoginType, config.Config.Auth.TokenSecret)
 
 	if err != nil {
 		errInfo := map[string]any{"userInfo": userInfo, "opt": opt}
@@ -79,7 +76,7 @@ func (s *AuthService) UsernameAndPasswordRegister(email, username, password stri
 
 // UsernameAndPasswordLogin 使用用户名和密码登录
 func (s *AuthService) UsernameAndPasswordLogin(username string, password string) (string, error) {
-	info, _ := s.accountService.UseUsernameFindOne(username)
+	info, _ := s.userService.UseUsernameFindOne(username)
 	if info.ID == 0 {
 		return "", &errs.ClientError{Msg: "用户名未注册", Info: nil}
 	}
@@ -87,8 +84,7 @@ func (s *AuthService) UsernameAndPasswordLogin(username string, password string)
 	if err != nil {
 		return "", errs.CreateClientError("密码错误", nil)
 	}
-	userinfo, _ := s.userService.FindByID(info.UserID)
-	token, err := utils.CreateUserToken(*userinfo, info.Type, config.Config.Auth.TokenSecret)
+	token, err := utils.CreateUserToken(*info, consts.UsernameLoginType, config.Config.Auth.TokenSecret)
 	if err != nil {
 		return "", errs.CreateServerError("Token 生成失败", err, nil)
 	}
@@ -106,28 +102,22 @@ func (s *AuthService) WxMpOpenidLogin(code string) (string, error) {
 	if err != nil {
 		return "", errs.CreateServerError("请求微信登陆接口失败", err, code)
 	}
-	fmt.Printf("微信返回的信息: %+v\n", res)
-	var userinfo *model.User
-	if account, qerr := dao.Account.Where(dao.Account.Type.Eq(uint(consts.WxMpAccountType)), dao.Account.WxOpenId.Eq(res.Openid)).Take(); qerr != nil {
+
+	userinfo, qerr := dao.User.Where(dao.User.WxOpenId.Eq(res.Openid)).Take()
+	if qerr != nil {
 		// 不存在则注册一个
-		fmt.Println("openid 未注册，注册中")
-		user, aerr := s.accountService.CreateWxMp(res.Openid)
+		user, aerr := s.userService.UseWxMpCreate(res.Openid)
 		if aerr != nil {
 			return "", errs.CreateServerError("注册失败", aerr, res)
 		}
 		userinfo = user
-	} else {
-		fmt.Println("openid 已注册，查询中")
-		user, berr := dao.User.FindByID(account.UserID)
-		if berr != nil {
-			return "", errs.CreateServerError("用户不存在", berr, account)
-		}
-		userinfo = user
 	}
+	// openid 已注册，校验是否为正常账号
+
 	if userinfo.Status != consts.UserStatusNormal {
-		return "", errs.CreateServerError("用户状态非法，禁止登陆", nil, *userinfo)
+		return "", errs.CreateClientError("用户状态非法，禁止登陆", *userinfo)
 	}
-	token, terr := utils.CreateUserToken(*userinfo, consts.WxMpAccountType, config.Config.Auth.TokenSecret)
+	token, terr := utils.CreateUserToken(*userinfo, consts.WxMpLoginType, config.Config.Auth.TokenSecret)
 	if terr != nil {
 		return "", errs.CreateServerError("Token 生成失败", terr, nil)
 	}

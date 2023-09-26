@@ -2,6 +2,10 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"server/consts"
+	"server/consts/permission"
+	"server/lib/valid"
 	"server/middleware"
 	"server/modules/service"
 	"server/utils"
@@ -16,8 +20,14 @@ func NewUserController(e *gin.Engine) {
 	c := &UserController{
 		service: service.NewUserService(),
 	}
-	admin := e.Group("/api/user")
-	admin.GET("/current", middleware.Auth(), c.CurrentInfo)
+	router := e.Group("/api/user")
+	router.GET("/current", middleware.Auth(), c.CurrentInfo)
+
+	// 管理后台使用的路由
+	admin := e.Group("/api/admin/c-user")
+	admin.GET("", middleware.AdminRole(permission.AdminCUserFind), c.FindList)
+	admin.PUT("/status", middleware.AdminRole(permission.AdminCUserUpdateStatus), c.UpdateState)
+
 }
 
 // CurrentInfo
@@ -33,7 +43,58 @@ func (c *UserController) CurrentInfo(ctx *gin.Context) {
 	ctx.JSON(resp.Succ(user))
 }
 
+// FindList
+//
+//	@Summary	用户列表
+//	@Tags		管理后台-C端用户管理
+//	@Accept		json
+//	@Produce	json
+//	@Param		current		query		number											false	"当前页"	default(1)
+//	@Param		page_size	query		number											false	"每页条数"	default(20)
+//	@Param		order_key	query		string											false	"需要排序的列"
+//	@Param		order_type	query		string											false	"排序方式"	Enums(ase,desc)
+//	@Param		keyword		query		string											false	"按名称或ID搜索"
+//	@Success	200			{object}	resp.Result{data=resp.RList{list=[]model.User}}	"resp"
+//	@Router		/api/admin/c-user [get]
+func (c *UserController) FindList(ctx *gin.Context) {
+	query := service.FindUserListOption{}
+	if err := ctx.ShouldBindQuery(&query); err != nil {
+		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
+		return
+	}
+	result, _ := c.service.FindList(query)
+	ctx.JSON(resp.Succ(result))
+}
+
+// UpdateState
+//
+//	@Summary	修改用户状态
+//	@Tags		管理后台-C端用户管理
+//	@Accept		json
+//	@Produce	json
+//	@Param		req	body		UpdateUserStatusBodyDto	true	"Body"
+//	@Success	200	{object}	resp.Result			"resp"
+//	@Router		/api/admin/status [put]
+func (c *UserController) UpdateState(ctx *gin.Context) {
+	var body UpdateUserStatusBodyDto
+	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
+		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
+		return
+	}
+
+	if _, err := c.service.UpdateStatus(body.ID, body.Status); err != nil {
+		ctx.JSON(resp.ParseErr(err))
+		return
+	}
+	ctx.JSON(resp.Succ(nil))
+}
+
 type CreateUserBodyDto struct {
 	Name string `json:"name" binding:"required" label:"姓名"` // 姓名
 	Sex  string `json:"sex" binding:"required" label:"性别"`  // 性别
+}
+
+type UpdateUserStatusBodyDto struct {
+	ID     uint              `json:"id" binding:"required"`                  // 用户 ID
+	Status consts.UserStatus `json:"status" binding:"required" enums:"-1,1"` // 状态 -1封禁 1-正常
 }

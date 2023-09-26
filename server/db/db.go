@@ -16,7 +16,6 @@ var Database *gorm.DB
 // Models 数据库表
 var Models = []any{
 	model.User{},
-	model.Account{},
 	model.Captcha{},
 	model.AdminUser{},
 	model.AdminRole{},

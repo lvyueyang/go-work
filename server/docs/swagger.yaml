@@ -182,6 +182,22 @@ definitions:
     - id
     - title
     type: object
+  api.UpdateUserStatusBodyDto:
+    properties:
+      id:
+        description: 用户 ID
+        type: integer
+      status:
+        allOf:
+        - $ref: '#/definitions/consts.UserStatus'
+        description: 状态 -1封禁 1-正常
+        enum:
+        - -1
+        - 1
+    required:
+    - id
+    - status
+    type: object
   api.adminInitRootUserBodyDto:
     properties:
       email:
@@ -279,20 +295,6 @@ definitions:
         description: 模块名称
         type: string
     type: object
-  consts.AccountType:
-    enum:
-    - 1
-    - 2
-    - 3
-    type: integer
-    x-enum-comments:
-      EmailAccountType: 邮箱账户
-      NormalAccountType: 普通账户,使用用户名和密码登录
-      WxMpAccountType: 微信小程序账户
-    x-enum-varnames:
-    - NormalAccountType
-    - EmailAccountType
-    - WxMpAccountType
   consts.AdminUserStatus:
     enum:
     - 1
@@ -343,27 +345,6 @@ definitions:
     x-enum-varnames:
     - UserStatusNormal
     - UserStatusLocked
-  model.Account:
-    properties:
-      created_at:
-        type: string
-      email:
-        type: string
-      id:
-        type: integer
-      type:
-        $ref: '#/definitions/consts.AccountType'
-      updated_at:
-        type: string
-      user_id:
-        type: integer
-      username:
-        type: string
-      wx_open_id:
-        type: string
-      wx_union_id:
-        type: string
-    type: object
   model.AdminRole:
     properties:
       code:
@@ -448,10 +429,6 @@ definitions:
     type: object
   model.User:
     properties:
-      account:
-        items:
-          $ref: '#/definitions/model.Account'
-        type: array
       age:
         type: integer
       avatar:
@@ -467,6 +444,12 @@ definitions:
       status:
         $ref: '#/definitions/consts.UserStatus'
       updated_at:
+        type: string
+      username:
+        type: string
+      wx_open_id:
+        type: string
+      wx_union_id:
         type: string
     type: object
   permission.LabelType:
@@ -568,6 +551,58 @@ paths:
       summary: 用户登录
       tags:
       - 管理后台-用户认证
+  /api/admin/c-user:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - default: 1
+        description: 当前页
+        in: query
+        name: current
+        type: number
+      - default: 20
+        description: 每页条数
+        in: query
+        name: page_size
+        type: number
+      - description: 需要排序的列
+        in: query
+        name: order_key
+        type: string
+      - description: 排序方式
+        enum:
+        - ase
+        - desc
+        in: query
+        name: order_type
+        type: string
+      - description: 按名称或ID搜索
+        in: query
+        name: keyword
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/resp.RList'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/model.User'
+                        type: array
+                    type: object
+              type: object
+      summary: 用户列表
+      tags:
+      - 管理后台-C端用户管理
   /api/admin/news:
     get:
       consumes:
@@ -857,6 +892,27 @@ paths:
       summary: 修改管理员角色权限
       tags:
       - 管理后台-管理员角色
+  /api/admin/status:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.UpdateUserStatusBodyDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 修改用户状态
+      tags:
+      - 管理后台-C端用户管理
   /api/admin/user:
     get:
       consumes:

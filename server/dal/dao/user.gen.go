@@ -37,11 +37,10 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 	_user.Email = field.NewString(tableName, "email")
 	_user.Avatar = field.NewString(tableName, "avatar")
 	_user.Status = field.NewInt8(tableName, "status")
-	_user.Account = userHasManyAccount{
-		db: db.Session(&gorm.Session{}),
-
-		RelationField: field.NewRelation("Account", "model.Account"),
-	}
+	_user.Username = field.NewString(tableName, "username")
+	_user.Password = field.NewString(tableName, "password")
+	_user.WxOpenId = field.NewString(tableName, "wx_open_id")
+	_user.WxUnionId = field.NewString(tableName, "wx_union_id")
 
 	_user.fillFieldMap()
 
@@ -61,7 +60,10 @@ type user struct {
 	Email     field.String
 	Avatar    field.String
 	Status    field.Int8
-	Account   userHasManyAccount
+	Username  field.String
+	Password  field.String
+	WxOpenId  field.String
+	WxUnionId field.String
 
 	fieldMap map[string]field.Expr
 }
@@ -87,6 +89,10 @@ func (u *user) updateTableName(table string) *user {
 	u.Email = field.NewString(table, "email")
 	u.Avatar = field.NewString(table, "avatar")
 	u.Status = field.NewInt8(table, "status")
+	u.Username = field.NewString(table, "username")
+	u.Password = field.NewString(table, "password")
+	u.WxOpenId = field.NewString(table, "wx_open_id")
+	u.WxUnionId = field.NewString(table, "wx_union_id")
 
 	u.fillFieldMap()
 
@@ -103,7 +109,7 @@ func (u *user) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (u *user) fillFieldMap() {
-	u.fieldMap = make(map[string]field.Expr, 10)
+	u.fieldMap = make(map[string]field.Expr, 13)
 	u.fieldMap["id"] = u.ID
 	u.fieldMap["created_at"] = u.CreatedAt
 	u.fieldMap["updated_at"] = u.UpdatedAt
@@ -113,7 +119,10 @@ func (u *user) fillFieldMap() {
 	u.fieldMap["email"] = u.Email
 	u.fieldMap["avatar"] = u.Avatar
 	u.fieldMap["status"] = u.Status
-
+	u.fieldMap["username"] = u.Username
+	u.fieldMap["password"] = u.Password
+	u.fieldMap["wx_open_id"] = u.WxOpenId
+	u.fieldMap["wx_union_id"] = u.WxUnionId
 }
 
 func (u user) clone(db *gorm.DB) user {
@@ -124,77 +133,6 @@ func (u user) clone(db *gorm.DB) user {
 func (u user) replaceDB(db *gorm.DB) user {
 	u.userDo.ReplaceDB(db)
 	return u
-}
-
-type userHasManyAccount struct {
-	db *gorm.DB
-
-	field.RelationField
-}
-
-func (a userHasManyAccount) Where(conds ...field.Expr) *userHasManyAccount {
-	if len(conds) == 0 {
-		return &a
-	}
-
-	exprs := make([]clause.Expression, 0, len(conds))
-	for _, cond := range conds {
-		exprs = append(exprs, cond.BeCond().(clause.Expression))
-	}
-	a.db = a.db.Clauses(clause.Where{Exprs: exprs})
-	return &a
-}
-
-func (a userHasManyAccount) WithContext(ctx context.Context) *userHasManyAccount {
-	a.db = a.db.WithContext(ctx)
-	return &a
-}
-
-func (a userHasManyAccount) Session(session *gorm.Session) *userHasManyAccount {
-	a.db = a.db.Session(session)
-	return &a
-}
-
-func (a userHasManyAccount) Model(m *model.User) *userHasManyAccountTx {
-	return &userHasManyAccountTx{a.db.Model(m).Association(a.Name())}
-}
-
-type userHasManyAccountTx struct{ tx *gorm.Association }
-
-func (a userHasManyAccountTx) Find() (result []*model.Account, err error) {
-	return result, a.tx.Find(&result)
-}
-
-func (a userHasManyAccountTx) Append(values ...*model.Account) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Append(targetValues...)
-}
-
-func (a userHasManyAccountTx) Replace(values ...*model.Account) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Replace(targetValues...)
-}
-
-func (a userHasManyAccountTx) Delete(values ...*model.Account) (err error) {
-	targetValues := make([]interface{}, len(values))
-	for i, v := range values {
-		targetValues[i] = v
-	}
-	return a.tx.Delete(targetValues...)
-}
-
-func (a userHasManyAccountTx) Clear() error {
-	return a.tx.Clear()
-}
-
-func (a userHasManyAccountTx) Count() int64 {
-	return a.tx.Count()
 }
 
 type userDo struct{ gen.DO }

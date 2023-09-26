@@ -139,6 +139,93 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/admin/c-user": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理后台-C端用户管理"
+                ],
+                "summary": "用户列表",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "default": 1,
+                        "description": "当前页",
+                        "name": "current",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "default": 20,
+                        "description": "每页条数",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "需要排序的列",
+                        "name": "order_key",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "ase",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "description": "排序方式",
+                        "name": "order_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "按名称或ID搜索",
+                        "name": "keyword",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "resp",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/resp.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/resp.RList"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/model.User"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/news": {
             "get": {
                 "consumes": [
@@ -596,6 +683,39 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "resp",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/status": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理后台-C端用户管理"
+                ],
+                "summary": "修改用户状态",
+                "parameters": [
+                    {
+                        "description": "Body",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.UpdateUserStatusBodyDto"
+                        }
                     }
                 ],
                 "responses": {
@@ -1613,6 +1733,31 @@ const docTemplate = `{
                 }
             }
         },
+        "api.UpdateUserStatusBodyDto": {
+            "type": "object",
+            "required": [
+                "id",
+                "status"
+            ],
+            "properties": {
+                "id": {
+                    "description": "用户 ID",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "状态 -1封禁 1-正常",
+                    "enum": [
+                        -1,
+                        1
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.UserStatus"
+                        }
+                    ]
+                }
+            }
+        },
         "api.adminInitRootUserBodyDto": {
             "type": "object",
             "required": [
@@ -1751,24 +1896,6 @@ const docTemplate = `{
                 }
             }
         },
-        "consts.AccountType": {
-            "type": "integer",
-            "enum": [
-                1,
-                2,
-                3
-            ],
-            "x-enum-comments": {
-                "EmailAccountType": "邮箱账户",
-                "NormalAccountType": "普通账户,使用用户名和密码登录",
-                "WxMpAccountType": "微信小程序账户"
-            },
-            "x-enum-varnames": [
-                "NormalAccountType",
-                "EmailAccountType",
-                "WxMpAccountType"
-            ]
-        },
         "consts.AdminUserStatus": {
             "type": "integer",
             "enum": [
@@ -1834,38 +1961,6 @@ const docTemplate = `{
                 "UserStatusNormal",
                 "UserStatusLocked"
             ]
-        },
-        "model.Account": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "type": {
-                    "$ref": "#/definitions/consts.AccountType"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
-                },
-                "username": {
-                    "type": "string"
-                },
-                "wx_open_id": {
-                    "type": "string"
-                },
-                "wx_union_id": {
-                    "type": "string"
-                }
-            }
         },
         "model.AdminRole": {
             "type": "object",
@@ -1991,12 +2086,6 @@ const docTemplate = `{
         "model.User": {
             "type": "object",
             "properties": {
-                "account": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.Account"
-                    }
-                },
                 "age": {
                     "type": "integer"
                 },
@@ -2019,6 +2108,15 @@ const docTemplate = `{
                     "$ref": "#/definitions/consts.UserStatus"
                 },
                 "updated_at": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "wx_open_id": {
+                    "type": "string"
+                },
+                "wx_union_id": {
                     "type": "string"
                 }
             }
