@@ -36,7 +36,7 @@ export const PERMISSION_CODE = {
   /** 上传文件到本地 */
   ADMIN_USER_UPLOAD_FILE: 'admin:user:upload:file',
 } as const;
-
+  
 export const PERMISSION_MAP = {
   [PERMISSION_CODE.ADMIN_NEWS_CREATE]: '创建新闻',
   [PERMISSION_CODE.ADMIN_NEWS_DELETE]: '删除新闻',

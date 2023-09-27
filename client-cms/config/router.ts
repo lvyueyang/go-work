@@ -18,6 +18,11 @@ const router = {
           menuHide: true,
         },
         {
+          path: '/user',
+          component: 'user',
+          title: 'C 端用户管理',
+        },
+        {
           path: '/admin-user',
           title: '后台账户管理',
           // icon: UserOutlined,

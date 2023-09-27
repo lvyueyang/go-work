@@ -110,6 +110,13 @@ export interface ApiUpdateNewsBodyDto {
   title: string;
 }
 
+export interface ApiUpdateUserStatusBodyDto {
+  /** 用户 ID */
+  id: number;
+  /** 状态 -1封禁 1-正常 */
+  status: -1 | 1;
+}
+
 export interface ApiAdminInitRootUserBodyDto {
   /** 邮箱 */
   email: string;
@@ -163,6 +170,11 @@ export interface ApiRegisterBodyDto {
   username: string;
 }
 
+export interface ApiWxMpLoginBodyDto {
+  /** code */
+  code: string;
+}
+
 export interface CliCreateModuleBody {
   /** 模块名称 */
   name?: string;
@@ -183,6 +195,11 @@ export enum ConstsCaptchaScenes {
 export enum ConstsCaptchaType {
   CaptchaTypePhone = 1,
   CaptchaTypeEmail = 2,
+}
+
+export enum ConstsUserStatus {
+  UserStatusNormal = 1,
+  UserStatusLocked = -1,
 }
 
 export interface ModelAdminRole {
@@ -228,6 +245,20 @@ export interface ModelNews {
   recommend?: number;
   title?: string;
   updated_at?: string;
+}
+
+export interface ModelUser {
+  age?: number;
+  avatar?: string;
+  created_at?: string;
+  email?: string;
+  id?: number;
+  name?: string;
+  status?: ConstsUserStatus;
+  updated_at?: string;
+  username?: string;
+  wx_open_id?: string;
+  wx_union_id?: string;
 }
 
 export interface PermissionLabelType {
