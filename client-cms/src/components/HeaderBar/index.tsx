@@ -1,12 +1,54 @@
-import LOGO from '@/assets/logo.png';
 import { outLogin } from '@/services';
 import { useUserinfoStore } from '@/store/userinfo';
 import { DownOutlined, FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
 import { useFullscreen } from 'ahooks';
-import { Avatar, Dropdown } from 'antd';
+import { Avatar, Breadcrumb, Dropdown } from 'antd';
+import pathToRegexp from 'path-to-regexp';
 import { useRef } from 'react';
-import { Link, history } from 'umi';
+import { history, useAppData, useLocation } from 'umi';
 import styles from './index.module.less';
+
+interface TreeNode {
+  path?: string;
+  title?: string;
+  children?: TreeNode[];
+}
+function getParentNodesByKey(
+  path?: string,
+  tree: TreeNode[] = [],
+  parentNodes: TreeNode[] = [],
+): Omit<TreeNode, 'children'>[] | void {
+  for (const node of tree) {
+    const currentNode = { path: node.path, title: node.title };
+
+    if (new RegExp(pathToRegexp(node.path!)).test(path!)) {
+      return [...parentNodes, currentNode];
+    }
+    if (node.children) {
+      const result = getParentNodesByKey(path, node.children, [...parentNodes, currentNode]);
+      if (result) {
+        return result;
+      }
+    }
+  }
+  return void 0;
+}
+
+export function HeaderBreadcrumb() {
+  const { clientRoutes } = useAppData();
+  const menuRoutes = clientRoutes[0].children?.find((i: any) => i.meta?.isMenuRoot)?.children;
+  const currentPathname = location.pathname;
+  const list = getParentNodesByKey(currentPathname, menuRoutes);
+  useLocation();
+  return (
+    <Breadcrumb
+      className={styles.headerBreadcrumb}
+      items={list?.map((item) => ({
+        title: item.title,
+      }))}
+    />
+  );
+}
 
 function PageFullscreenButton(props: React.HTMLAttributes<HTMLDivElement>) {
   const ref = useRef(document.body);
@@ -24,15 +66,14 @@ export default function HeaderBar() {
 
   return (
     <div className={`${styles.headerContainer} header`}>
-      <Link to="/" className={styles.logoTitle}>
-        <span className={styles.title}>
-          <img src={LOGO} alt="" />
-        </span>
-      </Link>
+      <div>
+        <HeaderBreadcrumb />
+      </div>
       <div className={styles.userContainer}>
         <div className={styles.item}>
           <PageFullscreenButton />
         </div>
+
         <Dropdown
           menu={{
             items: [

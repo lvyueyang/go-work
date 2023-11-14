@@ -13,7 +13,7 @@ type FormValues = ApiAdminUserForgetPasswordBodyDto;
 export default function Login() {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm<FormValues>();
-  const [success, setSuccess] = useState(false);
+  const [success] = useState(false);
   const email = Form.useWatch<FormValues['email']>('email', form);
   const { modal } = App.useApp();
 

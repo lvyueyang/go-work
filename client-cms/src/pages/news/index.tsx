@@ -1,5 +1,3 @@
-import Header from '@/components/Header';
-import PageContainer from '@/components/PageContainer';
 import { transformPagination, transformSort } from '@/utils';
 import { message } from '@/utils/notice';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
@@ -97,54 +95,51 @@ export default function NewsListPage() {
 
   return (
     <>
-      <Header />
-      <PageContainer>
-        <ProTable<TableItem>
-          columns={columns}
-          rowKey="id"
-          bordered
-          search={false}
-          request={(params, sort) => {
-            return getListApi({
-              ...transformPagination(params),
-              ...transformSort(sort),
-              ...searchForm,
-            }).then(({ data }) => {
-              return { data: data.data.list, total: data.data.total || 0 };
-            });
-          }}
-          actionRef={tableRef}
-          headerTitle={
-            <Input.Search
-              value={searchForm.keyword}
-              onChange={(e) => {
-                setSearchForm((state) => ({
-                  ...state,
-                  keyword: e.target.value.trim(),
-                }));
-              }}
-              style={{ width: 400 }}
-              placeholder="请输入新闻名称或 ID 搜索"
-              enterButton={<>搜索</>}
-              onSearch={() => {
-                tableRef.current?.setPageInfo?.({ current: 1 });
-                tableRef.current?.reload();
-              }}
-            />
-          }
-          toolBarRender={() => [
-            <Button
-              key="create"
-              type="primary"
-              onClick={() => {
-                history.push('/news/create');
-              }}
-            >
-              新增新闻
-            </Button>,
-          ]}
-        />
-      </PageContainer>
+      <ProTable<TableItem>
+        columns={columns}
+        rowKey="id"
+        bordered
+        search={false}
+        request={(params, sort) => {
+          return getListApi({
+            ...transformPagination(params),
+            ...transformSort(sort),
+            ...searchForm,
+          }).then(({ data }) => {
+            return { data: data.data.list, total: data.data.total || 0 };
+          });
+        }}
+        actionRef={tableRef}
+        headerTitle={
+          <Input.Search
+            value={searchForm.keyword}
+            onChange={(e) => {
+              setSearchForm((state) => ({
+                ...state,
+                keyword: e.target.value.trim(),
+              }));
+            }}
+            style={{ width: 400 }}
+            placeholder="请输入新闻名称或 ID 搜索"
+            enterButton={<>搜索</>}
+            onSearch={() => {
+              tableRef.current?.setPageInfo?.({ current: 1 });
+              tableRef.current?.reload();
+            }}
+          />
+        }
+        toolBarRender={() => [
+          <Button
+            key="create"
+            type="primary"
+            onClick={() => {
+              history.push('/news/create');
+            }}
+          >
+            新增新闻
+          </Button>,
+        ]}
+      />
     </>
   );
 }

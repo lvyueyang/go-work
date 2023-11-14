@@ -1,14 +1,30 @@
 .sideBarContainer {
   position: sticky;
-  top: var(--headerbar-height);
+  top: 0;
   left: 0;
   flex: 0 0 var(--sidebar-width);
   width: var(--sidebar-width);
-  height: calc(100vh - var(--headerbar-height));
+  height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: #fff;
   z-index: 10;
+  background-color: var(--dark-bg);
+  border-radius: 4px;
+  color: #fff;
+  :global {
+    .ant-menu {
+      border-radius: 4px;
+    }
+  }
+}
+.logoTitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 15px 8px;
+  font-size: 20px;
+  color: #fff;
+  font-weight: 700;
 }
 .collapsed {
   flex: 0 0 auto;

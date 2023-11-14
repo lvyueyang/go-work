@@ -1,5 +1,3 @@
-import Header from '@/components/Header';
-import PageContainer from '@/components/PageContainer';
 import { ModelAdminUser } from '@/interface/serverApi';
 import { useUserinfoStore } from '@/store/userinfo';
 import { message } from '@/utils/notice';
@@ -84,30 +82,27 @@ export default function UserInfoPage() {
 
   return (
     <>
-      <Header />
-      <PageContainer>
-        <Card style={{ maxWidth: 600, margin: '0 auto' }}>
-          <Form<FormValues> labelCol={{ flex: '100px' }} form={form} colon={false}>
-            <Form.Item label="用户名">
-              <Space>
-                <Input readOnly style={{ width: 300 }} value={userInfo?.username} />
-              </Space>
-            </Form.Item>
-            <Form.Item label="邮箱">
-              <Space>
-                <Input readOnly style={{ width: 300 }} value={userInfo?.email} />
-              </Space>
-            </Form.Item>
-            <Form.Item label="姓名">
-              <Space>
-                <Input readOnly style={{ width: 300 }} value={userInfo?.name} />
-              </Space>
-            </Form.Item>
-          </Form>
-        </Card>
-        {/* <UpdatePassword /> */}
-        <div style={{ height: 200 }}></div>
-      </PageContainer>
+      <Card style={{ maxWidth: 600, margin: '0 auto' }}>
+        <Form<FormValues> labelCol={{ flex: '100px' }} form={form} colon={false}>
+          <Form.Item label="用户名">
+            <Space>
+              <Input readOnly style={{ width: 300 }} value={userInfo?.username} />
+            </Space>
+          </Form.Item>
+          <Form.Item label="邮箱">
+            <Space>
+              <Input readOnly style={{ width: 300 }} value={userInfo?.email} />
+            </Space>
+          </Form.Item>
+          <Form.Item label="姓名">
+            <Space>
+              <Input readOnly style={{ width: 300 }} value={userInfo?.name} />
+            </Space>
+          </Form.Item>
+        </Form>
+      </Card>
+      {/* <UpdatePassword /> */}
+      <div style={{ height: 200 }}></div>
     </>
   );
 }

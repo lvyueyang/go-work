@@ -55,3 +55,18 @@ export default function Header({ items, children }: React.PropsWithChildren<Head
     </div>
   );
 }
+
+export function HeaderBreadcrumb() {
+  const { clientRoutes } = useAppData();
+  const menuRoutes = clientRoutes[0].children?.find((i: any) => i.meta?.isMenuRoot)?.children;
+  const currentPathname = location.pathname;
+  const list = getParentNodesByKey(currentPathname, menuRoutes);
+
+  return (
+    <Breadcrumb
+      items={list?.map((item) => ({
+        title: item.title,
+      }))}
+    />
+  );
+}

@@ -1,8 +1,7 @@
 import { cls } from '@/utils';
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { useEffect, useState } from 'react';
-import { history } from 'umi';
+import { Link, history } from 'umi';
 import { getDefaultOpenKeys, getNavMenu } from './getNavMenu';
 import styles from './index.module.less';
 
@@ -37,11 +36,14 @@ function useSelectMenu() {
 }
 
 export default function SideBar() {
-  const { collapsed, openKeys, selectKeys, setSelectKeys, toggleCollapsed, setOpenKeys } =
-    useSelectMenu();
+  const { collapsed, openKeys, selectKeys, setSelectKeys, setOpenKeys } = useSelectMenu();
   return (
     <div className={cls(styles.sideBarContainer, collapsed && styles.collapsed)}>
+      <Link to="/" className={styles.logoTitle}>
+        <span className={styles.title}>管理后台</span>
+      </Link>
       <Menu
+        theme="dark"
         inlineCollapsed={collapsed}
         mode="inline"
         className={styles.menuList}
@@ -56,11 +58,6 @@ export default function SideBar() {
           setOpenKeys(e);
         }}
       />
-      <div className={styles.operate}>
-        <div className={styles.item} onClick={toggleCollapsed}>
-          {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-        </div>
-      </div>
     </div>
   );
 }

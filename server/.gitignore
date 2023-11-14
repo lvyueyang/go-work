@@ -4,6 +4,7 @@
 bin/
 **/.DS_Store
 main
+tmp/
 temp/
 temp.yaml
 bin

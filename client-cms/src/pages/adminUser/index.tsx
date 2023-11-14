@@ -1,6 +1,4 @@
 import { ConfirmPasswordItem } from '@/components/ConfirmPasswordItem';
-import Header from '@/components/Header';
-import PageContainer from '@/components/PageContainer';
 import PageTable from '@/components/PageTable';
 import { ADMIN_USER_STATUS } from '@/constants';
 import { ModalType, useFormModal } from '@/hooks/useFormModal';
@@ -233,53 +231,50 @@ export default function UserAdminList() {
 
   return (
     <>
-      <Header />
-      <PageContainer>
-        <PageTable<TableItem>
-          columns={columns}
-          request={(params, sort) => {
-            return getUserList({
-              ...transformPagination(params),
-              ...transformSort(sort),
-              keyword: searchForm.keyword,
-            }).then(({ data }) => {
-              return { data: data.data.list, total: data.data.total || 0 };
-            });
-          }}
-          headerTitle={
-            <Input.Search
-              value={searchForm.keyword}
-              onChange={(e) => {
-                setSearchForm((state) => ({
-                  ...state,
-                  keyword: e.target.value.trim(),
-                }));
-              }}
-              style={{ width: 400 }}
-              placeholder="请输入姓名/用户名搜索"
-              enterButton={<>搜索</>}
-              allowClear={true}
-              onSearch={() => {
-                tableRef.current?.setPageInfo?.({ current: 1 });
-                tableRef.current?.reload();
-              }}
-            />
-          }
-          actionRef={tableRef}
-          toolBarRender={() => [
-            <Button
-              key="create"
-              type="primary"
-              onClick={() => {
-                form.resetFields();
-                formModalShow();
-              }}
-            >
-              新增管理账户
-            </Button>,
-          ]}
-        />
-      </PageContainer>
+      <PageTable<TableItem>
+        columns={columns}
+        request={(params, sort) => {
+          return getUserList({
+            ...transformPagination(params),
+            ...transformSort(sort),
+            keyword: searchForm.keyword,
+          }).then(({ data }) => {
+            return { data: data.data.list, total: data.data.total || 0 };
+          });
+        }}
+        headerTitle={
+          <Input.Search
+            value={searchForm.keyword}
+            onChange={(e) => {
+              setSearchForm((state) => ({
+                ...state,
+                keyword: e.target.value.trim(),
+              }));
+            }}
+            style={{ width: 400 }}
+            placeholder="请输入姓名/用户名搜索"
+            enterButton={<>搜索</>}
+            allowClear={true}
+            onSearch={() => {
+              tableRef.current?.setPageInfo?.({ current: 1 });
+              tableRef.current?.reload();
+            }}
+          />
+        }
+        actionRef={tableRef}
+        toolBarRender={() => [
+          <Button
+            key="create"
+            type="primary"
+            onClick={() => {
+              form.resetFields();
+              formModalShow();
+            }}
+          >
+            新增管理账户
+          </Button>,
+        ]}
+      />
       <Modal
         maskClosable={false}
         open={formModal.open}

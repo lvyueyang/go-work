@@ -1,5 +1,3 @@
-import Header from '@/components/Header';
-import PageContainer from '@/components/PageContainer';
 import { BANNER_POSITION, BANNER_STATUS } from '@/constants';
 import { BannerInfo } from '@/interface/serverApi';
 import { options2ValueEnum, transformPagination } from '@/utils';
@@ -93,52 +91,47 @@ export default function BannerListPage() {
 
   return (
     <>
-      <Header />
-      <PageContainer>
-        <ProTable<TableItem>
-          columns={columns}
-          rowKey="id"
-          bordered
-          search={false}
-          request={(params) => {
-            return getListApi({ ...transformPagination(params), ...searchForm }).then(
-              ({ data }) => {
-                return { data: data.data.list, total: data.data.total || 0 };
-              },
-            );
-          }}
-          actionRef={tableRef}
-          headerTitle={
-            <Input.Search
-              value={searchForm.keyword}
-              onChange={(e) => {
-                setSearchForm((state) => ({
-                  ...state,
-                  keyword: e.target.value.trim(),
-                }));
-              }}
-              style={{ width: 400 }}
-              placeholder="请输入广告位名称搜索"
-              enterButton={<>搜索</>}
-              onSearch={() => {
-                tableRef.current?.setPageInfo?.({ current: 1 });
-                tableRef.current?.reload();
-              }}
-            />
-          }
-          toolBarRender={() => [
-            <Button
-              key="create"
-              type="primary"
-              onClick={() => {
-                history.push('/banner/create');
-              }}
-            >
-              新增广告位
-            </Button>,
-          ]}
-        />
-      </PageContainer>
+      <ProTable<TableItem>
+        columns={columns}
+        rowKey="id"
+        bordered
+        search={false}
+        request={(params) => {
+          return getListApi({ ...transformPagination(params), ...searchForm }).then(({ data }) => {
+            return { data: data.data.list, total: data.data.total || 0 };
+          });
+        }}
+        actionRef={tableRef}
+        headerTitle={
+          <Input.Search
+            value={searchForm.keyword}
+            onChange={(e) => {
+              setSearchForm((state) => ({
+                ...state,
+                keyword: e.target.value.trim(),
+              }));
+            }}
+            style={{ width: 400 }}
+            placeholder="请输入广告位名称搜索"
+            enterButton={<>搜索</>}
+            onSearch={() => {
+              tableRef.current?.setPageInfo?.({ current: 1 });
+              tableRef.current?.reload();
+            }}
+          />
+        }
+        toolBarRender={() => [
+          <Button
+            key="create"
+            type="primary"
+            onClick={() => {
+              history.push('/banner/create');
+            }}
+          >
+            新增广告位
+          </Button>,
+        ]}
+      />
     </>
   );
 }

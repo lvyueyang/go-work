@@ -1,5 +1,3 @@
-import Header from '@/components/Header';
-import PageContainer from '@/components/PageContainer';
 import PageTable from '@/components/PageTable';
 import { ModalType, useFormModal } from '@/hooks/useFormModal';
 import { ApiCreateAdminRoleBodyDto, ModelAdminRole } from '@/interface/serverApi';
@@ -166,30 +164,27 @@ export default function AdminRoleList() {
 
   return (
     <>
-      <Header />
-      <PageContainer>
-        <PageTable<TableItem>
-          columns={columns}
-          request={(params) => {
-            return getListApi({ ...transformPagination(params) }).then(({ data }) => {
-              return { data: data.data.list, total: data.data.total || 0 };
-            });
-          }}
-          actionRef={tableRef}
-          toolBarRender={() => [
-            <Button
-              type="primary"
-              key="create"
-              onClick={() => {
-                infoModal.form.resetFields();
-                infoModal.formModalShow();
-              }}
-            >
-              新增角色
-            </Button>,
-          ]}
-        />
-      </PageContainer>
+      <PageTable<TableItem>
+        columns={columns}
+        request={(params) => {
+          return getListApi({ ...transformPagination(params) }).then(({ data }) => {
+            return { data: data.data.list, total: data.data.total || 0 };
+          });
+        }}
+        actionRef={tableRef}
+        toolBarRender={() => [
+          <Button
+            type="primary"
+            key="create"
+            onClick={() => {
+              infoModal.form.resetFields();
+              infoModal.formModalShow();
+            }}
+          >
+            新增角色
+          </Button>,
+        ]}
+      />
 
       <Modal
         maskClosable={false}
