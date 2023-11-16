@@ -73,7 +73,7 @@ func (c *UserController) FindList(ctx *gin.Context) {
 //	@Accept		json
 //	@Produce	json
 //	@Param		req	body		UpdateUserStatusBodyDto	true	"Body"
-//	@Success	200	{object}	resp.Result			"resp"
+//	@Success	200	{object}	resp.Result				"resp"
 //	@Router		/api/admin/status [put]
 func (c *UserController) UpdateState(ctx *gin.Context) {
 	var body UpdateUserStatusBodyDto

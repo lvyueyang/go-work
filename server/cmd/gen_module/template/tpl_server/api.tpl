@@ -14,33 +14,33 @@ import (
 	"time"
 )
 
-type NewsController struct {
-	service *service.NewsService
+type {{.Name}}Controller struct {
+	service *service.{{.Name}}Service
 }
 
-func NewNewsController(e *gin.Engine) {
-	c := &NewsController{
-		service: service.NewNewsService(),
+func New{{.Name}}Controller(e *gin.Engine) {
+	c := &{{.Name}}Controller{
+		service: service.New{{.Name}}Service(),
 	}
-	admin := e.Group("/api/admin/news")
-	admin.POST("/list", middleware.AdminRole(permission.AdminNewsFind), c.FindList)
-	admin.GET("/:id", middleware.AdminRole(permission.AdminNewsFindDetail), c.FindDetail)
-	admin.POST("", middleware.AdminRole(permission.AdminNewsCreate), c.Create)
-	admin.PUT("", middleware.AdminRole(permission.AdminNewsUpdateInfo), c.Update)
-	admin.DELETE("/:id", middleware.AdminRole(permission.AdminNewsDelete), c.Delete)
+	admin := e.Group("/api/admin/{{.DbName}}")
+	admin.POST("/list", middleware.AdminRole(permission.Admin{{.Name}}Find), c.FindList)
+	admin.GET("/:id", middleware.AdminRole(permission.Admin{{.Name}}FindDetail), c.FindDetail)
+	admin.POST("", middleware.AdminRole(permission.Admin{{.Name}}Create), c.Create)
+	admin.PUT("", middleware.AdminRole(permission.Admin{{.Name}}UpdateInfo), c.Update)
+	admin.DELETE("/:id", middleware.AdminRole(permission.Admin{{.Name}}Delete), c.Delete)
 }
 
 // FindList
 //
-//	@Summary	新闻列表
-//	@Tags		管理后台-新闻
+//	@Summary	{{.CName}}列表
+//	@Tags		管理后台-{{.CName}}
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		service.FindNewsListOption						true	"Body"
-//	@Success	200	{object}	resp.Result{data=resp.RList{list=[]model.News}}	"resp"
-//	@Router		/api/admin/news/list [post]
-func (c *NewsController) FindList(ctx *gin.Context) {
-	query := service.FindNewsListOption{}
+//	@Param		req	body		service.Find{{.Name}}ListOption						true	"Body"
+//	@Success	200	{object}	resp.Result{data=resp.RList{list=[]model.{{.Name}}}}	"resp"
+//	@Router		/api/admin/{{.DbName}}/list [post]
+func (c *{{.Name}}Controller) FindList(ctx *gin.Context) {
+	query := service.Find{{.Name}}ListOption{}
 	if err := ctx.ShouldBindQuery(&query); err != nil {
 		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
 		return
@@ -51,14 +51,14 @@ func (c *NewsController) FindList(ctx *gin.Context) {
 
 // FindDetail
 //
-//	@Summary	新闻详情
-//	@Tags		管理后台-新闻
+//	@Summary	{{.CName}}详情
+//	@Tags		管理后台-{{.CName}}
 //	@Accept		json
 //	@Produce	json
 //	@Param		id	path		number							true	"ID"
-//	@Success	200	{object}	resp.Result{data=model.News}	"resp"
-//	@Router		/api/admin/news/{id} [get]
-func (c *NewsController) FindDetail(ctx *gin.Context) {
+//	@Success	200	{object}	resp.Result{data=model.{{.Name}}}	"resp"
+//	@Router		/api/admin/{{.DbName}}/{id} [get]
+func (c *{{.Name}}Controller) FindDetail(ctx *gin.Context) {
 	id, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	info, err := c.service.FindDetail(uint(id))
 	if err != nil {
@@ -70,22 +70,22 @@ func (c *NewsController) FindDetail(ctx *gin.Context) {
 
 // Create
 //
-//	@Summary	新增新闻
-//	@Tags		管理后台-新闻
+//	@Summary	新增{{.CName}}
+//	@Tags		管理后台-{{.CName}}
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		CreateNewsBodyDto	true	"Body"
+//	@Param		req	body		Create{{.Name}}BodyDto	true	"Body"
 //	@Success	200	{object}	resp.Result			"resp"
-//	@Router		/api/admin/news [post]
-func (c *NewsController) Create(ctx *gin.Context) {
-	var body CreateNewsBodyDto
+//	@Router		/api/admin/{{.DbName}} [post]
+func (c *{{.Name}}Controller) Create(ctx *gin.Context) {
+	var body Create{{.Name}}BodyDto
 	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
 		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
 		return
 	}
 	user := utils.GetCurrentAdminUser(ctx)
 
-	data := model.News{
+	data := model.{{.Name}}{
 		Title:     body.Title,
 		Desc:      body.Desc,
 		Cover:     body.Cover,
@@ -113,21 +113,21 @@ func (c *NewsController) Create(ctx *gin.Context) {
 
 // Update
 //
-//	@Summary	修改新闻
-//	@Tags		管理后台-新闻
+//	@Summary	修改{{.CName}}
+//	@Tags		管理后台-{{.CName}}
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		UpdateNewsBodyDto	true	"Body"
+//	@Param		req	body		Update{{.Name}}BodyDto	true	"Body"
 //	@Success	200	{object}	resp.Result			"resp"
-//	@Router		/api/admin/news [put]
-func (c *NewsController) Update(ctx *gin.Context) {
-	var body UpdateNewsBodyDto
+//	@Router		/api/admin/{{.DbName}} [put]
+func (c *{{.Name}}Controller) Update(ctx *gin.Context) {
+	var body Update{{.Name}}BodyDto
 	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
 		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
 		return
 	}
 
-	data := model.News{
+	data := model.{{.Name}}{
 		Title:     body.Title,
 		Desc:      body.Desc,
 		Cover:     body.Cover,
@@ -153,14 +153,14 @@ func (c *NewsController) Update(ctx *gin.Context) {
 
 // Delete
 //
-//	@Summary	删除新闻
-//	@Tags		管理后台-新闻
+//	@Summary	删除{{.CName}}
+//	@Tags		管理后台-{{.CName}}
 //	@Accept		json
 //	@Produce	json
 //	@Param		id	path		number		true	"ID"
 //	@Success	200	{object}	resp.Result	"resp"
-//	@Router		/api/admin/news/{id} [delete]
-func (c *NewsController) Delete(ctx *gin.Context) {
+//	@Router		/api/admin/{{.DbName}}/{id} [delete]
+func (c *{{.Name}}Controller) Delete(ctx *gin.Context) {
 	id, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
 	if err := c.service.Delete(uint(id)); err != nil {
 		ctx.JSON(resp.ParseErr(err))
@@ -169,8 +169,8 @@ func (c *NewsController) Delete(ctx *gin.Context) {
 	ctx.JSON(resp.Succ(nil))
 }
 
-type CreateNewsBodyDto struct {
-	Title     string `json:"title" binding:"required" label:"新闻名称"`
+type Create{{.Name}}BodyDto struct {
+	Title     string `json:"title" binding:"required" label:"{{.CName}}名称"`
 	Desc      string `json:"desc"`
 	Cover     string `json:"cover"`
 	Content   string `json:"content"`
@@ -178,7 +178,7 @@ type CreateNewsBodyDto struct {
 	Recommend uint   `json:"recommend"` // 推荐等级 0 为不推荐，数值越大越靠前
 }
 
-type UpdateNewsBodyDto struct {
+type Update{{.Name}}BodyDto struct {
 	ID uint `json:"id"  binding:"required" label:"角色 ID"` // 角色 ID
-	CreateNewsBodyDto
+	Create{{.Name}}BodyDto
 }
