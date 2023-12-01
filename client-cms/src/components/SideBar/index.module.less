@@ -27,8 +27,11 @@
   font-weight: 700;
 }
 .collapsed {
-  flex: 0 0 auto;
+  flex: 0 0 80px;
   width: auto;
+  .logoTitle {
+    font-size: 14px;
+  }
 }
 
 .menuList {
@@ -47,5 +50,16 @@
     font-size: 20px;
     cursor: pointer;
     text-align: center;
+  }
+}
+
+.bottomOperate {
+  display: flex;
+  padding: 5px;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 4px;
+  &:hover {
+    background-color: rgb(0, 12, 23);
   }
 }

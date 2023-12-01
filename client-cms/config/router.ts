@@ -1,3 +1,5 @@
+import { FundOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+
 const router = {
   routes: [
     { path: '/login', component: 'login' },
@@ -20,12 +22,13 @@ const router = {
         {
           path: '/user',
           component: 'user',
-          title: 'C 端用户管理',
+          title: '客户管理',
+          icon: UserOutlined,
         },
         {
           path: '/admin-user',
           title: '后台账户管理',
-          // icon: UserOutlined,
+          icon: TeamOutlined,
           routes: [
             {
               path: '/admin-user/list',
@@ -48,6 +51,7 @@ const router = {
         {
           path: '/news',
           title: '新闻管理',
+          icon: FundOutlined,
           routes: [
             {
               path: '/news/list',
