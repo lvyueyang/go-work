@@ -227,91 +227,6 @@ const docTemplate = `{
             }
         },
         "/api/admin/news": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "管理后台-新闻"
-                ],
-                "summary": "新闻列表",
-                "parameters": [
-                    {
-                        "type": "number",
-                        "default": 1,
-                        "description": "当前页",
-                        "name": "current",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "default": 20,
-                        "description": "每页条数",
-                        "name": "page_size",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "需要排序的列",
-                        "name": "order_key",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "ase",
-                            "desc"
-                        ],
-                        "type": "string",
-                        "description": "排序方式",
-                        "name": "order_type",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "按名称或ID搜索",
-                        "name": "keyword",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "resp",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/resp.Result"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/resp.RList"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "list": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/model.News"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            },
             "put": {
                 "consumes": [
                     "application/json"
@@ -370,6 +285,66 @@ const docTemplate = `{
                         "description": "resp",
                         "schema": {
                             "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/news/list": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理后台-新闻"
+                ],
+                "summary": "新闻列表",
+                "parameters": [
+                    {
+                        "description": "Body",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.FindNewsListOption"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "resp",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/resp.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/resp.RList"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/model.News"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -1367,70 +1342,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/cli/module/create": {
-            "post": {
-                "description": "get string by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "cli"
-                ],
-                "summary": "创建模块",
-                "parameters": [
-                    {
-                        "description": "模块名称",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/cli.CreateModuleBody"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "resp",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/resp.Result"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "boolean"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "resp",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/resp.Result"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/api/user/current": {
             "get": {
                 "consumes": [
@@ -1887,15 +1798,6 @@ const docTemplate = `{
                 }
             }
         },
-        "cli.CreateModuleBody": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "description": "模块名称",
-                    "type": "string"
-                }
-            }
-        },
         "consts.AdminUserStatus": {
             "type": "integer",
             "enum": [
@@ -2150,6 +2052,28 @@ const docTemplate = `{
                 "data": {},
                 "msg": {
                     "type": "string"
+                }
+            }
+        },
+        "service.FindNewsListOption": {
+            "type": "object",
+            "properties": {
+                "current": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "keyword": {
+                    "type": "string"
+                },
+                "order_key": {
+                    "type": "string"
+                },
+                "order_type": {
+                    "type": "string"
+                },
+                "page_size": {
+                    "type": "integer",
+                    "minimum": 0
                 }
             }
         }

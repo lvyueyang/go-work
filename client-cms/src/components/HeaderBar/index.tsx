@@ -1,10 +1,11 @@
 import { outLogin } from '@/services';
+import { useGlobalStore } from '@/store/global';
 import { useUserinfoStore } from '@/store/userinfo';
 import { DownOutlined, FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
 import { useFullscreen } from 'ahooks';
 import { Avatar, Breadcrumb, Dropdown } from 'antd';
-import pathToRegexp from 'path-to-regexp';
-import { useRef } from 'react';
+import { pathToRegexp } from 'path-to-regexp';
+import { useEffect, useRef } from 'react';
 import { history, useAppData, useLocation } from 'umi';
 import styles from './index.module.less';
 
@@ -36,18 +37,19 @@ function getParentNodesByKey(
 
 export function HeaderBreadcrumb() {
   const { clientRoutes } = useAppData();
-  const menuRoutes = clientRoutes[0].children?.find((i: any) => i.meta?.isMenuRoot)?.children;
-  const currentPathname = location.pathname;
-  const list = getParentNodesByKey(currentPathname, menuRoutes);
-  useLocation();
-  return (
-    <Breadcrumb
-      className={styles.headerBreadcrumb}
-      items={list?.map((item) => ({
-        title: item.title,
-      }))}
-    />
-  );
+  const location = useLocation();
+
+  const globalStore = useGlobalStore();
+  useEffect(() => {
+    const menuRoutes = clientRoutes[0].children?.find((i: any) => i.meta?.isMenuRoot)?.children;
+    const currentPathname = location.pathname;
+    const list = getParentNodesByKey(currentPathname, menuRoutes);
+    if (list) {
+      console.log('list: ', list);
+      globalStore.updateHeaderBreadcrumbItems(list.map((i) => ({ title: i.title })));
+    }
+  }, [location]);
+  return <Breadcrumb items={globalStore.headerBreadcrumbItems} />;
 }
 
 function PageFullscreenButton(props: React.HTMLAttributes<HTMLDivElement>) {

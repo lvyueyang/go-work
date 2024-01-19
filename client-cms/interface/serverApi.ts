@@ -175,11 +175,6 @@ export interface ApiWxMpLoginBodyDto {
   code: string;
 }
 
-export interface CliCreateModuleBody {
-  /** 模块名称 */
-  name?: string;
-}
-
 export enum ConstsAdminUserStatus {
   AdminUserStatusNormal = 1,
   AdminUserStatusLocked = -1,
@@ -274,4 +269,14 @@ export interface RespResult {
   code?: number;
   data?: any;
   msg?: string;
+}
+
+export interface ServiceFindNewsListOption {
+  /** @min 1 */
+  current?: number;
+  keyword?: string;
+  order_key?: string;
+  order_type?: string;
+  /** @min 0 */
+  page_size?: number;
 }

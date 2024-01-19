@@ -1,12 +1,15 @@
 import { AIP_FIX } from '@/constants';
-import { ListResult, Pagination, Result, request } from '@/request';
-import { ApiCreateNewsBodyDto, ApiUpdateNewsBodyDto, ModelNews } from 'interface/serverApi';
+import { ListResult, Result, request } from '@/request';
+import {
+  ApiCreateNewsBodyDto,
+  ApiUpdateNewsBodyDto,
+  ModelNews,
+  ServiceFindNewsListOption,
+} from 'interface/serverApi';
 
 /** 列表 */
-export const getListApi = (params: Pagination & { keyword?: string }) => {
-  return request.get<ListResult<ModelNews>>(`${AIP_FIX}/news`, {
-    params,
-  });
+export const getListApi = (body: ServiceFindNewsListOption) => {
+  return request.post<ListResult<ModelNews>>(`${AIP_FIX}/news/list`, body);
 };
 
 /** 详情 */
