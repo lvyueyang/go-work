@@ -31,6 +31,13 @@ type WxMpConfig struct {
 	AppSecret string `mapstructure:"appsecret"`
 }
 
+type OssConfig struct {
+	AccessKeyID     string `mapstructure:"accessKeyID"`
+	AccessKeySecret string `mapstructure:"accessKeySecret"`
+	Endpoint        string `mapstructure:"endpoint"`
+	Bucket          string `mapstructure:"bucket"`
+}
+
 type Result struct {
 	Env           string      //  环境
 	IsDev         bool        //  是否是开发环境
@@ -42,4 +49,5 @@ type Result struct {
 	Email         EmailConfig //  邮箱配置
 	FileUploadDir string      `mapstructure:"file_upload_dir"` //  文件上传路径
 	WxMp          WxMpConfig  `mapstructure:"wxmp"`            //  微信小程序配置
+	AliOss        OssConfig   `mapstructure:"alioss"`          //  阿里云 oss
 }

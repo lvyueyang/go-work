@@ -1,9 +1,10 @@
 package main
 
 import (
-	"gorm.io/gen"
 	"server/config"
 	"server/db"
+
+	"gorm.io/gen"
 )
 
 func main() {
@@ -14,7 +15,7 @@ func main() {
 		FieldNullable: true,
 	})
 
-	database := db.Connect()
+	database := db.Connect(true)
 
 	g.UseDB(database)
 

@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
 	"server/config"
 	"server/consts"
 	"server/consts/permission"
@@ -10,6 +9,8 @@ import (
 	"server/dal/model"
 	"server/utils"
 	"server/utils/resp"
+
+	"github.com/gin-gonic/gin"
 )
 
 // AdminAuth 管理后台用户登录认证中间件

@@ -1,22 +1,27 @@
 package config
 
 import (
-	"github.com/duke-git/lancet/v2/fileutil"
-	"github.com/spf13/viper"
 	"path"
 	"server/consts"
+
+	"github.com/duke-git/lancet/v2/fileutil"
+	"github.com/spf13/viper"
 )
 
 var Config Result
 
-func New() {
-	viper.SetConfigFile("config/config.prod.toml")
+func New(path string) {
+	p := "config/config.dev.toml"
+	if path != "" {
+		p = path
+	}
+	viper.SetConfigFile(p)
 	viper.SetConfigType("toml")
 
 	//判断文件是否存在
-	if err := viper.ReadInConfig(); err != nil {
-		viper.SetConfigFile("config/config.dev.toml")
-	}
+	//if err := viper.ReadInConfig(); err != nil {
+	//	viper.SetConfigFile("config/config.dev.toml")
+	//}
 
 	if err := viper.ReadInConfig(); err != nil {
 		panic("配置文件不存在")

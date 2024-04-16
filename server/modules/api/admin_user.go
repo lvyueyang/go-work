@@ -1,9 +1,9 @@
 package api
 
 import (
+	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
+	"io"
 	"path"
 	"server/config"
 	"server/consts"
@@ -15,6 +15,11 @@ import (
 	"server/utils"
 	"server/utils/resp"
 	"strconv"
+	"strings"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 type AdminUserController struct {
@@ -251,6 +256,63 @@ func (c *AdminUserController) Upload(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(resp.Succ("/" + consts.UploadFilePathName + "/" + filePath))
+}
+
+// UploadToAliOss
+//
+//	@Summary	文件上传至 阿里云 oss
+//	@Tags		管理后台-通用接口
+//	@Accept		json
+//	@Produce	json
+//	@Param		file	formData	file						true	"文件"
+//	@Param		prefix	formData	string						true	"文件路径"
+//	@Success	200		{object}	resp.Result{data=string}	"文件地址"
+//	@Router		/api/admin/user/upload-oss [post]
+func (c *AdminUserController) UploadToAliOss(ctx *gin.Context) {
+	user := utils.GetCurrentAdminUser(ctx)
+	file, errF := ctx.FormFile("file")
+	prefix := strings.TrimSpace(ctx.PostForm("prefix"))
+	if len(prefix) < 3 {
+		ctx.JSON(resp.ParamErr(valid.ErrTransform(errors.New("prefix 长度不能小于 3"))))
+		return
+	}
+	if prefix[0:1] == "/" {
+		prefix = prefix[1:]
+	}
+	if prefix[len(prefix)-1:] == "/" {
+		prefix = prefix[0 : len(prefix)-1]
+	}
+	if errF != nil {
+		ctx.JSON(resp.ParseErr(errF))
+		return
+	}
+	envPath := "test"
+	if config.Config.IsProd {
+		envPath = "prod"
+	}
+	date := time.Now().Format("2006/01/02")
+	filePath := envPath + "/file/" + strconv.Itoa(int(user.ID)) + "/" + prefix + "/" + date + "/" + file.Filename
+	ossConfig := config.Config.AliOss
+	fmt.Printf("ossconfig %+v \n", ossConfig)
+	f, errO := file.Open()
+	if errF != nil {
+		ctx.JSON(resp.ParseErr(errO))
+		return
+	}
+	errU := utils.UploadFileToAliOss(utils.UploadOssOptions{
+		AccessKeyID:     ossConfig.AccessKeyID,
+		AccessKeySecret: ossConfig.AccessKeySecret,
+		Endpoint:        ossConfig.Endpoint,
+		Bucket:          ossConfig.Bucket,
+		File:            io.Reader(f),
+		FilePath:        path.Join(filePath),
+		Options:         nil,
+	})
+	if errU != nil {
+		ctx.JSON(resp.ParseErr(errU))
+		return
+	}
+	ctx.JSON(resp.Succ("https://" + ossConfig.Bucket + "." + ossConfig.Endpoint + "/" + filePath))
 }
 
 type CreateAdminUserBodyDto struct {

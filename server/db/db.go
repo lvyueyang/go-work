@@ -2,13 +2,14 @@ package db
 
 import (
 	"fmt"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 	"reflect"
 	"server/config"
 	"server/dal/dao"
 	"server/dal/model"
 	"time"
+
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 var Database *gorm.DB
@@ -23,12 +24,12 @@ var Models = []any{
 	model.News{},
 }
 
-func New() {
-	Database = Connect()
+func New(initModel bool) {
+	Database = Connect(initModel)
 }
 
 // Connect 数据库连接
-func Connect() *gorm.DB {
+func Connect(initModel bool) *gorm.DB {
 	fmt.Println("数据库连接中")
 	now := time.Now()
 	conf := config.Config.Db
@@ -51,15 +52,18 @@ func Connect() *gorm.DB {
 
 	dao.SetDefault(db)
 
-	for _, m := range Models {
-		structType := reflect.TypeOf(m)
+	if initModel {
+		for _, m := range Models {
+			structType := reflect.TypeOf(m)
 
-		if err := db.AutoMigrate(m); err != nil {
-			fmt.Printf("表 %+v 初始化失败\n", structType.Name())
-			panic(err)
-		} else {
-			fmt.Printf("表 %+v 初始化成功\n", structType.Name())
+			if err := db.AutoMigrate(m); err != nil {
+				fmt.Printf("表 %+v 初始化失败\n", structType.Name())
+				panic(err)
+			} else {
+				fmt.Printf("表 %+v 初始化成功\n", structType.Name())
+			}
 		}
+
 	}
 	fmt.Printf("数据库连接成功，耗时 %+v\n", time.Now().Sub(now))
 	sqlDB, _ := db.DB()

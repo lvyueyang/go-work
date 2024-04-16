@@ -17,18 +17,6 @@ tokenSecret = "ajax2023"
 adminTokenSecret = "ajaxadmin2023"
 
 [db]
-#host = "47.100.38.198"
-#user  = "lvyueyang"
-#password = "ciErDe5GF92cCbh"
-#port = 5433
-#dbname = "db41ff70fd53de4812ab44957ce5ddeb95cms_dev"
-
-#host = "localhost"
-#user  = "postgres"
-#password = "123456"
-#port = 5432
-#dbname = "cms_dev"
-
 host = "localhost"
 user  = "lvyueyang"
 password = "Lv12345678"
@@ -48,3 +36,10 @@ from="" # 发件人邮箱
 [wxmp]
 appid=""
 appsecret=""
+
+# 阿里云 oss
+[alioss]
+accessKeyID=""
+accessKeySecret=""
+endpoint="oss-cn-beijing.aliyuncs.com"
+bucket=""

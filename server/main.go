@@ -1,34 +1,36 @@
 package main
 
 import (
-	"context"
+	"flag"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"golang.org/x/exp/slog"
 	"net/http"
-	"os"
-	"os/signal"
 	"server/app"
 	"server/config"
 	"server/consts"
 	"server/db"
 	_ "server/docs"
 	"server/lib/logger"
+	"server/lib/run_server"
 	"server/lib/valid"
 	"server/middleware"
 	"server/utils"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
-//	@title		男生自用 API 接口文档
-//	@version	1.0
+// @title		男生自用 API 接口文档
+// @version	1.0
 func main() {
+	initDBModel := flag.Bool("init-db-model", false, "初始化数据库表")
 	fmt.Println("Version:", consts.Version)
 	now := time.Now()
 
 	// 配置
-	config.New()
+	configPath := flag.String("c", "config/config.dev.toml", "配置文件路径")
+	config.New(*configPath)
+
 	var envName = utils.EnumLabel(consts.EnvDev)
 	if config.Config.IsProd {
 		envName = utils.EnumLabel(consts.EnvProd)
@@ -42,7 +44,7 @@ func main() {
 	}
 
 	// 数据库
-	db.New()
+	db.New(*initDBModel)
 	defer db.Close()
 
 	// gin
@@ -56,10 +58,10 @@ func main() {
 	// 启动
 	app.New(router)
 
-	srv := &http.Server{
+	s := run_server.New(&http.Server{
 		Addr:    ":" + strconv.Itoa(config.Config.Port),
 		Handler: router,
-	}
+	})
 
 	fmt.Println("\nAPI: ", "http://127.0.0.1:"+strconv.Itoa(config.Config.Port))
 	fmt.Println("Swagger: ", "http://127.0.0.1:"+strconv.Itoa(config.Config.Port)+"/swagger/index.html")
@@ -67,25 +69,5 @@ func main() {
 	fmt.Println("当前环境: ", envName)
 	fmt.Println("启动耗时: ", time.Now().Sub(now))
 
-	go func() {
-		// 服务连接
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			slog.Error("listen:", "err", err)
-			panic(err)
-		}
-	}()
-
-	// 等待中断信号以优雅地关闭服务器（设置 5 秒的超时时间）
-	quit := make(chan os.Signal)
-	signal.Notify(quit, os.Interrupt)
-	<-quit
-	fmt.Println("服务关闭中...")
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
-		slog.Error("服务关闭:", "err", err)
-		panic(err)
-	}
-	fmt.Println("服务退出")
+	s.Run()
 }
