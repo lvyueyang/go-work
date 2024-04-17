@@ -1,8 +1,10 @@
 package main
 
 import (
+	"embed"
 	"flag"
 	"fmt"
+	"html/template"
 	"net/http"
 	"server/app"
 	"server/config"
@@ -19,6 +21,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+//go:embed assets/*
+var fe embed.FS
 
 // @title		男生自用 API 接口文档
 // @version	1.0
@@ -52,6 +57,10 @@ func main() {
 	// 全局中间件
 	router.Use(middleware.RequestLogger(), gin.Recovery())
 
+	// 前端模板
+	templ := template.Must(template.New("").ParseFS(fe, "assets/fe/*.html"))
+	router.SetHTMLTemplate(templ)
+	router.StaticFS("/public", http.FS(fe))
 	// 验证器
 	valid.New()
 
@@ -71,3 +80,16 @@ func main() {
 
 	s.Run()
 }
+
+// func FS() http.FileSystem {
+// 	return FePublic{}
+// }
+
+// type FePublic struct {
+// }
+
+// func (c FePublic) Open(name string) (http.File, error) {
+// 	print(name + "\n")
+// 	f, err := fe.Open("assets/fe-ui/" + name)
+// 	return file, err
+// }

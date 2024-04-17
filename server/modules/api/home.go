@@ -1,8 +1,9 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type HomeController struct{}
@@ -15,5 +16,7 @@ func NewHomeController(e *gin.Engine) {
 
 // HomePage 主页
 func (c *HomeController) HomePage(ctx *gin.Context) {
-	ctx.String(http.StatusOK, "男生自用")
+	ctx.HTML(http.StatusOK, "home.html", gin.H{
+		"title": "男生自用",
+	})
 }
