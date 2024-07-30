@@ -12,3 +12,5 @@ logs/**/*.log
 server*
 goserver*
 config/config.prod.toml
+config.dev.toml
+config.prod.toml

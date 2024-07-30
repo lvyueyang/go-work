@@ -1,0 +1,45 @@
+# 运行环境 development/production
+env = "development"
+
+# 端口
+port = 4002
+
+# 文件上传路径(绝对路径)
+file_upload_dir = "E:/project/go/uploadfile"
+
+# 日志
+[log]
+output = "/Users/lyy/code/project/goserver/logs"
+
+# 用户认证
+[auth]
+tokenSecret = "auth2023"
+adminTokenSecret = "authadmin2023"
+
+[db]
+host = "localhost"
+user = "xxx"
+password = "xxx"
+port = 3306
+dbname = "cms_dev"
+
+# 邮箱配置信息
+[email]
+host = "smtp.163.com"
+port = 25
+secure = true
+user = ""
+password = ""
+from = ""             # 发件人邮箱
+
+# 微信小程序
+[wxmp]
+appid = ""
+appsecret = ""
+
+# 阿里云 oss
+[alioss]
+accessKeyID = ""
+accessKeySecret = ""
+endpoint = "oss-cn-beijing.aliyuncs.com"
+bucket = ""

@@ -33,7 +33,7 @@ func main() {
 	now := time.Now()
 
 	// 配置
-	configPath := flag.String("c", "config/config.dev.toml", "配置文件路径")
+	configPath := flag.String("c", "config.dev.toml", "配置文件路径")
 	config.New(*configPath)
 
 	var envName = utils.EnumLabel(consts.EnvDev)
