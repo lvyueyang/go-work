@@ -19,35 +19,24 @@ const router = {
           title: '用户信息',
           menuHide: true,
         },
-        {
-          path: '/user',
-          component: 'user',
-          title: '客户管理',
-          icon: UserOutlined,
-        },
-        {
-          path: '/admin-user',
-          title: '后台账户管理',
-          icon: TeamOutlined,
-          routes: [
-            {
-              path: '/admin-user/list',
-              component: 'adminUser',
-              title: '用户列表',
-            },
-            {
-              path: '/admin-user/role',
-              component: 'adminRole',
-              title: '角色管理',
-            },
-          ],
-        },
         // {
-        //   path: '/logger',
-        //   component: 'logger',
-        //   title: '系统日志',
+        //   path: '/user',
+        //   component: 'user',
+        //   title: '客户管理',
+        //   icon: UserOutlined,
         // },
-
+        {
+          path: '/admin-user/list',
+          component: 'adminUser',
+          icon: UserOutlined,
+          title: '用户管理',
+        },
+        {
+          path: '/admin-user/role',
+          component: 'adminRole',
+          icon: TeamOutlined,
+          title: '角色管理',
+        },
         {
           path: '/news',
           title: '新闻管理',

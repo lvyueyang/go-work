@@ -13,8 +13,10 @@ import (
 type NewsService struct {
 }
 
+var newsService = new(NewsService)
+
 func NewNewsService() *NewsService {
-	return new(NewsService)
+	return newsService
 }
 
 type FindNewsListOption struct {

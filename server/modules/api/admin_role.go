@@ -1,8 +1,6 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"server/consts/permission"
 	"server/dal/dbtypes"
 	"server/dal/model"
@@ -11,15 +9,20 @@ import (
 	"server/modules/service"
 	"server/utils/resp"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 type AdminRoleController struct {
-	service *service.AdminRoleService
+	service          *service.AdminRoleService
+	adminUserService *service.AdminUserService
 }
 
 func NewAdminRoleController(e *gin.Engine) {
 	c := &AdminRoleController{
-		service: service.NewAdminRoleService(),
+		service:          service.NewAdminRoleService(),
+		adminUserService: service.NewAdminUserService(),
 	}
 	admin := e.Group("/api/admin/role")
 	admin.GET("/permission/codes", c.FindPermissionCodes)
@@ -44,6 +47,7 @@ func NewAdminRoleController(e *gin.Engine) {
 //	@Success	200			{object}	resp.Result{data=resp.RList{list=[]model.AdminRole}}	"resp"
 //	@Router		/api/admin/role [get]
 func (c *AdminRoleController) FindList(ctx *gin.Context) {
+	c.adminUserService.Num()
 	query := service.FindAdminRoleListOption{}
 	if err := ctx.ShouldBindQuery(&query); err != nil {
 		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))

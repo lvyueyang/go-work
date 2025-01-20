@@ -13,8 +13,10 @@ import (
 type AdminRoleService struct {
 }
 
+var adminRoleService = new(AdminRoleService)
+
 func NewAdminRoleService() *AdminRoleService {
-	return new(AdminRoleService)
+	return adminRoleService
 }
 
 type FindAdminRoleListOption struct {

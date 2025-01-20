@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"golang.org/x/crypto/bcrypt"
 	"server/config"
 	"server/consts"
 	"server/dal/dao"
@@ -10,16 +9,20 @@ import (
 	"server/lib/errs"
 	"server/lib/wx_mp"
 	"server/utils"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthService struct {
 	userService *UserService
 }
 
+var authService = &AuthService{
+	userService: NewUserService(),
+}
+
 func NewAuthService() *AuthService {
-	return &AuthService{
-		userService: NewUserService(),
-	}
+	return authService
 }
 
 type LoginOptions struct {

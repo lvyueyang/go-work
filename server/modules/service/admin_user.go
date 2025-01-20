@@ -1,7 +1,6 @@
 package service
 
 import (
-	"golang.org/x/crypto/bcrypt"
 	"server/config"
 	"server/consts"
 	"server/dal/dao"
@@ -11,13 +10,18 @@ import (
 	"server/utils"
 	"strconv"
 	"strings"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AdminUserService struct {
+	num int
 }
 
+var adminUserService = new(AdminUserService)
+
 func NewAdminUserService() *AdminUserService {
-	return new(AdminUserService)
+	return adminUserService
 }
 
 type FindAdminUserListOption struct {
@@ -26,7 +30,14 @@ type FindAdminUserListOption struct {
 	Keyword string `json:"keyword" form:"keyword"`
 }
 
+func (s *AdminUserService) Num() error {
+	println("========", s.num)
+	s.num += 1
+	return nil
+}
+
 func (s *AdminUserService) FindList(query FindAdminUserListOption) (utils.ListResult[[]*model.AdminUser], error) {
+	s.Num()
 	result := utils.ListResult[[]*model.AdminUser]{}
 	u := dao.AdminUser
 	q := u.Where(

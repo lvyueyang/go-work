@@ -12,8 +12,10 @@ import (
 
 type CaptchaService struct{}
 
+var captchaService = new(CaptchaService)
+
 func NewCaptchaService() *CaptchaService {
-	return new(CaptchaService)
+	return captchaService
 }
 
 func (s *CaptchaService) FindByID(id uint) (*model.Captcha, error) {

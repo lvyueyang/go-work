@@ -29,11 +29,13 @@ var fe embed.FS
 // @version	1.0
 func main() {
 	initDBModel := flag.Bool("init-db-model", false, "初始化数据库表")
+	configPath := flag.String("c", "config.dev.toml", "配置文件路径")
+	flag.Parse()
+
 	fmt.Println("Version:", consts.Version)
 	now := time.Now()
 
 	// 配置
-	configPath := flag.String("c", "config.dev.toml", "配置文件路径")
 	config.New(*configPath)
 
 	var envName = utils.EnumLabel(consts.EnvDev)

@@ -8,8 +8,10 @@ import (
 
 type NotifyService struct{}
 
+var notifyService = new(NotifyService)
+
 func NewNotifyService() *NotifyService {
-	return new(NotifyService)
+	return notifyService
 }
 
 // SendCaptchaEmail 发送验证码邮件

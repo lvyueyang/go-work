@@ -2,19 +2,21 @@ package service
 
 import (
 	"fmt"
-	"golang.org/x/crypto/bcrypt"
 	"server/config"
 	"server/dal/dao"
 	"server/lib/errs"
 	"server/utils"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AdminAuthService struct {
-	adminUserService *AdminUserService
 }
 
+var adminAuthService = new(AdminAuthService)
+
 func NewAdminAuthService() *AdminAuthService {
-	return new(AdminAuthService)
+	return adminAuthService
 }
 
 func (s *AdminAuthService) UsernameAndPasswordLogin(username string, password string) (string, error) {

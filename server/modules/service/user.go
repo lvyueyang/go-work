@@ -14,8 +14,10 @@ import (
 type UserService struct {
 }
 
+var userService = new(UserService)
+
 func NewUserService() *UserService {
-	return new(UserService)
+	return userService
 }
 
 type FindUserListOption struct {
