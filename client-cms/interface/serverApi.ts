@@ -256,10 +256,6 @@ export interface ModelUser {
   wx_union_id?: string;
 }
 
-export interface PermissionLabelType {
-  label?: string;
-}
-
 export interface RespRList {
   list?: any[];
   total?: number;
@@ -279,4 +275,11 @@ export interface ServiceFindNewsListOption {
   order_type?: string;
   /** @min 0 */
   page_size?: number;
+}
+
+export interface UtilsPermissionInfo {
+  /** 权限码 */
+  code?: string;
+  /** 权限名称 */
+  name?: string;
 }

@@ -1,9 +1,6 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
-	"server/consts/permission"
 	"server/dal/model"
 	"server/lib/valid"
 	"server/middleware"
@@ -12,6 +9,9 @@ import (
 	"server/utils/resp"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 type NewsController struct {
@@ -23,11 +23,11 @@ func NewNewsController(e *gin.Engine) {
 		service: service.NewNewsService(),
 	}
 	admin := e.Group("/api/admin/news")
-	admin.POST("/list", middleware.AdminRole(permission.AdminNewsFind), c.FindList)
-	admin.GET("/:id", middleware.AdminRole(permission.AdminNewsFindDetail), c.FindDetail)
-	admin.POST("", middleware.AdminRole(permission.AdminNewsCreate), c.Create)
-	admin.PUT("", middleware.AdminRole(permission.AdminNewsUpdateInfo), c.Update)
-	admin.DELETE("/:id", middleware.AdminRole(permission.AdminNewsDelete), c.Delete)
+	admin.POST("/list", middleware.AdminRole(utils.CreatePermission("admin:news:find:list", "查询新闻列表")), c.FindList)
+	admin.GET("/:id", middleware.AdminRole(utils.CreatePermission("admin:news:find:detail", "查询新闻详情")), c.FindDetail)
+	admin.POST("", middleware.AdminRole(utils.CreatePermission("admin:news:create", "创建新闻")), c.Create)
+	admin.PUT("", middleware.AdminRole(utils.CreatePermission("admin:news:update:info", "修改新闻信息")), c.Update)
+	admin.DELETE("/:id", middleware.AdminRole(utils.CreatePermission("admin:news:delete", "删除新闻")), c.Delete)
 }
 
 // FindList

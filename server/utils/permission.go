@@ -4,9 +4,9 @@ import "fmt"
 
 type PermissionInfo struct {
 	// 权限码
-	Code string `json:"name"`
+	Code string `json:"code"`
 	// 权限名称
-	Name string `json:"desc"`
+	Name string `json:"name"`
 }
 
 var PermissionList = []PermissionInfo{}
@@ -36,4 +36,13 @@ func CreatePermission(code string, name string) PermissionInfo {
 	PermissionList = append(PermissionList, info)
 
 	return info
+}
+
+func FindPermission(code string) *PermissionInfo {
+	for _, permission := range PermissionList {
+		if permission.Code == code {
+			return &permission
+		}
+	}
+	return &PermissionInfo{}
 }

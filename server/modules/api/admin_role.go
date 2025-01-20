@@ -1,12 +1,12 @@
 package api
 
 import (
-	"server/consts/permission"
 	"server/dal/dbtypes"
 	"server/dal/model"
 	"server/lib/valid"
 	"server/middleware"
 	"server/modules/service"
+	"server/utils"
 	"server/utils/resp"
 	"strconv"
 
@@ -26,11 +26,11 @@ func NewAdminRoleController(e *gin.Engine) {
 	}
 	admin := e.Group("/api/admin/role")
 	admin.GET("/permission/codes", c.FindPermissionCodes)
-	admin.GET("", middleware.AdminRole(permission.AdminRoleFind), c.FindList)
-	admin.POST("", middleware.AdminRole(permission.AdminRoleCreate), c.Create)
-	admin.PUT("", middleware.AdminRole(permission.AdminRoleUpdateInfo), c.Update)
-	admin.DELETE("/:id", middleware.AdminRole(permission.AdminRoleDelete), c.Delete)
-	admin.PUT("/permission/codes", middleware.AdminRole(permission.AdminRoleUpdateCode), c.UpdatePermissionCodes)
+	admin.GET("", middleware.AdminRole(utils.CreatePermission("admin:role:find:list", "查询管理员角色列表")), c.FindList)
+	admin.POST("", middleware.AdminRole(utils.CreatePermission("admin:role:create", "创建管理员角色")), c.Create)
+	admin.PUT("", middleware.AdminRole(utils.CreatePermission("admin:role:update:info", "修改管理员角色信息")), c.Update)
+	admin.DELETE("/:id", middleware.AdminRole(utils.CreatePermission("admin:role:delete", "删除管理员角色")), c.Delete)
+	admin.PUT("/permission/codes", middleware.AdminRole(utils.CreatePermission("admin:role:update:code", "修改管理角色权限码")), c.UpdatePermissionCodes)
 }
 
 // FindList
@@ -144,7 +144,7 @@ func (c *AdminRoleController) UpdatePermissionCodes(ctx *gin.Context) {
 	}
 
 	for _, code := range body.Codes {
-		if permission.AdminLabelMap[code].Label == "" {
+		if utils.FindPermission(code).Code == "" {
 			ctx.JSON(resp.ParamErr("无效的权限码: " + code))
 			return
 		}
@@ -163,10 +163,10 @@ func (c *AdminRoleController) UpdatePermissionCodes(ctx *gin.Context) {
 //	@Tags		管理后台-管理员角色
 //	@Accept		json
 //	@Produce	json
-//	@Success	200	{object}	resp.Result{data=map[string]permission.LabelType}	"resp"
+//	@Success	200	{object}	resp.Result{data=[]utils.PermissionInfo}	"resp"
 //	@Router		/api/admin/role/permission/codes [get]
 func (c *AdminRoleController) FindPermissionCodes(ctx *gin.Context) {
-	ctx.JSON(resp.Succ(permission.AdminLabelMap))
+	ctx.JSON(resp.Succ(utils.PermissionList))
 }
 
 type CreateAdminRoleBodyDto struct {

@@ -25,8 +25,8 @@ import (
 //go:embed assets/*
 var fe embed.FS
 
-// @title		男生自用 API 接口文档
-// @version	1.0
+//	@title		男生自用 API 接口文档
+//	@version	1.0
 func main() {
 	initDBModel := flag.Bool("init-db-model", false, "初始化数据库表")
 	configPath := flag.String("c", "config.dev.toml", "配置文件路径")

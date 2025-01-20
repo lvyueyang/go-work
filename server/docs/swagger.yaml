@@ -446,11 +446,6 @@ definitions:
       wx_union_id:
         type: string
     type: object
-  permission.LabelType:
-    properties:
-      label:
-        type: string
-    type: object
   resp.RList:
     properties:
       list:
@@ -481,6 +476,15 @@ definitions:
       page_size:
         minimum: 0
         type: integer
+    type: object
+  utils.PermissionInfo:
+    properties:
+      code:
+        description: 权限码
+        type: string
+      name:
+        description: 权限名称
+        type: string
     type: object
 info:
   contact: {}
@@ -856,9 +860,9 @@ paths:
             - $ref: '#/definitions/resp.Result'
             - properties:
                 data:
-                  additionalProperties:
-                    $ref: '#/definitions/permission.LabelType'
-                  type: object
+                  items:
+                    $ref: '#/definitions/utils.PermissionInfo'
+                  type: array
               type: object
       summary: 管理后台权限码列表
       tags:
@@ -1126,6 +1130,36 @@ paths:
                   type: string
               type: object
       summary: 文件上传
+      tags:
+      - 管理后台-通用接口
+  /api/admin/user/upload-oss:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: 文件路径
+        in: formData
+        name: prefix
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 文件地址
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 文件上传至 阿里云 oss
       tags:
       - 管理后台-通用接口
   /api/auth/login:

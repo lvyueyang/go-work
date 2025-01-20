@@ -1,15 +1,15 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"server/consts"
-	"server/consts/permission"
 	"server/lib/valid"
 	"server/middleware"
 	"server/modules/service"
 	"server/utils"
 	"server/utils/resp"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 type UserController struct {
@@ -25,8 +25,8 @@ func NewUserController(e *gin.Engine) {
 
 	// 管理后台使用的路由
 	admin := e.Group("/api/admin/c-user")
-	admin.GET("", middleware.AdminRole(permission.AdminCUserFind), c.FindList)
-	admin.PUT("/status", middleware.AdminRole(permission.AdminCUserUpdateStatus), c.UpdateState)
+	admin.GET("", middleware.AdminRole(utils.CreatePermission("admin:c_user:find:list", "查询C端用户列表")), c.FindList)
+	admin.PUT("/status", middleware.AdminRole(utils.CreatePermission("admin:c_user:update:status", "修改C端用户状态")), c.UpdateState)
 
 }
 

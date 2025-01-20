@@ -595,9 +595,9 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "object",
-                                            "additionalProperties": {
-                                                "$ref": "#/definitions/permission.LabelType"
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/utils.PermissionInfo"
                                             }
                                         }
                                     }
@@ -978,6 +978,56 @@ const docTemplate = `{
                         "type": "file",
                         "description": "文件",
                         "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "文件地址",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/resp.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/user/upload-oss": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理后台-通用接口"
+                ],
+                "summary": "文件上传至 阿里云 oss",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "文件",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "文件路径",
+                        "name": "prefix",
                         "in": "formData",
                         "required": true
                     }
@@ -2023,14 +2073,6 @@ const docTemplate = `{
                 }
             }
         },
-        "permission.LabelType": {
-            "type": "object",
-            "properties": {
-                "label": {
-                    "type": "string"
-                }
-            }
-        },
         "resp.RList": {
             "type": "object",
             "properties": {
@@ -2074,6 +2116,19 @@ const docTemplate = `{
                 "page_size": {
                     "type": "integer",
                     "minimum": 0
+                }
+            }
+        },
+        "utils.PermissionInfo": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "权限码",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "权限名称",
+                    "type": "string"
                 }
             }
         }

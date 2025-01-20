@@ -51,15 +51,12 @@ func genServer(name, cname string) error {
 	// 	fileutil.CreateDir(dir)
 	// }
 
-	modNames := []string{"api", "service", "model", "permission"}
+	modNames := []string{"api", "service", "model"}
 	for _, modName := range modNames {
 		// 生成的文件
 		var filePath, _ = filepath.Abs(path.Join("modules", modName, info.DbName+".go"))
 		if modName == "model" {
 			filePath, _ = filepath.Abs(path.Join("dal", "model", info.DbName+".go"))
-		}
-		if modName == "permission" {
-			filePath, _ = filepath.Abs(path.Join("consts", "permission", info.DbName+".go"))
 		}
 		if fileutil.IsExist(filePath) {
 			return errors.New("文件已存在: " + filePath)

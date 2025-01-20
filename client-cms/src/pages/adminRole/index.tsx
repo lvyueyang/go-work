@@ -33,9 +33,8 @@ export default function AdminRoleList() {
 
   const { data: codesList } = useRequest(() => {
     return getCodeListApi().then((res) => {
-      const list = Object.entries(res.data.data).map(([code, item]) => {
+      const list = res.data.data.map((item) => {
         return {
-          code,
           ...item,
         };
       });
@@ -44,6 +43,7 @@ export default function AdminRoleList() {
       return list;
     });
   });
+  console.log('codesList: ', codesList);
 
   const infoModal = useFormModal<FormValues & { id?: number }>({
     submit: (values, modal) => {
@@ -244,7 +244,7 @@ export default function AdminRoleList() {
               height: 600,
             }}
             showSearch
-            rowKey={(row) => row.code}
+            rowKey={(row) => row.code!}
             dataSource={codesList}
             titles={['未拥有权限', '已拥有权限']}
             targetKeys={codeModal.values}
@@ -255,7 +255,7 @@ export default function AdminRoleList() {
               }));
               submitCodeHandler(values);
             }}
-            render={(item) => item.label!}
+            render={(item) => item.name!}
           />
         </Spin>
       </Modal>

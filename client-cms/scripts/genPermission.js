@@ -15,11 +15,11 @@ http
       console.log(data.data);
       let codeResult = '';
       let mapResult = '';
-      Object.entries(data.data).forEach(([k, item]) => {
-        const key = k.toLocaleUpperCase().replace(/:/gi, '_');
-        const label = item.label;
+      data.data.forEach(({ code, name }) => {
+        const key = code.toLocaleUpperCase().replace(/:/gi, '_');
+        const label = name;
         codeResult += `  /** ${label} */
-  ${key}: '${k}',
+  ${key}: '${code}',
 `;
         mapResult += `  [PERMISSION_CODE.${key}]: '${label}',
 `;

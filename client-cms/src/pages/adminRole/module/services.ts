@@ -4,15 +4,13 @@ import {
   ApiUpdateAdminRoleBodyDto,
   ApiUpdateAdminRolePermissionBodyDto,
   ModelAdminRole,
-  PermissionLabelType,
 } from '@/interface/serverApi';
 import { ListResult, Pagination, Result, request } from '@/request';
+import { UtilsPermissionInfo } from 'interface/serverApi';
 
 /** 权限码列表 */
 export const getCodeListApi = () => {
-  return request.get<Result<Record<string, Required<PermissionLabelType>>>>(
-    `${AIP_FIX}/role/permission/codes`,
-  );
+  return request.get<Result<UtilsPermissionInfo[]>>(`${AIP_FIX}/role/permission/codes`);
 };
 
 /** 修改权限 */

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"server/config"
 	"server/consts"
-	"server/consts/permission"
 	"server/dal/dao"
 	"server/dal/model"
 	"server/utils"
@@ -26,7 +25,7 @@ func AdminAuth() gin.HandlerFunc {
 }
 
 // AdminRole 管理后台用户权限中间件
-func AdminRole(code string) gin.HandlerFunc {
+func AdminRole(role utils.PermissionInfo) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user, err := isAdminLogin(c)
 		if err != nil {
@@ -35,7 +34,7 @@ func AdminRole(code string) gin.HandlerFunc {
 			return
 		}
 
-		if errP := isPermission(user, code); errP != nil {
+		if errP := isPermission(user, role.Code); errP != nil {
 			c.JSON(resp.ForbiddenErr(errP.Error()))
 			c.Abort()
 			return
@@ -70,20 +69,20 @@ func isAdminLogin(c *gin.Context) (*model.AdminUser, error) {
 
 func isPermission(user *model.AdminUser, code string) error {
 	// 超管直接绕过权限认证
-	if user.IsRoot == true {
+	if user.IsRoot {
 		return nil
 	}
 	codeMap := make(map[string]bool)
 
 	for _, role := range user.Roles {
 		for _, code := range role.PermissionCodes {
-			if codeMap[code] == false {
+			if !codeMap[code] {
 				codeMap[code] = true
 			}
 		}
 	}
-	if codeMap[code] == false {
-		msg := "没有" + permission.AdminLabelMap[code].Label + "的权限"
+	if !codeMap[code] {
+		msg := "没有" + utils.FindPermission(code).Name + "的权限"
 		return errors.New(msg)
 	}
 	return nil

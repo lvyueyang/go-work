@@ -7,7 +7,6 @@ import (
 	"path"
 	"server/config"
 	"server/consts"
-	"server/consts/permission"
 	"server/dal/model"
 	"server/lib/valid"
 	"server/middleware"
@@ -33,14 +32,14 @@ func NewAdminUserController(e *gin.Engine) {
 	admin := e.Group("/api/admin/user")
 
 	admin.GET("/current", middleware.AdminAuth(), c.CurrentInfo)
-	admin.GET("", middleware.AdminRole(permission.AdminUserFind), c.FindList)
-	admin.POST("", middleware.AdminRole(permission.AdminUserCreate), c.Create)
-	admin.PUT("/:id", middleware.AdminRole(permission.AdminUserUpdateInfo), c.Update)
-	admin.DELETE("/:id", middleware.AdminRole(permission.AdminUserDelete), c.Delete)
-	admin.PUT("/reset-password/:id", middleware.AdminRole(permission.AdminUserUpdatePassword), c.ResetPassword)
-	admin.PUT("/status/:id", middleware.AdminRole(permission.AdminUserUpdateStatus), c.UpdateStatus)
-	admin.PUT("/role", middleware.AdminRole(permission.AdminUserUpdateRole), c.UpdateRole)
-	admin.POST("/upload", middleware.AdminRole(permission.AdminUserUploadFile), c.Upload)
+	admin.GET("", middleware.AdminRole(utils.CreatePermission("admin:user:find:list", "查询管理员列表")), c.FindList)
+	admin.POST("", middleware.AdminRole(utils.CreatePermission("admin:user:create", "创建管理员")), c.Create)
+	admin.PUT("/:id", middleware.AdminRole(utils.CreatePermission("admin:user:update:info", "修改管理员基本信息")), c.Update)
+	admin.DELETE("/:id", middleware.AdminRole(utils.CreatePermission("admin:user:delete", "删除管理员")), c.Delete)
+	admin.PUT("/reset-password/:id", middleware.AdminRole(utils.CreatePermission("admin:user:update:password", "修改管理员密码")), c.ResetPassword)
+	admin.PUT("/status/:id", middleware.AdminRole(utils.CreatePermission("admin:user:update:status", "修改管理员状态")), c.UpdateStatus)
+	admin.PUT("/role", middleware.AdminRole(utils.CreatePermission("admin:user:update:role", "修改管理员角色")), c.UpdateRole)
+	admin.POST("/upload", middleware.AdminRole(utils.CreatePermission("admin:user:upload:file", "上传文件到本地")), c.Upload)
 }
 
 // FindList

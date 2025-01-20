@@ -8,7 +8,7 @@ export function Permission({ code, children }: React.PropsWithChildren<Permissio
   const codes = Array.isArray(code) ? code : [code];
   const success = usePermission(...codes);
   if (success) {
-    return children;
+    return <>{children}</>;
   }
   return null;
 }

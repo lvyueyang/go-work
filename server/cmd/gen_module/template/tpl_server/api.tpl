@@ -3,7 +3,6 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"server/consts/permission"
 	"server/dal/model"
 	"server/lib/valid"
 	"server/middleware"
@@ -23,11 +22,11 @@ func New{{.Name}}Controller(e *gin.Engine) {
 		service: service.New{{.Name}}Service(),
 	}
 	admin := e.Group("/api/admin/{{.DbName}}")
-	admin.POST("/list", middleware.AdminRole(permission.Admin{{.Name}}Find), c.FindList)
-	admin.GET("/:id", middleware.AdminRole(permission.Admin{{.Name}}FindDetail), c.FindDetail)
-	admin.POST("", middleware.AdminRole(permission.Admin{{.Name}}Create), c.Create)
-	admin.PUT("", middleware.AdminRole(permission.Admin{{.Name}}UpdateInfo), c.Update)
-	admin.DELETE("/:id", middleware.AdminRole(permission.Admin{{.Name}}Delete), c.Delete)
+	admin.POST("/list", middleware.AdminRole(utils.CreatePermission("admin:{{.ServiceName}}:find:list", "查询{{.Name}}列表")), c.FindList)
+	admin.GET("/:id", middleware.AdminRole(utils.CreatePermission("admin:{{.ServiceName}}:find:detail", "查询{{.Name}}详情")), c.FindDetail)
+	admin.POST("", middleware.AdminRole(utils.CreatePermission("admin:{{.ServiceName}}:create", "创建{{.Name}}")), c.Create)
+	admin.PUT("", middleware.AdminRole(utils.CreatePermission("admin:{{.ServiceName}}:update:info", "修改{{.Name}}")), c.Update)
+	admin.DELETE("/:id", middleware.AdminRole(utils.CreatePermission("admin:{{.ServiceName}}:delete", "删除{{.Name}}")), c.Delete)
 }
 
 // FindList
