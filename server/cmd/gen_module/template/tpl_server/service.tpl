@@ -13,10 +13,10 @@ import (
 type {{.Name}}Service struct {
 }
 
-var {{.Name.ToLower}}Service = new({{.Name}}Service)
+var {{.ServiceName}}Service = new({{.Name}}Service)
 
 func New{{.Name}}Service() *{{.Name}}Service {
-	return {{.Name.ToLower}}Service
+	return {{.ServiceName}}Service
 }
 
 type Find{{.Name}}ListOption struct {

@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	config.New()
+	config.New("config.dev.toml")
 	g := gen.NewGenerator(gen.Config{
 		OutPath:       "./dal/dao",
 		Mode:          gen.WithoutContext | gen.WithDefaultQuery | gen.WithQueryInterface,
