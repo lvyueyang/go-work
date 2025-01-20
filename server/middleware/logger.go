@@ -3,12 +3,13 @@ package middleware
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
-	"golang.org/x/exp/slog"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"golang.org/x/exp/slog"
 )
 
 // 自定义一个结构体，实现 gin.ResponseWriter interface
@@ -51,11 +52,11 @@ func loggerMiddleware() gin.HandlerFunc {
 		start := time.Now()
 		//bodyJson := body2string(c) // 暂不使用，会导致文件上传无法获取到文件流
 
-		writer := responseWriter{
-			c.Writer,
-			bytes.NewBuffer([]byte{}),
-		}
-		c.Writer = writer
+		// writer := responseWriter{
+		// 	c.Writer,
+		// 	bytes.NewBuffer([]byte{}),
+		// }
+		// c.Writer = writer
 
 		c.Next()
 
@@ -66,10 +67,10 @@ func loggerMiddleware() gin.HandlerFunc {
 			Method:       c.Request.Method,
 			StatusCode:   c.Writer.Status(),
 			ResponseSize: c.Writer.Size(),
-			Response:     writer.b.String(),
 			Path:         c.Request.URL.Path,
 			Query:        c.Request.URL.RawQuery,
-			//Body:         bodyJson,
+			// Response:     writer.b.String(),
+			// Body:         bodyJson,
 		}
 
 		// 结束时间
@@ -90,8 +91,8 @@ func loggerMiddleware() gin.HandlerFunc {
 						slog.Time("timeStamp", param.TimeStamp),
 						slog.Int("status", param.StatusCode),
 						slog.Int("responseSize", param.ResponseSize),
-						slog.String("response", param.Response),
-						slog.String("body", param.Body),
+						// slog.String("response", param.Response),
+						// slog.String("body", param.Body),
 						slog.String("query", param.Query),
 					),
 				)
@@ -105,9 +106,8 @@ func loggerMiddleware() gin.HandlerFunc {
 						slog.Time("timeStamp", param.TimeStamp),
 						slog.Int("status", param.StatusCode),
 						slog.Int("responseSize", param.ResponseSize),
-						slog.String("response", param.Response),
-						slog.String("body", param.Body),
-						slog.String("query", param.Query),
+						// slog.String("response", param.Response),
+						// slog.String("body", param.Body),
 						slog.String("query", param.Query),
 					),
 				)
