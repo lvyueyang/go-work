@@ -4,9 +4,9 @@ import (
 	"server/dal/dao"
 	"server/dal/dbtypes"
 	"server/dal/model"
+	"server/internal/types"
+	"server/internal/utils"
 	"server/lib/errs"
-	"server/types"
-	"server/utils"
 	"strings"
 )
 

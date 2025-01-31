@@ -1,17 +1,18 @@
-package api
+package controller
 
 import (
 	"fmt"
+	"server/internal/consts"
+	"server/internal/middleware"
+	"server/internal/service"
+	"server/internal/utils/resp"
+	"server/lib/valid"
+
 	"github.com/dchest/captcha"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/robfig/cron/v3"
 	"golang.org/x/exp/slog"
-	"server/consts"
-	"server/lib/valid"
-	"server/middleware"
-	"server/modules/service"
-	"server/utils/resp"
 )
 
 type CaptchaController struct {

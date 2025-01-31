@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"server/types"
+	"server/internal/types"
 )
 
 type FindListOption struct {

@@ -1,14 +1,14 @@
-package api
+package controller
 
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"server/dal/model"
 	"server/lib/valid"
-	"server/middleware"
-	"server/modules/service"
-	"server/utils"
-	"server/utils/resp"
+	"server/internal/middleware"
+	"server/internal/service"
+	"server/internal/utils"
+	"server/internal/utils/resp"
 	"strconv"
 	"time"
 )

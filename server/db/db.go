@@ -32,15 +32,7 @@ func New(initModel bool) {
 func Connect(initModel bool) *gorm.DB {
 	fmt.Println("数据库连接中")
 	now := time.Now()
-	conf := config.Config.Db
-	//dsn := fmt.Sprintf(
-	//	"host=%v user=%v password=%v port=%v dbname=%v sslmode=disable TimeZone=Asia/Shanghai",
-	//	conf.Host, conf.User, conf.Password, conf.Port, conf.Dbname,
-	//)
-	dsn := fmt.Sprintf(
-		"%v:%v@tcp(%v:%v)/%v?charset=utf8mb4&parseTime=True&loc=Local",
-		conf.User, conf.Password, conf.Host, conf.Port, conf.Dbname,
-	)
+	dsn := config.Config.Db.Link
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	//db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})

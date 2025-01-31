@@ -1,7 +1,7 @@
 package model
 
 import (
-	"server/consts"
+	"server/internal/consts"
 )
 
 type AdminUser struct {

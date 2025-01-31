@@ -3,11 +3,11 @@ package middleware
 import (
 	"errors"
 	"server/config"
-	"server/consts"
 	"server/dal/dao"
 	"server/dal/model"
-	"server/utils"
-	"server/utils/resp"
+	"server/internal/consts"
+	"server/internal/utils"
+	"server/internal/utils/resp"
 
 	"github.com/gin-gonic/gin"
 )

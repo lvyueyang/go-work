@@ -54,7 +54,7 @@ func genServer(name, cname string) error {
 	modNames := []string{"api", "service", "model"}
 	for _, modName := range modNames {
 		// 生成的文件
-		var filePath, _ = filepath.Abs(path.Join("modules", modName, info.DbName+".go"))
+		var filePath, _ = filepath.Abs(path.Join("internal", modName, info.DbName+".go"))
 		if modName == "model" {
 			filePath, _ = filepath.Abs(path.Join("dal", "model", info.DbName+".go"))
 		}

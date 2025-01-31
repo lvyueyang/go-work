@@ -1,12 +1,12 @@
 package service
 
 import (
-	"server/consts"
 	"server/dal/dao"
 	"server/dal/model"
+	"server/internal/consts"
+	"server/internal/types"
+	"server/internal/utils"
 	"server/lib/errs"
-	"server/types"
-	"server/utils"
 	"strconv"
 	"strings"
 )

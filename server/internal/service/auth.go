@@ -3,12 +3,12 @@ package service
 import (
 	"fmt"
 	"server/config"
-	"server/consts"
 	"server/dal/dao"
 	"server/dal/model"
+	"server/internal/consts"
+	"server/internal/utils"
 	"server/lib/errs"
 	"server/lib/wx_mp"
-	"server/utils"
 
 	"golang.org/x/crypto/bcrypt"
 )

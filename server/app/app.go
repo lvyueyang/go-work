@@ -1,11 +1,12 @@
 package app
 
 import (
-	"github.com/gin-gonic/gin"
 	"path"
 	"server/config"
-	"server/consts"
-	"server/modules/api"
+	"server/internal/consts"
+	"server/internal/controller"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Controller interface {
@@ -15,18 +16,18 @@ type Controller interface {
 func New(r *gin.Engine) {
 	r.Static(consts.UploadFilePathName, path.Join(config.Config.FileUploadDir))
 
-	api.NewSwaggerController(r)
+	controller.NewSwaggerController(r)
 
-	api.NewHomeController(r)
+	controller.NewHomeController(r)
 
-	api.NewUserController(r)
-	api.NewAuthController(r)
-	api.NewCaptchaController(r)
+	controller.NewUserController(r)
+	controller.NewAuthController(r)
+	controller.NewCaptchaController(r)
 
-	api.NewAdminUserController(r)
-	api.NewAdminAuthController(r)
-	api.NewAdminRoleController(r)
+	controller.NewAdminUserController(r)
+	controller.NewAdminAuthController(r)
+	controller.NewAdminRoleController(r)
 
-	api.NewNewsController(r)
+	controller.NewNewsController(r)
 
 }

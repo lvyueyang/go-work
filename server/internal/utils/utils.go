@@ -1,9 +1,10 @@
 package utils
 
 import (
-	"github.com/gin-gonic/gin"
-	"server/consts"
 	"server/dal/model"
+	"server/internal/consts"
+
+	"github.com/gin-gonic/gin"
 )
 
 // GetCurrentAdminUser 获取当前登录的管理员用户信息

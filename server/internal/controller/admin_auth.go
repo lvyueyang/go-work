@@ -1,10 +1,10 @@
-package api
+package controller
 
 import (
-	"server/consts"
+	"server/internal/consts"
+	"server/internal/service"
+	"server/internal/utils/resp"
 	"server/lib/valid"
-	"server/modules/service"
-	"server/utils/resp"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"

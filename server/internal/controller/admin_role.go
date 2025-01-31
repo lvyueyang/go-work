@@ -1,13 +1,13 @@
-package api
+package controller
 
 import (
 	"server/dal/dbtypes"
 	"server/dal/model"
+	"server/internal/middleware"
+	"server/internal/service"
+	"server/internal/utils"
+	"server/internal/utils/resp"
 	"server/lib/valid"
-	"server/middleware"
-	"server/modules/service"
-	"server/utils"
-	"server/utils/resp"
 	"strconv"
 
 	"github.com/gin-gonic/gin"

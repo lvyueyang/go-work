@@ -1,12 +1,11 @@
 package service
 
 import (
-	"fmt"
-	"server/consts"
 	"server/dal/dao"
 	"server/dal/model"
+	"server/internal/consts"
+	"server/internal/utils"
 	"server/lib/errs"
-	"server/utils"
 	"time"
 )
 
@@ -72,5 +71,5 @@ func (s *CaptchaService) Create(currentType consts.CaptchaType, current string, 
 // ClearExpiration 清理过期验证码
 func (s *CaptchaService) ClearExpiration() {
 	dao.Captcha.Where(dao.Captcha.Expiration.Lt(time.Now().Add(1 * time.Minute))).Delete()
-	fmt.Println("已清除过期验证码")
+	// fmt.Println("已清除过期验证码")
 }

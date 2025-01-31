@@ -1,4 +1,4 @@
-package api
+package controller
 
 import (
 	"errors"
@@ -6,13 +6,13 @@ import (
 	"io"
 	"path"
 	"server/config"
-	"server/consts"
 	"server/dal/model"
+	"server/internal/consts"
+	"server/internal/middleware"
+	"server/internal/service"
+	"server/internal/utils"
+	"server/internal/utils/resp"
 	"server/lib/valid"
-	"server/middleware"
-	"server/modules/service"
-	"server/utils"
-	"server/utils/resp"
 	"strconv"
 	"strings"
 	"time"

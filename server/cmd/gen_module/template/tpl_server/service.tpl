@@ -4,8 +4,8 @@ import (
 	"server/dal/dao"
 	"server/dal/model"
 	"server/lib/errs"
-	"server/types"
-	"server/utils"
+	"server/internal/types"
+	"server/internal/utils"
 	"strconv"
 	"strings"
 )

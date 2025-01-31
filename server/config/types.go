@@ -10,11 +10,7 @@ type AuthConfig struct {
 }
 
 type DBConfig struct {
-	Host     string
-	User     string
-	Password string
-	Port     uint32
-	Dbname   string
+	Link string
 }
 
 type EmailConfig struct {

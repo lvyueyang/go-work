@@ -2,12 +2,13 @@ package middleware
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
 	"server/config"
-	"server/consts"
 	"server/dal/dao"
-	"server/utils"
-	"server/utils/resp"
+	"server/internal/consts"
+	"server/internal/utils"
+	"server/internal/utils/resp"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Auth 用户登录认证中间件

@@ -2,7 +2,7 @@ package service
 
 import (
 	"bytes"
-	"server/utils"
+	"server/internal/utils"
 	"text/template"
 )
 

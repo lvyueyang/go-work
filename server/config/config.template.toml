@@ -16,12 +16,9 @@ output = "/Users/lyy/code/project/goserver/logs"
 tokenSecret = "auth2023"
 adminTokenSecret = "authadmin2023"
 
+# 数据库，注意时区要做转移否则会导致链接失败
 [db]
-host = "localhost"
-user = "xxx"
-password = "xxx"
-port = 3306
-dbname = "cms_dev"
+link = "{user}:{password}@tcp({host}:{port})/{db}?charset=utf8mb4&parseTime=True&loc=Asia%2fShanghai"
 
 # 邮箱配置信息
 [email]

@@ -2,7 +2,7 @@ package config
 
 import (
 	"path"
-	"server/consts"
+	"server/internal/consts"
 
 	"github.com/duke-git/lancet/v2/fileutil"
 	"github.com/spf13/viper"
@@ -48,4 +48,8 @@ func GetLoggerOutPutPath() string {
 	}
 	cPath := fileutil.CurrentPath()
 	return path.Join(cPath, "../logs")
+}
+
+func GetCfg() *Result {
+	return &Config
 }
