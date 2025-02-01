@@ -4,9 +4,9 @@ import (
 	"server/dal/dao"
 	"server/dal/dbtypes"
 	"server/dal/model"
-	"server/internal/types"
+	"server/internal/api"
+	"server/internal/lib/errs"
 	"server/internal/utils"
-	"server/lib/errs"
 	"strings"
 )
 
@@ -19,13 +19,8 @@ func NewAdminRoleService() *AdminRoleService {
 	return adminRoleService
 }
 
-type FindAdminRoleListOption struct {
-	types.Pagination
-	types.Order
-	Keyword string `json:"keyword" form:"keyword"`
-}
-
-func (s *AdminRoleService) FindList(query FindAdminRoleListOption) (utils.ListResult[[]*model.AdminRole], error) {
+// 查询角色
+func (s *AdminRoleService) FindList(query api.AdminRoleListReq) (utils.ListResult[[]*model.AdminRole], error) {
 	result := utils.ListResult[[]*model.AdminRole]{}
 	q := dao.AdminRole.Where(
 		dao.AdminRole.Name.Like("%" + query.Keyword + "%"),
@@ -50,7 +45,8 @@ func (s *AdminRoleService) FindList(query FindAdminRoleListOption) (utils.ListRe
 	return result, nil
 }
 
-func (s *AdminRoleService) Create(info model.AdminRole) (*model.AdminRole, error) {
+// 创建角色
+func (s *AdminRoleService) Create(info api.AdminRoleCreateReq) (*model.AdminRole, error) {
 	oldData, err := dao.AdminRole.Where(dao.AdminRole.Name.Eq(info.Name)).Or(dao.AdminRole.Code.Eq(info.Code)).Take()
 
 	if err == nil {
@@ -58,10 +54,9 @@ func (s *AdminRoleService) Create(info model.AdminRole) (*model.AdminRole, error
 	}
 
 	data := &model.AdminRole{
-		Name:            info.Name,
-		Code:            info.Code,
-		Desc:            info.Desc,
-		PermissionCodes: info.PermissionCodes,
+		Name: info.Name,
+		Code: info.Code,
+		Desc: info.Desc,
 	}
 	if err := dao.AdminRole.Create(data); err != nil {
 		return oldData, err
@@ -70,8 +65,9 @@ func (s *AdminRoleService) Create(info model.AdminRole) (*model.AdminRole, error
 	return data, nil
 }
 
-func (s *AdminRoleService) Update(id uint, info model.AdminRole) (*model.AdminRole, error) {
-	current, err := dao.AdminRole.FindByID(id)
+// 修改角色
+func (s *AdminRoleService) Update(info api.AdminRoleUpdateReq) (*model.AdminRole, error) {
+	current, err := dao.AdminRole.FindByID(info.ID)
 	if err != nil {
 		return current, errs.CreateServerError("角色不存在", err, nil)
 	}
@@ -81,12 +77,25 @@ func (s *AdminRoleService) Update(id uint, info model.AdminRole) (*model.AdminRo
 		Desc: info.Desc,
 	}
 
-	if _, err := dao.AdminRole.Where(dao.AdminRole.ID.Eq(id)).Updates(&data); err != nil {
+	if _, err := dao.AdminRole.Where(dao.AdminRole.ID.Eq(info.ID)).Updates(&data); err != nil {
 		return current, err
 	}
 	return data, nil
 }
 
+// 删除角色
+func (s *AdminRoleService) Delete(id uint) error {
+	if _, err := dao.AdminRole.FindByID(id); err != nil {
+		return errs.CreateServerError("角色不存在", err, nil)
+	}
+
+	if _, err := dao.AdminRole.Where(dao.AdminRole.ID.Eq(id)).Delete(); err != nil {
+		return err
+	}
+	return nil
+}
+
+// 更新角色权限码
 func (s *AdminRoleService) UpdatePermissionCode(id uint, codes dbtypes.StringArray) (*model.AdminRole, error) {
 	current, err := dao.AdminRole.FindByID(id)
 	if err != nil {
@@ -100,15 +109,4 @@ func (s *AdminRoleService) UpdatePermissionCode(id uint, codes dbtypes.StringArr
 		return current, err
 	}
 	return data, nil
-}
-
-func (s *AdminRoleService) Delete(id uint) error {
-	if _, err := dao.AdminRole.FindByID(id); err != nil {
-		return errs.CreateServerError("角色不存在", err, nil)
-	}
-
-	if _, err := dao.AdminRole.Where(dao.AdminRole.ID.Eq(id)).Delete(); err != nil {
-		return err
-	}
-	return nil
 }

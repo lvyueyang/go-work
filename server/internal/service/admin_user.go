@@ -4,10 +4,11 @@ import (
 	"server/config"
 	"server/dal/dao"
 	"server/dal/model"
+	"server/internal/api"
 	"server/internal/consts"
+	"server/internal/lib/errs"
 	"server/internal/types"
 	"server/internal/utils"
-	"server/lib/errs"
 	"strconv"
 	"strings"
 
@@ -15,7 +16,6 @@ import (
 )
 
 type AdminUserService struct {
-	num int
 }
 
 var adminUserService = new(AdminUserService)
@@ -30,14 +30,7 @@ type FindAdminUserListOption struct {
 	Keyword string `json:"keyword" form:"keyword"`
 }
 
-func (s *AdminUserService) Num() error {
-	println("========", s.num)
-	s.num += 1
-	return nil
-}
-
-func (s *AdminUserService) FindList(query FindAdminUserListOption) (utils.ListResult[[]*model.AdminUser], error) {
-	s.Num()
+func (s *AdminUserService) FindList(query api.AdminUserListReq) (utils.ListResult[[]*model.AdminUser], error) {
 	result := utils.ListResult[[]*model.AdminUser]{}
 	u := dao.AdminUser
 	q := u.Where(
@@ -109,8 +102,8 @@ func (s *AdminUserService) Create(user model.AdminUser) (*model.AdminUser, error
 	return data, nil
 }
 
-func (s *AdminUserService) Update(id uint, user model.AdminUser) error {
-	if _, err := dao.AdminUser.FindByID(id); err != nil {
+func (s *AdminUserService) Update(user api.AdminUserUpdateReq) error {
+	if _, err := dao.AdminUser.FindByID(user.ID); err != nil {
 		return errs.CreateServerError("用户不存在", err, nil)
 	}
 	data := model.AdminUser{
@@ -118,7 +111,7 @@ func (s *AdminUserService) Update(id uint, user model.AdminUser) error {
 		Avatar: user.Avatar,
 	}
 
-	if _, err := dao.AdminUser.Where(dao.AdminUser.ID.Eq(id)).Updates(data); err != nil {
+	if _, err := dao.AdminUser.Where(dao.AdminUser.ID.Eq(user.ID)).Updates(data); err != nil {
 		return err
 	}
 	return nil

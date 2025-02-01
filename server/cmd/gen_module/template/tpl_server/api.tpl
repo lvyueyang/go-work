@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"server/dal/model"
-	"server/lib/valid"
+	"server/internal/lib/valid"
 	"server/internal/middleware"
 	"server/internal/service"
 	"server/internal/utils"

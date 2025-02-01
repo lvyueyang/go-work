@@ -2,11 +2,11 @@ package controller
 
 import (
 	"server/dal/model"
+	"server/internal/lib/valid"
 	"server/internal/middleware"
 	"server/internal/service"
 	"server/internal/utils"
 	"server/internal/utils/resp"
-	"server/lib/valid"
 	"strconv"
 	"time"
 

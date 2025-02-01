@@ -1,14 +1,12 @@
 package controller
 
 import (
-	"server/dal/dbtypes"
-	"server/dal/model"
+	"server/internal/api"
+	"server/internal/lib/valid"
 	"server/internal/middleware"
 	"server/internal/service"
 	"server/internal/utils"
 	"server/internal/utils/resp"
-	"server/lib/valid"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -24,13 +22,13 @@ func NewAdminRoleController(e *gin.Engine) {
 		service:          service.NewAdminRoleService(),
 		adminUserService: service.NewAdminUserService(),
 	}
-	admin := e.Group("/api/admin/role")
-	admin.GET("/permission/codes", c.FindPermissionCodes)
-	admin.GET("", middleware.AdminRole(utils.CreatePermission("admin:role:find:list", "查询管理员角色列表")), c.FindList)
-	admin.POST("", middleware.AdminRole(utils.CreatePermission("admin:role:create", "创建管理员角色")), c.Create)
-	admin.PUT("", middleware.AdminRole(utils.CreatePermission("admin:role:update:info", "修改管理员角色信息")), c.Update)
-	admin.DELETE("/:id", middleware.AdminRole(utils.CreatePermission("admin:role:delete", "删除管理员角色")), c.Delete)
-	admin.PUT("/permission/codes", middleware.AdminRole(utils.CreatePermission("admin:role:update:code", "修改管理角色权限码")), c.UpdatePermissionCodes)
+	group := e.Group("/api/admin/role")
+	group.POST("/list", middleware.AdminRole(utils.CreatePermission("admin:role:find:list", "查询管理员角色列表")), c.FindList)
+	group.POST("/create", middleware.AdminRole(utils.CreatePermission("admin:role:create", "创建管理员角色")), c.Create)
+	group.POST("/update", middleware.AdminRole(utils.CreatePermission("admin:role:update:info", "修改管理员角色信息")), c.Update)
+	group.POST("/delete", middleware.AdminRole(utils.CreatePermission("admin:role:delete", "删除管理员角色")), c.Delete)
+	group.POST("/update/permission-codes", middleware.AdminRole(utils.CreatePermission("admin:role:update:code", "修改管理角色权限码")), c.UpdatePermissionCodes)
+	group.GET("/permission/codes", c.FindPermissionCodes)
 }
 
 // FindList
@@ -39,21 +37,18 @@ func NewAdminRoleController(e *gin.Engine) {
 //	@Tags		管理后台-管理员角色
 //	@Accept		json
 //	@Produce	json
-//	@Param		current		query		number													false	"当前页"	default(1)
-//	@Param		page_size	query		number													false	"每页条数"	default(20)
-//	@Param		order_key	query		string													false	"需要排序的列"
-//	@Param		order_type	query		string													false	"排序方式"	Enums(ase,desc)
-//	@Param		keyword		query		string													false	"按用户名搜索"
-//	@Success	200			{object}	resp.Result{data=resp.RList{list=[]model.AdminRole}}	"resp"
-//	@Router		/api/admin/role [get]
+//	@Param		req	body		api.AdminRoleListReq					true	"body"
+//	@Success	200	{object}	resp.Result{data=api.AdminRoleListRes}	"resp"
+//	@Router		/api/admin/role/list [post]
 func (c *AdminRoleController) FindList(ctx *gin.Context) {
-	c.adminUserService.Num()
-	query := service.FindAdminRoleListOption{}
-	if err := ctx.ShouldBindQuery(&query); err != nil {
-		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
+	var body api.AdminRoleListReq
+	utils.BindBody(ctx, &body)
+
+	result, err := c.service.FindList(body)
+	if err != nil {
+		ctx.JSON(resp.ParseErr(err))
 		return
 	}
-	result, _ := c.service.FindList(query)
 	ctx.JSON(resp.Succ(result))
 }
 
@@ -63,20 +58,34 @@ func (c *AdminRoleController) FindList(ctx *gin.Context) {
 //	@Tags		管理后台-管理员角色
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		CreateAdminRoleBodyDto	true	"管理员信息"
-//	@Success	200	{object}	resp.Result				"resp"
-//	@Router		/api/admin/role [post]
+//	@Param		req	body		api.AdminRoleCreateReq						true	"body"
+//	@Success	200	{object}	resp.Result{data=api.AdminRoleCreateRes}	"resp"
+//	@Router		/api/admin/role/create [post]
 func (c *AdminRoleController) Create(ctx *gin.Context) {
-	var body CreateAdminRoleBodyDto
-	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
-		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
+	var body api.AdminRoleCreateReq
+	utils.BindBody(ctx, &body)
+
+	info, err := c.service.Create(body)
+	if err != nil {
+		ctx.JSON(resp.ParseErr(err))
 		return
 	}
-	if _, err := c.service.Create(model.AdminRole{
-		Name: body.Name,
-		Code: body.Code,
-		Desc: body.Desc,
-	}); err != nil {
+	ctx.JSON(resp.Succ(info.ID))
+}
+
+// Update
+//
+//	@Summary	修改管理员角色
+//	@Tags		管理后台-管理员角色
+//	@Accept		json
+//	@Produce	json
+//	@Param		req	body		api.AdminRoleUpdateReq	true	"body"
+//	@Success	200	{object}	resp.Result				"resp"
+//	@Router		/api/admin/role/update [post]
+func (c *AdminRoleController) Update(ctx *gin.Context) {
+	var body api.AdminRoleUpdateReq
+	utils.BindBody(ctx, &body)
+	if _, err := c.service.Update(body); err != nil {
 		ctx.JSON(resp.ParseErr(err))
 		return
 	}
@@ -89,38 +98,14 @@ func (c *AdminRoleController) Create(ctx *gin.Context) {
 //	@Tags		管理后台-管理员角色
 //	@Accept		json
 //	@Produce	json
-//	@Param		id	path		number		true	"角色 ID"
-//	@Success	200	{object}	resp.Result	"resp"
-//	@Router		/api/admin/role/{id} [delete]
-func (c *AdminRoleController) Delete(ctx *gin.Context) {
-	id, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
-	if err := c.service.Delete(uint(id)); err != nil {
-		ctx.JSON(resp.ParseErr(err))
-		return
-	}
-	ctx.JSON(resp.Succ(nil))
-}
-
-// Update
-//
-//	@Summary	修改管理员角色
-//	@Tags		管理后台-管理员角色
-//	@Accept		json
-//	@Produce	json
-//	@Param		req	body		UpdateAdminRoleBodyDto	true	"管理员信息"
+//	@Param		req	body		api.AdminRoleDeleteReq	true	"body"
 //	@Success	200	{object}	resp.Result				"resp"
-//	@Router		/api/admin/role [put]
-func (c *AdminRoleController) Update(ctx *gin.Context) {
-	var body UpdateAdminRoleBodyDto
-	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
-		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
-		return
-	}
-	if _, err := c.service.Update(body.ID, model.AdminRole{
-		Name: body.Name,
-		Code: body.Code,
-		Desc: body.Desc,
-	}); err != nil {
+//	@Router		/api/admin/role/delete [post]
+func (c *AdminRoleController) Delete(ctx *gin.Context) {
+	var body api.AdminRoleDeleteReq
+	utils.BindBody(ctx, &body)
+
+	if err := c.service.Delete(body.ID); err != nil {
 		ctx.JSON(resp.ParseErr(err))
 		return
 	}
@@ -133,11 +118,11 @@ func (c *AdminRoleController) Update(ctx *gin.Context) {
 //	@Tags		管理后台-管理员角色
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		UpdateAdminRolePermissionBodyDto	true	"管理员信息"
-//	@Success	200	{object}	resp.Result							"resp"
-//	@Router		/api/admin/role/permission/codes [put]
+//	@Param		req	body		api.AdminRoleUpdateCodesReq	true	"body"
+//	@Success	200	{object}	resp.Result					"resp"
+//	@Router		/api/admin/role/update/permission-codes [post]
 func (c *AdminRoleController) UpdatePermissionCodes(ctx *gin.Context) {
-	var body UpdateAdminRolePermissionBodyDto
+	var body api.AdminRoleUpdateCodesReq
 	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
 		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
 		return
@@ -163,24 +148,8 @@ func (c *AdminRoleController) UpdatePermissionCodes(ctx *gin.Context) {
 //	@Tags		管理后台-管理员角色
 //	@Accept		json
 //	@Produce	json
-//	@Success	200	{object}	resp.Result{data=[]utils.PermissionInfo}	"resp"
+//	@Success	200	{object}	resp.Result{data=api.AdminPermissionCodeListRes}	"resp"
 //	@Router		/api/admin/role/permission/codes [get]
 func (c *AdminRoleController) FindPermissionCodes(ctx *gin.Context) {
 	ctx.JSON(resp.Succ(utils.PermissionList))
-}
-
-type CreateAdminRoleBodyDto struct {
-	Name string `json:"name" binding:"required" label:"角色名称"` // 姓名
-	Code string `json:"code" binding:"required" label:"角色编码"` // 用户名
-	Desc string `json:"desc"`                                 // 描述
-}
-
-type UpdateAdminRoleBodyDto struct {
-	ID uint `json:"id"  binding:"required" label:"角色 ID"` // 角色 ID
-	CreateAdminRoleBodyDto
-}
-
-type UpdateAdminRolePermissionBodyDto struct {
-	ID    uint                `json:"id"  binding:"required" label:"角色 ID"` // 角色 ID
-	Codes dbtypes.StringArray `json:"codes" label:"权限码"`                    // 权限码
 }

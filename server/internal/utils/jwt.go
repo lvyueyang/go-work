@@ -4,7 +4,7 @@ import (
 	"errors"
 	"server/dal/model"
 	"server/internal/consts"
-	"server/lib/errs"
+	"server/internal/lib/errs"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"

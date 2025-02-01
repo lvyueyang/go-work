@@ -1,13 +1,13 @@
 package controller
 
 import (
+	"server/internal/api"
 	"server/internal/consts"
 	"server/internal/service"
+	"server/internal/utils"
 	"server/internal/utils/resp"
-	"server/lib/valid"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 )
 
 type AdminAuthController struct {
@@ -22,10 +22,10 @@ func NewAdminAuthController(e *gin.Engine) {
 		adminUserService: service.NewAdminUserService(),
 		captchaService:   service.NewCaptchaService(),
 	}
-	router := e.Group("/api/admin/auth")
-	router.POST("/login", c.Login)
-	router.POST("/init-root-user", c.InitRootUser)
-	router.POST("/forget-password", c.ForgetPassword)
+	group := e.Group("/api/admin/auth")
+	group.POST("/login", c.Login)
+	group.POST("/init-root-user", c.InitRootUser)
+	group.POST("/forget-password", c.ForgetPassword)
 }
 
 // Login
@@ -34,20 +34,18 @@ func NewAdminAuthController(e *gin.Engine) {
 //	@Tags		管理后台-用户认证
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		adminUserLoginBodyDto							true	"body"
-//	@Success	200	{object}	resp.Result{data=adminUserLoginSuccessResponse}	"resp"
+//	@Param		req	body		api.AdminUserLoginReq					true	"body"
+//	@Success	200	{object}	resp.Result{data=api.AdminUserLoginRes}	"resp"
 //	@Router		/api/admin/auth/login [post]
 func (c *AdminAuthController) Login(ctx *gin.Context) {
-	var body = new(adminUserLoginBodyDto)
-	if err := ctx.ShouldBindBodyWith(body, binding.JSON); err != nil {
-		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
-		return
-	}
+	var body api.AdminUserLoginReq
+	utils.BindBody(ctx, &body)
+
 	token, err := c.service.UsernameAndPasswordLogin(body.Username, body.Password)
 	if err != nil {
 		ctx.JSON(resp.ParseErr(err))
 	} else {
-		ctx.JSON(resp.Success(adminUserLoginSuccessResponse{Token: token}, "登录成功"))
+		ctx.JSON(resp.Success(api.AdminUserLoginRes{Token: token}, "登录成功"))
 	}
 }
 
@@ -57,21 +55,18 @@ func (c *AdminAuthController) Login(ctx *gin.Context) {
 //	@Tags		管理后台-用户认证
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		adminInitRootUserBodyDto						true	"body"
-//	@Success	200	{object}	resp.Result{data=adminUserLoginSuccessResponse}	"resp"
+//	@Param		req	body		api.AdminInitRootUserReq					true	"body"
+//	@Success	200	{object}	resp.Result{data=api.AdminInitRootUserRes}	"resp"
 //	@Router		/api/admin/auth/init-root-user [post]
 func (c *AdminAuthController) InitRootUser(ctx *gin.Context) {
-	var body = new(adminInitRootUserBodyDto)
-	if err := ctx.ShouldBindBodyWith(body, binding.JSON); err != nil {
-		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
-		return
-	}
+	var body api.AdminInitRootUserReq
+	utils.BindBody(ctx, &body)
 
 	token, err := c.adminUserService.CreateRootUser(body.Username, body.Name, body.Password, body.Email)
 	if err != nil {
 		ctx.JSON(resp.ParseErr(err))
 	} else {
-		ctx.JSON(resp.Success(adminUserLoginSuccessResponse{Token: token}, "超级管理员创建成功"))
+		ctx.JSON(resp.Success(api.AdminInitRootUserRes{Token: token}, "超级管理员创建成功"))
 	}
 }
 
@@ -81,15 +76,12 @@ func (c *AdminAuthController) InitRootUser(ctx *gin.Context) {
 //	@Tags		管理后台-用户认证
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		adminUserForgetPasswordBodyDto	true	"body"
-//	@Success	200	{object}	resp.Result{}					"resp"
+//	@Param		req	body		api.AdminUserForgetPasswordReq	true	"body"
+//	@Success	200	{object}	resp.Result						"resp"
 //	@Router		/api/admin/auth/forget-password [post]
 func (c *AdminAuthController) ForgetPassword(ctx *gin.Context) {
-	var body = new(adminUserForgetPasswordBodyDto)
-	if err := ctx.ShouldBindBodyWith(body, binding.JSON); err != nil {
-		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
-		return
-	}
+	var body api.AdminUserForgetPasswordReq
+	utils.BindBody(ctx, &body)
 
 	if ok, err := c.captchaService.Validate(body.Email, consts.CaptchaTypeEmail, body.Captcha, consts.CaptchaScenesForgetPassword); ok == false {
 		ctx.JSON(resp.ParamErr(err.Error()))
@@ -101,26 +93,4 @@ func (c *AdminAuthController) ForgetPassword(ctx *gin.Context) {
 	} else {
 		ctx.JSON(resp.Success(nil, "密码重置成功"))
 	}
-}
-
-type adminUserLoginBodyDto struct {
-	Username string `json:"username"` // 用户名
-	Password string `json:"password"` // 密码
-}
-
-type adminUserForgetPasswordBodyDto struct {
-	Email    string `json:"email" binding:"required" label:"邮箱"`    // 邮箱
-	Password string `json:"password" binding:"required" label:"密码"` // 密码
-	Captcha  string `json:"captcha" binding:"required" label:"验证码"` // 邮箱验证码
-}
-
-type adminUserLoginSuccessResponse struct {
-	Token string `json:"token"`
-}
-
-type adminInitRootUserBodyDto struct {
-	Name     string `json:"name" binding:"required" label:"用户名"`     // 昵称
-	Username string `json:"username" binding:"required" label:"用户名"` // 用户名
-	Password string `json:"password" binding:"required" label:"密码"`  // 密码
-	Email    string `json:"email" binding:"required" label:"邮箱"`     // 邮箱
 }

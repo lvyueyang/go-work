@@ -3,10 +3,10 @@ package controller
 import (
 	"fmt"
 	"server/internal/consts"
+	"server/internal/lib/valid"
 	"server/internal/middleware"
 	"server/internal/service"
 	"server/internal/utils/resp"
-	"server/lib/valid"
 
 	"github.com/dchest/captcha"
 	"github.com/gin-gonic/gin"

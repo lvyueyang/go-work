@@ -1,204 +1,5 @@
 definitions:
-  api.AdminUserUpdateRolesBodyDto:
-    properties:
-      role_ids:
-        description: 角色 ID
-        items:
-          type: integer
-        type: array
-      user_id:
-        description: 用户 ID
-        type: integer
-    required:
-    - role_ids
-    - user_id
-    type: object
-  api.CreateAdminRoleBodyDto:
-    properties:
-      code:
-        description: 用户名
-        type: string
-      desc:
-        description: 描述
-        type: string
-      name:
-        description: 姓名
-        type: string
-    required:
-    - code
-    - name
-    type: object
-  api.CreateAdminUserBodyDto:
-    properties:
-      avatar:
-        description: 头像
-        type: string
-      email:
-        description: 邮箱
-        type: string
-      name:
-        description: 姓名
-        type: string
-      password:
-        description: 密码
-        type: string
-      username:
-        description: 用户名
-        type: string
-    required:
-    - email
-    - name
-    - password
-    - username
-    type: object
-  api.CreateCaptchaBodyDto:
-    properties:
-      captcha_key:
-        description: 图形验证码的key
-        type: string
-      captcha_value:
-        description: 输入的图形验证码
-        type: string
-      scenes:
-        allOf:
-        - $ref: '#/definitions/consts.CaptchaScenes'
-        description: 使用场景， 1-注册 2-忘记密码 3-修改手机 4-修改邮箱
-      type:
-        allOf:
-        - $ref: '#/definitions/consts.CaptchaType'
-        description: 验证码类型， 1-手机 2-邮箱
-      value:
-        description: 手机/邮箱账号
-        type: string
-    required:
-    - captcha_key
-    - captcha_value
-    - scenes
-    - type
-    - value
-    type: object
-  api.CreateNewsBodyDto:
-    properties:
-      content:
-        type: string
-      cover:
-        type: string
-      desc:
-        type: string
-      push_date:
-        description: 发布日期 YYYY-MM-DD HH:mm:ss
-        type: string
-      recommend:
-        description: 推荐等级 0 为不推荐，数值越大越靠前
-        type: integer
-      title:
-        type: string
-    required:
-    - title
-    type: object
-  api.ResetPasswordAdminUserBodyDto:
-    properties:
-      password:
-        description: 密码
-        type: string
-    required:
-    - password
-    type: object
-  api.UpdateAdminRoleBodyDto:
-    properties:
-      code:
-        description: 用户名
-        type: string
-      desc:
-        description: 描述
-        type: string
-      id:
-        description: 角色 ID
-        type: integer
-      name:
-        description: 姓名
-        type: string
-    required:
-    - code
-    - id
-    - name
-    type: object
-  api.UpdateAdminRolePermissionBodyDto:
-    properties:
-      codes:
-        description: 权限码
-        items:
-          type: string
-        type: array
-      id:
-        description: 角色 ID
-        type: integer
-    required:
-    - id
-    type: object
-  api.UpdateAdminUserBodyDto:
-    properties:
-      avatar:
-        description: 头像
-        type: string
-      name:
-        description: 姓名
-        type: string
-    required:
-    - name
-    type: object
-  api.UpdateAdminUserStatusBodyDto:
-    properties:
-      status:
-        allOf:
-        - $ref: '#/definitions/consts.AdminUserStatus'
-        description: 状态 1-解封 2-封禁
-        enum:
-        - -1
-        - 1
-    required:
-    - status
-    type: object
-  api.UpdateNewsBodyDto:
-    properties:
-      content:
-        type: string
-      cover:
-        type: string
-      desc:
-        type: string
-      id:
-        description: 角色 ID
-        type: integer
-      push_date:
-        description: 发布日期 YYYY-MM-DD HH:mm:ss
-        type: string
-      recommend:
-        description: 推荐等级 0 为不推荐，数值越大越靠前
-        type: integer
-      title:
-        type: string
-    required:
-    - id
-    - title
-    type: object
-  api.UpdateUserStatusBodyDto:
-    properties:
-      id:
-        description: 用户 ID
-        type: integer
-      status:
-        allOf:
-        - $ref: '#/definitions/consts.UserStatus'
-        description: 状态 -1封禁 1-正常
-        enum:
-        - -1
-        - 1
-    required:
-    - id
-    - status
-    type: object
-  api.adminInitRootUserBodyDto:
+  api.AdminInitRootUserReq:
     properties:
       email:
         description: 邮箱
@@ -218,7 +19,146 @@ definitions:
     - password
     - username
     type: object
-  api.adminUserForgetPasswordBodyDto:
+  api.AdminInitRootUserRes:
+    properties:
+      token:
+        type: string
+    type: object
+  api.AdminPermissionCodeListRes:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/utils.PermissionInfo'
+        type: array
+    type: object
+  api.AdminRoleCreateReq:
+    properties:
+      code:
+        description: 角色编码
+        type: string
+      desc:
+        description: 描述
+        type: string
+      name:
+        description: 角色名称
+        type: string
+    required:
+    - code
+    - name
+    type: object
+  api.AdminRoleCreateRes:
+    properties:
+      id:
+        description: 角色 ID
+        type: integer
+    type: object
+  api.AdminRoleDeleteReq:
+    properties:
+      id:
+        description: 角色 ID
+        type: integer
+    required:
+    - id
+    type: object
+  api.AdminRoleListReq:
+    properties:
+      current:
+        minimum: 1
+        type: integer
+      keyword:
+        description: 查询关键字
+        type: string
+      order_key:
+        type: string
+      order_type:
+        enum:
+        - ase
+        - desc
+        type: string
+      page_size:
+        minimum: 0
+        type: integer
+    type: object
+  api.AdminRoleListRes:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/model.AdminRole'
+        type: array
+      total:
+        type: integer
+    type: object
+  api.AdminRoleUpdateCodesReq:
+    properties:
+      codes:
+        description: 权限码
+        items:
+          type: string
+        type: array
+      id:
+        description: 角色 ID
+        type: integer
+    required:
+    - codes
+    - id
+    type: object
+  api.AdminRoleUpdateReq:
+    properties:
+      code:
+        description: 角色编码
+        type: string
+      desc:
+        description: 描述
+        type: string
+      id:
+        description: 角色 ID
+        type: integer
+      name:
+        description: 角色名称
+        type: string
+    required:
+    - code
+    - id
+    - name
+    type: object
+  api.AdminUserCreateReq:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      email:
+        description: 邮箱
+        type: string
+      name:
+        description: 姓名
+        type: string
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    required:
+    - email
+    - name
+    - password
+    - username
+    type: object
+  api.AdminUserCreateRes:
+    properties:
+      id:
+        description: 管理员ID
+        type: string
+    type: object
+  api.AdminUserDeleteReq:
+    properties:
+      id:
+        description: ID
+        type: integer
+    required:
+    - id
+    type: object
+  api.AdminUserForgetPasswordReq:
     properties:
       captcha:
         description: 邮箱验证码
@@ -234,60 +174,134 @@ definitions:
     - email
     - password
     type: object
-  api.adminUserLoginBodyDto:
+  api.AdminUserInfoRes:
     properties:
-      password:
-        description: 密码
+      avatar:
         type: string
-      username:
-        description: 用户名
-        type: string
-    type: object
-  api.adminUserLoginSuccessResponse:
-    properties:
-      token:
-        type: string
-    type: object
-  api.loginBodyDto:
-    properties:
-      password:
-        description: 密码
-        type: string
-      username:
-        description: 用户名
-        type: string
-    type: object
-  api.loginSuccessResponse:
-    properties:
-      token:
-        type: string
-    type: object
-  api.registerBodyDto:
-    properties:
-      captcha:
-        description: 邮箱验证码
+      created_at:
         type: string
       email:
-        description: 邮箱
         type: string
+      id:
+        type: integer
+      is_root:
+        description: 是否是超级管理员
+        type: boolean
+      name:
+        type: string
+      news:
+        items:
+          $ref: '#/definitions/model.News'
+        type: array
+      roles:
+        items:
+          $ref: '#/definitions/model.AdminRole'
+        type: array
+      status:
+        $ref: '#/definitions/consts.AdminUserStatus'
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+  api.AdminUserListReq:
+    properties:
+      current:
+        minimum: 1
+        type: integer
+      keyword:
+        description: 查询关键字
+        type: string
+      order_key:
+        type: string
+      order_type:
+        enum:
+        - ase
+        - desc
+        type: string
+      page_size:
+        minimum: 0
+        type: integer
+    type: object
+  api.AdminUserListRes:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/model.AdminUser'
+        type: array
+      total:
+        type: integer
+    type: object
+  api.AdminUserLoginReq:
+    properties:
       password:
         description: 密码
         type: string
       username:
         description: 用户名
         type: string
-    required:
-    - email
-    - password
-    - username
     type: object
-  api.wxMpLoginBodyDto:
+  api.AdminUserLoginRes:
     properties:
-      code:
-        description: code
+      token:
+        type: string
+    type: object
+  api.AdminUserResetPasswordReq:
+    properties:
+      id:
+        description: ID
+        type: integer
+      password:
+        description: 密码
         type: string
     required:
-    - code
+    - id
+    - password
+    type: object
+  api.AdminUserUpdateReq:
+    properties:
+      avatar:
+        description: 头像
+        type: string
+      id:
+        description: ID
+        type: integer
+      name:
+        description: 姓名
+        type: string
+    required:
+    - id
+    - name
+    type: object
+  api.AdminUserUpdateRoleReq:
+    properties:
+      role_ids:
+        description: 角色 ID
+        items:
+          type: integer
+        type: array
+      user_id:
+        description: 用户 ID
+        type: integer
+    required:
+    - role_ids
+    - user_id
+    type: object
+  api.AdminUserUpdateStatusReq:
+    properties:
+      id:
+        description: ID
+        type: integer
+      status:
+        allOf:
+        - $ref: '#/definitions/consts.AdminUserStatus'
+        description: 状态 1-解封 2-封禁
+        enum:
+        - -1
+        - 1
+    required:
+    - id
+    - status
     type: object
   consts.AdminUserStatus:
     enum:
@@ -339,6 +353,131 @@ definitions:
     x-enum-varnames:
     - UserStatusNormal
     - UserStatusLocked
+  controller.CreateCaptchaBodyDto:
+    properties:
+      captcha_key:
+        description: 图形验证码的key
+        type: string
+      captcha_value:
+        description: 输入的图形验证码
+        type: string
+      scenes:
+        allOf:
+        - $ref: '#/definitions/consts.CaptchaScenes'
+        description: 使用场景， 1-注册 2-忘记密码 3-修改手机 4-修改邮箱
+      type:
+        allOf:
+        - $ref: '#/definitions/consts.CaptchaType'
+        description: 验证码类型， 1-手机 2-邮箱
+      value:
+        description: 手机/邮箱账号
+        type: string
+    required:
+    - captcha_key
+    - captcha_value
+    - scenes
+    - type
+    - value
+    type: object
+  controller.CreateNewsBodyDto:
+    properties:
+      content:
+        type: string
+      cover:
+        type: string
+      desc:
+        type: string
+      push_date:
+        description: 发布日期 YYYY-MM-DD HH:mm:ss
+        type: string
+      recommend:
+        description: 推荐等级 0 为不推荐，数值越大越靠前
+        type: integer
+      title:
+        type: string
+    required:
+    - title
+    type: object
+  controller.UpdateNewsBodyDto:
+    properties:
+      content:
+        type: string
+      cover:
+        type: string
+      desc:
+        type: string
+      id:
+        description: 角色 ID
+        type: integer
+      push_date:
+        description: 发布日期 YYYY-MM-DD HH:mm:ss
+        type: string
+      recommend:
+        description: 推荐等级 0 为不推荐，数值越大越靠前
+        type: integer
+      title:
+        type: string
+    required:
+    - id
+    - title
+    type: object
+  controller.UpdateUserStatusBodyDto:
+    properties:
+      id:
+        description: 用户 ID
+        type: integer
+      status:
+        allOf:
+        - $ref: '#/definitions/consts.UserStatus'
+        description: 状态 -1封禁 1-正常
+        enum:
+        - -1
+        - 1
+    required:
+    - id
+    - status
+    type: object
+  controller.loginBodyDto:
+    properties:
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    type: object
+  controller.loginSuccessResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  controller.registerBodyDto:
+    properties:
+      captcha:
+        description: 邮箱验证码
+        type: string
+      email:
+        description: 邮箱
+        type: string
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  controller.wxMpLoginBodyDto:
+    properties:
+      code:
+        description: code
+        type: string
+    required:
+    - code
+    type: object
   model.AdminRole:
     properties:
       code:
@@ -472,6 +611,9 @@ definitions:
       order_key:
         type: string
       order_type:
+        enum:
+        - ase
+        - desc
         type: string
       page_size:
         minimum: 0
@@ -501,7 +643,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/api.adminUserForgetPasswordBodyDto'
+          $ref: '#/definitions/api.AdminUserForgetPasswordReq'
       produces:
       - application/json
       responses:
@@ -522,7 +664,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/api.adminInitRootUserBodyDto'
+          $ref: '#/definitions/api.AdminInitRootUserReq'
       produces:
       - application/json
       responses:
@@ -533,7 +675,7 @@ paths:
             - $ref: '#/definitions/resp.Result'
             - properties:
                 data:
-                  $ref: '#/definitions/api.adminUserLoginSuccessResponse'
+                  $ref: '#/definitions/api.AdminInitRootUserRes'
               type: object
       summary: 初始化超级管理员用户
       tags:
@@ -548,7 +690,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/api.adminUserLoginBodyDto'
+          $ref: '#/definitions/api.AdminUserLoginReq'
       produces:
       - application/json
       responses:
@@ -559,7 +701,7 @@ paths:
             - $ref: '#/definitions/resp.Result'
             - properties:
                 data:
-                  $ref: '#/definitions/api.adminUserLoginSuccessResponse'
+                  $ref: '#/definitions/api.AdminUserLoginRes'
               type: object
       summary: 用户登录
       tags:
@@ -626,7 +768,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/api.CreateNewsBodyDto'
+          $ref: '#/definitions/controller.CreateNewsBodyDto'
       produces:
       - application/json
       responses:
@@ -646,7 +788,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/api.UpdateNewsBodyDto'
+          $ref: '#/definitions/controller.UpdateNewsBodyDto'
       produces:
       - application/json
       responses:
@@ -734,36 +876,17 @@ paths:
       summary: 新闻列表
       tags:
       - 管理后台-新闻
-  /api/admin/role:
-    get:
+  /api/admin/role/create:
+    post:
       consumes:
       - application/json
       parameters:
-      - default: 1
-        description: 当前页
-        in: query
-        name: current
-        type: number
-      - default: 20
-        description: 每页条数
-        in: query
-        name: page_size
-        type: number
-      - description: 需要排序的列
-        in: query
-        name: order_key
-        type: string
-      - description: 排序方式
-        enum:
-        - ase
-        - desc
-        in: query
-        name: order_type
-        type: string
-      - description: 按用户名搜索
-        in: query
-        name: keyword
-        type: string
+      - description: body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.AdminRoleCreateReq'
       produces:
       - application/json
       responses:
@@ -774,68 +897,22 @@ paths:
             - $ref: '#/definitions/resp.Result'
             - properties:
                 data:
-                  allOf:
-                  - $ref: '#/definitions/resp.RList'
-                  - properties:
-                      list:
-                        items:
-                          $ref: '#/definitions/model.AdminRole'
-                        type: array
-                    type: object
+                  $ref: '#/definitions/api.AdminRoleCreateRes'
               type: object
-      summary: 管理员角色列表
+      summary: 新增管理员角色
       tags:
       - 管理后台-管理员角色
+  /api/admin/role/delete:
     post:
       consumes:
       - application/json
       parameters:
-      - description: 管理员信息
+      - description: body
         in: body
         name: req
         required: true
         schema:
-          $ref: '#/definitions/api.CreateAdminRoleBodyDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: resp
-          schema:
-            $ref: '#/definitions/resp.Result'
-      summary: 新增管理员角色
-      tags:
-      - 管理后台-管理员角色
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: 管理员信息
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/api.UpdateAdminRoleBodyDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: resp
-          schema:
-            $ref: '#/definitions/resp.Result'
-      summary: 修改管理员角色
-      tags:
-      - 管理后台-管理员角色
-  /api/admin/role/{id}:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: 角色 ID
-        in: path
-        name: id
-        required: true
-        type: number
+          $ref: '#/definitions/api.AdminRoleDeleteReq'
       produces:
       - application/json
       responses:
@@ -844,6 +921,32 @@ paths:
           schema:
             $ref: '#/definitions/resp.Result'
       summary: 删除角色
+      tags:
+      - 管理后台-管理员角色
+  /api/admin/role/list:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.AdminRoleListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.AdminRoleListRes'
+              type: object
+      summary: 管理员角色列表
       tags:
       - 管理后台-管理员角色
   /api/admin/role/permission/codes:
@@ -860,23 +963,43 @@ paths:
             - $ref: '#/definitions/resp.Result'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/utils.PermissionInfo'
-                  type: array
+                  $ref: '#/definitions/api.AdminPermissionCodeListRes'
               type: object
       summary: 管理后台权限码列表
       tags:
       - 管理后台-管理员角色
-    put:
+  /api/admin/role/update:
+    post:
       consumes:
       - application/json
       parameters:
-      - description: 管理员信息
+      - description: body
         in: body
         name: req
         required: true
         schema:
-          $ref: '#/definitions/api.UpdateAdminRolePermissionBodyDto'
+          $ref: '#/definitions/api.AdminRoleUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 修改管理员角色
+      tags:
+      - 管理后台-管理员角色
+  /api/admin/role/update/permission-codes:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.AdminRoleUpdateCodesReq'
       produces:
       - application/json
       responses:
@@ -897,7 +1020,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/api.UpdateUserStatusBodyDto'
+          $ref: '#/definitions/controller.UpdateUserStatusBodyDto'
       produces:
       - application/json
       responses:
@@ -908,36 +1031,17 @@ paths:
       summary: 修改用户状态
       tags:
       - 管理后台-C端用户管理
-  /api/admin/user:
-    get:
+  /api/admin/user/create:
+    post:
       consumes:
       - application/json
       parameters:
-      - default: 1
-        description: 当前页
-        in: query
-        name: current
-        type: number
-      - default: 20
-        description: 每页条数
-        in: query
-        name: page_size
-        type: number
-      - description: 需要排序的列
-        in: query
-        name: order_key
-        type: string
-      - description: 排序方式
-        enum:
-        - ase
-        - desc
-        in: query
-        name: order_type
-        type: string
-      - description: 按用户名搜索
-        in: query
-        name: keyword
-        type: string
+      - description: body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.AdminUserCreateReq'
       produces:
       - application/json
       responses:
@@ -948,76 +1052,9 @@ paths:
             - $ref: '#/definitions/resp.Result'
             - properties:
                 data:
-                  allOf:
-                  - $ref: '#/definitions/resp.RList'
-                  - properties:
-                      list:
-                        items:
-                          $ref: '#/definitions/model.AdminUser'
-                        type: array
-                    type: object
+                  $ref: '#/definitions/api.AdminUserCreateRes'
               type: object
-      summary: 管理员列表
-      tags:
-      - 管理后台-管理员用户
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: 管理员信息
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/api.CreateAdminUserBodyDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: resp
-          schema:
-            $ref: '#/definitions/resp.Result'
       summary: 新增管理员
-      tags:
-      - 管理后台-管理员用户
-  /api/admin/user/{id}:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: 管理员ID
-        in: path
-        name: id
-        required: true
-        type: number
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: resp
-          schema:
-            $ref: '#/definitions/resp.Result'
-      summary: 删除管理员
-      tags:
-      - 管理后台-管理员用户
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: 管理员信息
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/api.UpdateAdminUserBodyDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: resp
-          schema:
-            $ref: '#/definitions/resp.Result'
-      summary: 修改管理员信息
       tags:
       - 管理后台-管理员用户
   /api/admin/user/current:
@@ -1034,22 +1071,69 @@ paths:
             - $ref: '#/definitions/resp.Result'
             - properties:
                 data:
-                  $ref: '#/definitions/model.AdminUser'
+                  $ref: '#/definitions/api.AdminUserInfoRes'
               type: object
       summary: 当前登陆者信息
       tags:
       - 管理后台-用户认证
-  /api/admin/user/reset-password/{id}:
-    put:
+  /api/admin/user/delete:
+    post:
       consumes:
       - application/json
       parameters:
-      - description: 管理员信息
+      - description: body
         in: body
         name: req
         required: true
         schema:
-          $ref: '#/definitions/api.ResetPasswordAdminUserBodyDto'
+          $ref: '#/definitions/api.AdminUserDeleteReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 删除管理员
+      tags:
+      - 管理后台-管理员用户
+  /api/admin/user/list:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.AdminUserListReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.AdminUserListRes'
+              type: object
+      summary: 管理员列表
+      tags:
+      - 管理后台-管理员用户
+  /api/admin/user/reset-password:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.AdminUserResetPasswordReq'
       produces:
       - application/json
       responses:
@@ -1060,17 +1144,38 @@ paths:
       summary: 重置管理员密码
       tags:
       - 管理后台-管理员用户
-  /api/admin/user/role:
-    put:
+  /api/admin/user/update/info:
+    post:
       consumes:
       - application/json
       parameters:
-      - description: req
+      - description: body
         in: body
         name: req
         required: true
         schema:
-          $ref: '#/definitions/api.AdminUserUpdateRolesBodyDto'
+          $ref: '#/definitions/api.AdminUserUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 修改管理员信息
+      tags:
+      - 管理后台-管理员用户
+  /api/admin/user/update/role:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.AdminUserUpdateRoleReq'
       produces:
       - application/json
       responses:
@@ -1081,22 +1186,17 @@ paths:
       summary: 为管理用户更新角色
       tags:
       - 管理后台-管理员用户
-  /api/admin/user/status/{id}:
-    put:
+  /api/admin/user/update/status:
+    post:
       consumes:
       - application/json
       parameters:
-      - description: 管理员ID
-        in: path
-        name: id
-        required: true
-        type: number
-      - description: 用户状态
+      - description: body
         in: body
         name: req
         required: true
         schema:
-          $ref: '#/definitions/api.UpdateAdminUserStatusBodyDto'
+          $ref: '#/definitions/api.AdminUserUpdateStatusReq'
       produces:
       - application/json
       responses:
@@ -1172,7 +1272,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/api.loginBodyDto'
+          $ref: '#/definitions/controller.loginBodyDto'
       produces:
       - application/json
       responses:
@@ -1183,7 +1283,7 @@ paths:
             - $ref: '#/definitions/resp.Result'
             - properties:
                 data:
-                  $ref: '#/definitions/api.loginSuccessResponse'
+                  $ref: '#/definitions/controller.loginSuccessResponse'
               type: object
       summary: 用户登录
       tags:
@@ -1198,7 +1298,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/api.registerBodyDto'
+          $ref: '#/definitions/controller.registerBodyDto'
       produces:
       - application/json
       responses:
@@ -1209,7 +1309,7 @@ paths:
             - $ref: '#/definitions/resp.Result'
             - properties:
                 data:
-                  $ref: '#/definitions/api.loginSuccessResponse'
+                  $ref: '#/definitions/controller.loginSuccessResponse'
               type: object
       summary: 用户注册
       tags:
@@ -1224,7 +1324,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/api.wxMpLoginBodyDto'
+          $ref: '#/definitions/controller.wxMpLoginBodyDto'
       produces:
       - application/json
       responses:
@@ -1235,7 +1335,7 @@ paths:
             - $ref: '#/definitions/resp.Result'
             - properties:
                 data:
-                  $ref: '#/definitions/api.loginSuccessResponse'
+                  $ref: '#/definitions/controller.loginSuccessResponse'
               type: object
       summary: 微信小程序登录
       tags:
@@ -1250,7 +1350,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/api.CreateCaptchaBodyDto'
+          $ref: '#/definitions/controller.CreateCaptchaBodyDto'
       produces:
       - application/json
       responses:

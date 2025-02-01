@@ -2,11 +2,11 @@ package controller
 
 import (
 	"server/internal/consts"
+	"server/internal/lib/valid"
 	"server/internal/middleware"
 	"server/internal/service"
 	"server/internal/utils"
 	"server/internal/utils/resp"
-	"server/lib/valid"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"

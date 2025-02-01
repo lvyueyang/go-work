@@ -6,9 +6,9 @@ import (
 	"server/dal/dao"
 	"server/dal/model"
 	"server/internal/consts"
+	"server/internal/lib/errs"
+	"server/internal/lib/wx_mp"
 	"server/internal/utils"
-	"server/lib/errs"
-	"server/lib/wx_mp"
 
 	"golang.org/x/crypto/bcrypt"
 )

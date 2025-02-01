@@ -4,8 +4,8 @@ import (
 	"server/dal/dao"
 	"server/dal/model"
 	"server/internal/consts"
+	"server/internal/lib/errs"
 	"server/internal/utils"
-	"server/lib/errs"
 	"time"
 )
 

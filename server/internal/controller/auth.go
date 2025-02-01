@@ -2,9 +2,9 @@ package controller
 
 import (
 	"fmt"
+	"server/internal/lib/valid"
 	"server/internal/service"
 	"server/internal/utils/resp"
-	"server/lib/valid"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"

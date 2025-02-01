@@ -7,18 +7,18 @@ import (
 	"path"
 	"server/config"
 	"server/dal/model"
+	"server/internal/api"
 	"server/internal/consts"
+	"server/internal/lib/valid"
 	"server/internal/middleware"
 	"server/internal/service"
 	"server/internal/utils"
 	"server/internal/utils/resp"
-	"server/lib/valid"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 )
 
 type AdminUserController struct {
@@ -32,13 +32,13 @@ func NewAdminUserController(e *gin.Engine) {
 	admin := e.Group("/api/admin/user")
 
 	admin.GET("/current", middleware.AdminAuth(), c.CurrentInfo)
-	admin.GET("", middleware.AdminRole(utils.CreatePermission("admin:user:find:list", "查询管理员列表")), c.FindList)
-	admin.POST("", middleware.AdminRole(utils.CreatePermission("admin:user:create", "创建管理员")), c.Create)
-	admin.PUT("/:id", middleware.AdminRole(utils.CreatePermission("admin:user:update:info", "修改管理员基本信息")), c.Update)
-	admin.DELETE("/:id", middleware.AdminRole(utils.CreatePermission("admin:user:delete", "删除管理员")), c.Delete)
-	admin.PUT("/reset-password/:id", middleware.AdminRole(utils.CreatePermission("admin:user:update:password", "修改管理员密码")), c.ResetPassword)
-	admin.PUT("/status/:id", middleware.AdminRole(utils.CreatePermission("admin:user:update:status", "修改管理员状态")), c.UpdateStatus)
-	admin.PUT("/role", middleware.AdminRole(utils.CreatePermission("admin:user:update:role", "修改管理员角色")), c.UpdateRole)
+	admin.POST("/list", middleware.AdminRole(utils.CreatePermission("admin:user:find:list", "查询管理员列表")), c.FindList)
+	admin.POST("/create", middleware.AdminRole(utils.CreatePermission("admin:user:create", "创建管理员")), c.Create)
+	admin.POST("/update/info", middleware.AdminRole(utils.CreatePermission("admin:user:update:info", "修改管理员基本信息")), c.Update)
+	admin.POST("/update/status", middleware.AdminRole(utils.CreatePermission("admin:user:update:status", "修改管理员状态")), c.UpdateStatus)
+	admin.POST("/update/role", middleware.AdminRole(utils.CreatePermission("admin:user:update:role", "修改管理员角色")), c.UpdateRole)
+	admin.POST("/reset-password", middleware.AdminRole(utils.CreatePermission("admin:user:update:password", "修改管理员密码")), c.ResetPassword)
+	admin.POST("/delete", middleware.AdminRole(utils.CreatePermission("admin:user:delete", "删除管理员")), c.Delete)
 	admin.POST("/upload", middleware.AdminRole(utils.CreatePermission("admin:user:upload:file", "上传文件到本地")), c.Upload)
 }
 
@@ -48,20 +48,18 @@ func NewAdminUserController(e *gin.Engine) {
 //	@Tags		管理后台-管理员用户
 //	@Accept		json
 //	@Produce	json
-//	@Param		current		query		number													false	"当前页"	default(1)
-//	@Param		page_size	query		number													false	"每页条数"	default(20)
-//	@Param		order_key	query		string													false	"需要排序的列"
-//	@Param		order_type	query		string													false	"排序方式"	Enums(ase,desc)
-//	@Param		keyword		query		string													false	"按用户名搜索"
-//	@Success	200			{object}	resp.Result{data=resp.RList{list=[]model.AdminUser}}	"resp"
-//	@Router		/api/admin/user [get]
+//	@Param		req	body		api.AdminUserListReq					true	"body"
+//	@Success	200	{object}	resp.Result{data=api.AdminUserListRes}	"resp"
+//	@Router		/api/admin/user/list [post]
 func (c *AdminUserController) FindList(ctx *gin.Context) {
-	query := service.FindAdminUserListOption{}
-	if err := ctx.ShouldBindQuery(&query); err != nil {
-		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
+	var body api.AdminUserListReq
+	utils.BindBody(ctx, &body)
+
+	result, err := c.service.FindList(body)
+	if err != nil {
+		ctx.JSON(resp.ParseErr(err))
 		return
 	}
-	result, _ := c.service.FindList(query)
 	ctx.JSON(resp.Succ(result))
 }
 
@@ -71,26 +69,25 @@ func (c *AdminUserController) FindList(ctx *gin.Context) {
 //	@Tags		管理后台-管理员用户
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		CreateAdminUserBodyDto	true	"管理员信息"
-//	@Success	200	{object}	resp.Result				"resp"
-//	@Router		/api/admin/user [post]
+//	@Param		req	body		api.AdminUserCreateReq						true	"body"
+//	@Success	200	{object}	resp.Result{data=api.AdminUserCreateRes}	"resp"
+//	@Router		/api/admin/user/create [post]
 func (c *AdminUserController) Create(ctx *gin.Context) {
-	var body CreateAdminUserBodyDto
-	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
-		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
-		return
-	}
-	if _, err := c.service.Create(model.AdminUser{
+	var body api.AdminUserCreateReq
+	utils.BindBody(ctx, &body)
+	info, err := c.service.Create(model.AdminUser{
 		Name:     body.Name,
 		Username: body.Username,
 		Password: body.Password,
 		Email:    body.Email,
 		Avatar:   body.Avatar,
-	}); err != nil {
+	})
+
+	if err != nil {
 		ctx.JSON(resp.ParseErr(err))
 		return
 	}
-	ctx.JSON(resp.Succ(nil))
+	ctx.JSON(resp.Succ(info.ID))
 }
 
 // Update
@@ -99,20 +96,14 @@ func (c *AdminUserController) Create(ctx *gin.Context) {
 //	@Tags		管理后台-管理员用户
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		UpdateAdminUserBodyDto	true	"管理员信息"
+//	@Param		req	body		api.AdminUserUpdateReq	true	"body"
 //	@Success	200	{object}	resp.Result				"resp"
-//	@Router		/api/admin/user/{id} [put]
+//	@Router		/api/admin/user/update/info [post]
 func (c *AdminUserController) Update(ctx *gin.Context) {
-	var body UpdateAdminUserBodyDto
-	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
-		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
-		return
-	}
-	id, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
-	if err := c.service.Update(uint(id), model.AdminUser{
-		Name:   body.Name,
-		Avatar: body.Avatar,
-	}); err != nil {
+	var body api.AdminUserUpdateReq
+	utils.BindBody(ctx, &body)
+
+	if err := c.service.Update(body); err != nil {
 		ctx.JSON(resp.ParseErr(err))
 		return
 	}
@@ -125,18 +116,13 @@ func (c *AdminUserController) Update(ctx *gin.Context) {
 //	@Tags		管理后台-管理员用户
 //	@Accept		json
 //	@Produce	json
-//	@Param		id	path		number							true	"管理员ID"
-//	@Param		req	body		UpdateAdminUserStatusBodyDto	true	"用户状态"
+//	@Param		req	body		api.AdminUserUpdateStatusReq	true	"body"
 //	@Success	200	{object}	resp.Result						"resp"
-//	@Router		/api/admin/user/status/{id} [put]
+//	@Router		/api/admin/user/update/status [post]
 func (c *AdminUserController) UpdateStatus(ctx *gin.Context) {
-	var body UpdateAdminUserStatusBodyDto
-	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
-		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
-		return
-	}
-	id, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
-	if err := c.service.UpdateStatus(uint(id), body.Status); err != nil {
+	var body api.AdminUserUpdateStatusReq
+	utils.BindBody(ctx, &body)
+	if err := c.service.UpdateStatus(body.ID, body.Status); err != nil {
 		ctx.JSON(resp.ParseErr(err))
 		return
 	}
@@ -149,12 +135,13 @@ func (c *AdminUserController) UpdateStatus(ctx *gin.Context) {
 //	@Tags		管理后台-管理员用户
 //	@Accept		json
 //	@Produce	json
-//	@Param		id	path		number		true	"管理员ID"
-//	@Success	200	{object}	resp.Result	"resp"
-//	@Router		/api/admin/user/{id} [delete]
+//	@Param		req	body		api.AdminUserDeleteReq	true	"body"
+//	@Success	200	{object}	resp.Result				"resp"
+//	@Router		/api/admin/user/delete [post]
 func (c *AdminUserController) Delete(ctx *gin.Context) {
-	id, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
-	if err := c.service.Delete(uint(id)); err != nil {
+	var body api.AdminUserDeleteReq
+	utils.BindBody(ctx, &body)
+	if err := c.service.Delete(body.ID); err != nil {
 		ctx.JSON(resp.ParseErr(err))
 		return
 	}
@@ -167,24 +154,20 @@ func (c *AdminUserController) Delete(ctx *gin.Context) {
 //	@Tags		管理后台-管理员用户
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		ResetPasswordAdminUserBodyDto	true	"管理员信息"
+//	@Param		req	body		api.AdminUserResetPasswordReq	true	"body"
 //	@Success	200	{object}	resp.Result						"resp"
-//	@Router		/api/admin/user/reset-password/{id} [put]
+//	@Router		/api/admin/user/reset-password [post]
 func (c *AdminUserController) ResetPassword(ctx *gin.Context) {
-	var body ResetPasswordAdminUserBodyDto
-	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
-		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
-		return
-	}
-	id, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
+	var body api.AdminUserResetPasswordReq
+	utils.BindBody(ctx, &body)
 	currentUser := utils.GetCurrentAdminUser(ctx)
 
-	if err := c.service.OnlyRootAdminUser(uint(id), currentUser.ID); err != nil {
+	if err := c.service.OnlyRootAdminUser(body.ID, currentUser.ID); err != nil {
 		ctx.JSON(resp.ParamErr(err.Error()))
 		return
 	}
 
-	if err := c.service.UpdatePassword(uint(id), body.Password); err != nil {
+	if err := c.service.UpdatePassword(body.ID, body.Password); err != nil {
 		ctx.JSON(resp.ParseErr(err))
 		return
 	}
@@ -197,16 +180,13 @@ func (c *AdminUserController) ResetPassword(ctx *gin.Context) {
 //	@Tags		管理后台-管理员用户
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		AdminUserUpdateRolesBodyDto	true	"req"
+//	@Param		req	body		api.AdminUserUpdateRoleReq	true	"body"
 //	@Success	200	{object}	resp.Result					"resp"
-//	@Router		/api/admin/user/role [put]
+//	@Router		/api/admin/user/update/role [post]
 func (c *AdminUserController) UpdateRole(ctx *gin.Context) {
-	var body AdminUserUpdateRolesBodyDto
+	var body api.AdminUserUpdateRoleReq
 
-	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
-		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
-		return
-	}
+	utils.BindBody(ctx, &body)
 
 	if err := c.service.UpdateRole(body.UserId, body.RoleIds); err != nil {
 		ctx.JSON(resp.ParseErr(err))
@@ -222,7 +202,7 @@ func (c *AdminUserController) UpdateRole(ctx *gin.Context) {
 //	@Tags		管理后台-用户认证
 //	@Accept		json
 //	@Produce	json
-//	@Success	200	{object}	resp.Result{data=model.AdminUser}	"用户详情"
+//	@Success	200	{object}	resp.Result{data=api.AdminUserInfoRes}	"用户详情"
 //	@Router		/api/admin/user/current [get]
 func (c *AdminUserController) CurrentInfo(ctx *gin.Context) {
 	user := utils.GetCurrentAdminUser(ctx)
@@ -312,33 +292,4 @@ func (c *AdminUserController) UploadToAliOss(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(resp.Succ("https://" + ossConfig.Bucket + "." + ossConfig.Endpoint + "/" + filePath))
-}
-
-type CreateAdminUserBodyDto struct {
-	Name     string `json:"name" binding:"required" label:"姓名"`      // 姓名
-	Username string `json:"username" binding:"required" label:"用户名"` // 用户名
-	Password string `json:"password" binding:"required" label:"密码"`  // 密码
-	Email    string `json:"email" binding:"required" label:"邮箱"`     // 邮箱
-	Avatar   string `json:"avatar"`                                  // 头像
-}
-
-type UpdateAdminUserBodyDto struct {
-	Name   string `json:"name" binding:"required" label:"姓名"` // 姓名
-	Avatar string `json:"avatar"`                             // 头像
-}
-
-type UpdateAdminUserStatusBodyDto struct {
-	Status consts.AdminUserStatus `json:"status" binding:"required" label:"用户状态" enums:"-1,1"` // 状态 1-解封 2-封禁
-}
-
-type DeleteAdminUserStatusBodyDto struct {
-	ID uint `json:"id" binding:"required"`
-}
-type ResetPasswordAdminUserBodyDto struct {
-	Password string `json:"password" binding:"required" label:"密码"` // 密码
-}
-
-type AdminUserUpdateRolesBodyDto struct {
-	UserId  uint   `json:"user_id" binding:"required" label:"用户 ID"`  // 用户 ID
-	RoleIds []uint `json:"role_ids" binding:"required" label:"角色 ID"` // 角色 ID
 }

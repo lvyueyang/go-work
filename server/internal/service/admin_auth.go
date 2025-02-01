@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"server/config"
 	"server/dal/dao"
+	"server/internal/lib/errs"
 	"server/internal/utils"
-	"server/lib/errs"
 
 	"golang.org/x/crypto/bcrypt"
 )

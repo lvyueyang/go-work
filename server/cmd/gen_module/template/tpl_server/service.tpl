@@ -3,7 +3,7 @@ package service
 import (
 	"server/dal/dao"
 	"server/dal/model"
-	"server/lib/errs"
+	"server/internal/lib/errs"
 	"server/internal/types"
 	"server/internal/utils"
 	"strconv"

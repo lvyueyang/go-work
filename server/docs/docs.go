@@ -35,7 +35,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.adminUserForgetPasswordBodyDto"
+                            "$ref": "#/definitions/api.AdminUserForgetPasswordReq"
                         }
                     }
                 ],
@@ -68,7 +68,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.adminInitRootUserBodyDto"
+                            "$ref": "#/definitions/api.AdminInitRootUserReq"
                         }
                     }
                 ],
@@ -84,7 +84,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/api.adminUserLoginSuccessResponse"
+                                            "$ref": "#/definitions/api.AdminInitRootUserRes"
                                         }
                                     }
                                 }
@@ -113,7 +113,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.adminUserLoginBodyDto"
+                            "$ref": "#/definitions/api.AdminUserLoginReq"
                         }
                     }
                 ],
@@ -129,7 +129,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/api.adminUserLoginSuccessResponse"
+                                            "$ref": "#/definitions/api.AdminUserLoginRes"
                                         }
                                     }
                                 }
@@ -245,7 +245,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.UpdateNewsBodyDto"
+                            "$ref": "#/definitions/controller.UpdateNewsBodyDto"
                         }
                     }
                 ],
@@ -276,7 +276,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.CreateNewsBodyDto"
+                            "$ref": "#/definitions/controller.CreateNewsBodyDto"
                         }
                     }
                 ],
@@ -422,8 +422,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/role": {
-            "get": {
+        "/api/admin/role/create": {
+            "post": {
                 "consumes": [
                     "application/json"
                 ],
@@ -433,43 +433,16 @@ const docTemplate = `{
                 "tags": [
                     "管理后台-管理员角色"
                 ],
-                "summary": "管理员角色列表",
+                "summary": "新增管理员角色",
                 "parameters": [
                     {
-                        "type": "number",
-                        "default": 1,
-                        "description": "当前页",
-                        "name": "current",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "default": 20,
-                        "description": "每页条数",
-                        "name": "page_size",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "需要排序的列",
-                        "name": "order_key",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "ase",
-                            "desc"
-                        ],
-                        "type": "string",
-                        "description": "排序方式",
-                        "name": "order_type",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "按用户名搜索",
-                        "name": "keyword",
-                        "in": "query"
+                        "description": "body",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.AdminRoleCreateReq"
+                        }
                     }
                 ],
                 "responses": {
@@ -484,22 +457,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/resp.RList"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "list": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/model.AdminRole"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
+                                            "$ref": "#/definitions/api.AdminRoleCreateRes"
                                         }
                                     }
                                 }
@@ -507,38 +465,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "put": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "管理后台-管理员角色"
-                ],
-                "summary": "修改管理员角色",
-                "parameters": [
-                    {
-                        "description": "管理员信息",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.UpdateAdminRoleBodyDto"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "resp",
-                        "schema": {
-                            "$ref": "#/definitions/resp.Result"
-                        }
-                    }
-                }
-            },
+            }
+        },
+        "/api/admin/role/delete": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -549,15 +478,15 @@ const docTemplate = `{
                 "tags": [
                     "管理后台-管理员角色"
                 ],
-                "summary": "新增管理员角色",
+                "summary": "删除角色",
                 "parameters": [
                     {
-                        "description": "管理员信息",
+                        "description": "body",
                         "name": "req",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.CreateAdminRoleBodyDto"
+                            "$ref": "#/definitions/api.AdminRoleDeleteReq"
                         }
                     }
                 ],
@@ -566,6 +495,51 @@ const docTemplate = `{
                         "description": "resp",
                         "schema": {
                             "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/role/list": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理后台-管理员角色"
+                ],
+                "summary": "管理员角色列表",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.AdminRoleListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "resp",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/resp.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/api.AdminRoleListRes"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -595,10 +569,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/utils.PermissionInfo"
-                                            }
+                                            "$ref": "#/definitions/api.AdminPermissionCodeListRes"
                                         }
                                     }
                                 }
@@ -606,8 +577,10 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "put": {
+            }
+        },
+        "/api/admin/role/update": {
+            "post": {
                 "consumes": [
                     "application/json"
                 ],
@@ -617,15 +590,15 @@ const docTemplate = `{
                 "tags": [
                     "管理后台-管理员角色"
                 ],
-                "summary": "修改管理员角色权限",
+                "summary": "修改管理员角色",
                 "parameters": [
                     {
-                        "description": "管理员信息",
+                        "description": "body",
                         "name": "req",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.UpdateAdminRolePermissionBodyDto"
+                            "$ref": "#/definitions/api.AdminRoleUpdateReq"
                         }
                     }
                 ],
@@ -639,8 +612,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/role/{id}": {
-            "delete": {
+        "/api/admin/role/update/permission-codes": {
+            "post": {
                 "consumes": [
                     "application/json"
                 ],
@@ -650,14 +623,16 @@ const docTemplate = `{
                 "tags": [
                     "管理后台-管理员角色"
                 ],
-                "summary": "删除角色",
+                "summary": "修改管理员角色权限",
                 "parameters": [
                     {
-                        "type": "number",
-                        "description": "角色 ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
+                        "description": "body",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.AdminRoleUpdateCodesReq"
+                        }
                     }
                 ],
                 "responses": {
@@ -689,7 +664,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.UpdateUserStatusBodyDto"
+                            "$ref": "#/definitions/controller.UpdateUserStatusBodyDto"
                         }
                     }
                 ],
@@ -703,8 +678,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/user": {
-            "get": {
+        "/api/admin/user/create": {
+            "post": {
                 "consumes": [
                     "application/json"
                 ],
@@ -714,43 +689,16 @@ const docTemplate = `{
                 "tags": [
                     "管理后台-管理员用户"
                 ],
-                "summary": "管理员列表",
+                "summary": "新增管理员",
                 "parameters": [
                     {
-                        "type": "number",
-                        "default": 1,
-                        "description": "当前页",
-                        "name": "current",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "default": 20,
-                        "description": "每页条数",
-                        "name": "page_size",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "需要排序的列",
-                        "name": "order_key",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "ase",
-                            "desc"
-                        ],
-                        "type": "string",
-                        "description": "排序方式",
-                        "name": "order_type",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "按用户名搜索",
-                        "name": "keyword",
-                        "in": "query"
+                        "description": "body",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.AdminUserCreateReq"
+                        }
                     }
                 ],
                 "responses": {
@@ -765,57 +713,11 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/resp.RList"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "list": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/model.AdminUser"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
+                                            "$ref": "#/definitions/api.AdminUserCreateRes"
                                         }
                                     }
                                 }
                             ]
-                        }
-                    }
-                }
-            },
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "管理后台-管理员用户"
-                ],
-                "summary": "新增管理员",
-                "parameters": [
-                    {
-                        "description": "管理员信息",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.CreateAdminUserBodyDto"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "resp",
-                        "schema": {
-                            "$ref": "#/definitions/resp.Result"
                         }
                     }
                 }
@@ -845,7 +747,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.AdminUser"
+                                            "$ref": "#/definitions/api.AdminUserInfoRes"
                                         }
                                     }
                                 }
@@ -855,8 +757,86 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/user/reset-password/{id}": {
-            "put": {
+        "/api/admin/user/delete": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理后台-管理员用户"
+                ],
+                "summary": "删除管理员",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.AdminUserDeleteReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "resp",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/user/list": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理后台-管理员用户"
+                ],
+                "summary": "管理员列表",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.AdminUserListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "resp",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/resp.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/api.AdminUserListRes"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/user/reset-password": {
+            "post": {
                 "consumes": [
                     "application/json"
                 ],
@@ -869,12 +849,12 @@ const docTemplate = `{
                 "summary": "重置管理员密码",
                 "parameters": [
                     {
-                        "description": "管理员信息",
+                        "description": "body",
                         "name": "req",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.ResetPasswordAdminUserBodyDto"
+                            "$ref": "#/definitions/api.AdminUserResetPasswordReq"
                         }
                     }
                 ],
@@ -888,8 +868,41 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/user/role": {
-            "put": {
+        "/api/admin/user/update/info": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理后台-管理员用户"
+                ],
+                "summary": "修改管理员信息",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.AdminUserUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "resp",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/user/update/role": {
+            "post": {
                 "consumes": [
                     "application/json"
                 ],
@@ -902,12 +915,12 @@ const docTemplate = `{
                 "summary": "为管理用户更新角色",
                 "parameters": [
                     {
-                        "description": "req",
+                        "description": "body",
                         "name": "req",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.AdminUserUpdateRolesBodyDto"
+                            "$ref": "#/definitions/api.AdminUserUpdateRoleReq"
                         }
                     }
                 ],
@@ -921,8 +934,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/user/status/{id}": {
-            "put": {
+        "/api/admin/user/update/status": {
+            "post": {
                 "consumes": [
                     "application/json"
                 ],
@@ -935,19 +948,12 @@ const docTemplate = `{
                 "summary": "修改管理员状态(封禁/解封)",
                 "parameters": [
                     {
-                        "type": "number",
-                        "description": "管理员ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "用户状态",
+                        "description": "body",
                         "name": "req",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.UpdateAdminUserStatusBodyDto"
+                            "$ref": "#/definitions/api.AdminUserUpdateStatusReq"
                         }
                     }
                 ],
@@ -1054,68 +1060,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/user/{id}": {
-            "put": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "管理后台-管理员用户"
-                ],
-                "summary": "修改管理员信息",
-                "parameters": [
-                    {
-                        "description": "管理员信息",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.UpdateAdminUserBodyDto"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "resp",
-                        "schema": {
-                            "$ref": "#/definitions/resp.Result"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "管理后台-管理员用户"
-                ],
-                "summary": "删除管理员",
-                "parameters": [
-                    {
-                        "type": "number",
-                        "description": "管理员ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "resp",
-                        "schema": {
-                            "$ref": "#/definitions/resp.Result"
-                        }
-                    }
-                }
-            }
-        },
         "/api/auth/login": {
             "post": {
                 "consumes": [
@@ -1135,7 +1079,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.loginBodyDto"
+                            "$ref": "#/definitions/controller.loginBodyDto"
                         }
                     }
                 ],
@@ -1151,7 +1095,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/api.loginSuccessResponse"
+                                            "$ref": "#/definitions/controller.loginSuccessResponse"
                                         }
                                     }
                                 }
@@ -1180,7 +1124,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.registerBodyDto"
+                            "$ref": "#/definitions/controller.registerBodyDto"
                         }
                     }
                 ],
@@ -1196,7 +1140,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/api.loginSuccessResponse"
+                                            "$ref": "#/definitions/controller.loginSuccessResponse"
                                         }
                                     }
                                 }
@@ -1225,7 +1169,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.wxMpLoginBodyDto"
+                            "$ref": "#/definitions/controller.wxMpLoginBodyDto"
                         }
                     }
                 ],
@@ -1241,7 +1185,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/api.loginSuccessResponse"
+                                            "$ref": "#/definitions/controller.loginSuccessResponse"
                                         }
                                     }
                                 }
@@ -1270,7 +1214,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/api.CreateCaptchaBodyDto"
+                            "$ref": "#/definitions/controller.CreateCaptchaBodyDto"
                         }
                     }
                 ],
@@ -1428,298 +1372,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "api.AdminUserUpdateRolesBodyDto": {
-            "type": "object",
-            "required": [
-                "role_ids",
-                "user_id"
-            ],
-            "properties": {
-                "role_ids": {
-                    "description": "角色 ID",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "user_id": {
-                    "description": "用户 ID",
-                    "type": "integer"
-                }
-            }
-        },
-        "api.CreateAdminRoleBodyDto": {
-            "type": "object",
-            "required": [
-                "code",
-                "name"
-            ],
-            "properties": {
-                "code": {
-                    "description": "用户名",
-                    "type": "string"
-                },
-                "desc": {
-                    "description": "描述",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "姓名",
-                    "type": "string"
-                }
-            }
-        },
-        "api.CreateAdminUserBodyDto": {
-            "type": "object",
-            "required": [
-                "email",
-                "name",
-                "password",
-                "username"
-            ],
-            "properties": {
-                "avatar": {
-                    "description": "头像",
-                    "type": "string"
-                },
-                "email": {
-                    "description": "邮箱",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "姓名",
-                    "type": "string"
-                },
-                "password": {
-                    "description": "密码",
-                    "type": "string"
-                },
-                "username": {
-                    "description": "用户名",
-                    "type": "string"
-                }
-            }
-        },
-        "api.CreateCaptchaBodyDto": {
-            "type": "object",
-            "required": [
-                "captcha_key",
-                "captcha_value",
-                "scenes",
-                "type",
-                "value"
-            ],
-            "properties": {
-                "captcha_key": {
-                    "description": "图形验证码的key",
-                    "type": "string"
-                },
-                "captcha_value": {
-                    "description": "输入的图形验证码",
-                    "type": "string"
-                },
-                "scenes": {
-                    "description": "使用场景， 1-注册 2-忘记密码 3-修改手机 4-修改邮箱",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/consts.CaptchaScenes"
-                        }
-                    ]
-                },
-                "type": {
-                    "description": "验证码类型， 1-手机 2-邮箱",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/consts.CaptchaType"
-                        }
-                    ]
-                },
-                "value": {
-                    "description": "手机/邮箱账号",
-                    "type": "string"
-                }
-            }
-        },
-        "api.CreateNewsBodyDto": {
-            "type": "object",
-            "required": [
-                "title"
-            ],
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "cover": {
-                    "type": "string"
-                },
-                "desc": {
-                    "type": "string"
-                },
-                "push_date": {
-                    "description": "发布日期 YYYY-MM-DD HH:mm:ss",
-                    "type": "string"
-                },
-                "recommend": {
-                    "description": "推荐等级 0 为不推荐，数值越大越靠前",
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "api.ResetPasswordAdminUserBodyDto": {
-            "type": "object",
-            "required": [
-                "password"
-            ],
-            "properties": {
-                "password": {
-                    "description": "密码",
-                    "type": "string"
-                }
-            }
-        },
-        "api.UpdateAdminRoleBodyDto": {
-            "type": "object",
-            "required": [
-                "code",
-                "id",
-                "name"
-            ],
-            "properties": {
-                "code": {
-                    "description": "用户名",
-                    "type": "string"
-                },
-                "desc": {
-                    "description": "描述",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "角色 ID",
-                    "type": "integer"
-                },
-                "name": {
-                    "description": "姓名",
-                    "type": "string"
-                }
-            }
-        },
-        "api.UpdateAdminRolePermissionBodyDto": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "codes": {
-                    "description": "权限码",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "id": {
-                    "description": "角色 ID",
-                    "type": "integer"
-                }
-            }
-        },
-        "api.UpdateAdminUserBodyDto": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "avatar": {
-                    "description": "头像",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "姓名",
-                    "type": "string"
-                }
-            }
-        },
-        "api.UpdateAdminUserStatusBodyDto": {
-            "type": "object",
-            "required": [
-                "status"
-            ],
-            "properties": {
-                "status": {
-                    "description": "状态 1-解封 2-封禁",
-                    "enum": [
-                        -1,
-                        1
-                    ],
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/consts.AdminUserStatus"
-                        }
-                    ]
-                }
-            }
-        },
-        "api.UpdateNewsBodyDto": {
-            "type": "object",
-            "required": [
-                "id",
-                "title"
-            ],
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "cover": {
-                    "type": "string"
-                },
-                "desc": {
-                    "type": "string"
-                },
-                "id": {
-                    "description": "角色 ID",
-                    "type": "integer"
-                },
-                "push_date": {
-                    "description": "发布日期 YYYY-MM-DD HH:mm:ss",
-                    "type": "string"
-                },
-                "recommend": {
-                    "description": "推荐等级 0 为不推荐，数值越大越靠前",
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "api.UpdateUserStatusBodyDto": {
-            "type": "object",
-            "required": [
-                "id",
-                "status"
-            ],
-            "properties": {
-                "id": {
-                    "description": "用户 ID",
-                    "type": "integer"
-                },
-                "status": {
-                    "description": "状态 -1封禁 1-正常",
-                    "enum": [
-                        -1,
-                        1
-                    ],
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/consts.UserStatus"
-                        }
-                    ]
-                }
-            }
-        },
-        "api.adminInitRootUserBodyDto": {
+        "api.AdminInitRootUserReq": {
             "type": "object",
             "required": [
                 "email",
@@ -1746,7 +1399,207 @@ const docTemplate = `{
                 }
             }
         },
-        "api.adminUserForgetPasswordBodyDto": {
+        "api.AdminInitRootUserRes": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.AdminPermissionCodeListRes": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/utils.PermissionInfo"
+                    }
+                }
+            }
+        },
+        "api.AdminRoleCreateReq": {
+            "type": "object",
+            "required": [
+                "code",
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "description": "角色编码",
+                    "type": "string"
+                },
+                "desc": {
+                    "description": "描述",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "角色名称",
+                    "type": "string"
+                }
+            }
+        },
+        "api.AdminRoleCreateRes": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "角色 ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "api.AdminRoleDeleteReq": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "description": "角色 ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "api.AdminRoleListReq": {
+            "type": "object",
+            "properties": {
+                "current": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "keyword": {
+                    "description": "查询关键字",
+                    "type": "string"
+                },
+                "order_key": {
+                    "type": "string"
+                },
+                "order_type": {
+                    "type": "string",
+                    "enum": [
+                        "ase",
+                        "desc"
+                    ]
+                },
+                "page_size": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "api.AdminRoleListRes": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.AdminRole"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.AdminRoleUpdateCodesReq": {
+            "type": "object",
+            "required": [
+                "codes",
+                "id"
+            ],
+            "properties": {
+                "codes": {
+                    "description": "权限码",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "description": "角色 ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "api.AdminRoleUpdateReq": {
+            "type": "object",
+            "required": [
+                "code",
+                "id",
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "description": "角色编码",
+                    "type": "string"
+                },
+                "desc": {
+                    "description": "描述",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "角色 ID",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "角色名称",
+                    "type": "string"
+                }
+            }
+        },
+        "api.AdminUserCreateReq": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "邮箱",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "姓名",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "api.AdminUserCreateRes": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "管理员ID",
+                    "type": "string"
+                }
+            }
+        },
+        "api.AdminUserDeleteReq": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "description": "ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "api.AdminUserForgetPasswordReq": {
             "type": "object",
             "required": [
                 "captcha",
@@ -1768,64 +1621,95 @@ const docTemplate = `{
                 }
             }
         },
-        "api.adminUserLoginBodyDto": {
+        "api.AdminUserInfoRes": {
             "type": "object",
             "properties": {
-                "password": {
-                    "description": "密码",
+                "avatar": {
                     "type": "string"
                 },
-                "username": {
-                    "description": "用户名",
-                    "type": "string"
-                }
-            }
-        },
-        "api.adminUserLoginSuccessResponse": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string"
-                }
-            }
-        },
-        "api.loginBodyDto": {
-            "type": "object",
-            "properties": {
-                "password": {
-                    "description": "密码",
-                    "type": "string"
-                },
-                "username": {
-                    "description": "用户名",
-                    "type": "string"
-                }
-            }
-        },
-        "api.loginSuccessResponse": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string"
-                }
-            }
-        },
-        "api.registerBodyDto": {
-            "type": "object",
-            "required": [
-                "email",
-                "password",
-                "username"
-            ],
-            "properties": {
-                "captcha": {
-                    "description": "邮箱验证码",
+                "created_at": {
                     "type": "string"
                 },
                 "email": {
-                    "description": "邮箱",
                     "type": "string"
                 },
+                "id": {
+                    "type": "integer"
+                },
+                "is_root": {
+                    "description": "是否是超级管理员",
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "news": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.News"
+                    }
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.AdminRole"
+                    }
+                },
+                "status": {
+                    "$ref": "#/definitions/consts.AdminUserStatus"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.AdminUserListReq": {
+            "type": "object",
+            "properties": {
+                "current": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "keyword": {
+                    "description": "查询关键字",
+                    "type": "string"
+                },
+                "order_key": {
+                    "type": "string"
+                },
+                "order_type": {
+                    "type": "string",
+                    "enum": [
+                        "ase",
+                        "desc"
+                    ]
+                },
+                "page_size": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "api.AdminUserListRes": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.AdminUser"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.AdminUserLoginReq": {
+            "type": "object",
+            "properties": {
                 "password": {
                     "description": "密码",
                     "type": "string"
@@ -1836,15 +1720,94 @@ const docTemplate = `{
                 }
             }
         },
-        "api.wxMpLoginBodyDto": {
+        "api.AdminUserLoginRes": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.AdminUserResetPasswordReq": {
             "type": "object",
             "required": [
-                "code"
+                "id",
+                "password"
             ],
             "properties": {
-                "code": {
-                    "description": "code",
+                "id": {
+                    "description": "ID",
+                    "type": "integer"
+                },
+                "password": {
+                    "description": "密码",
                     "type": "string"
+                }
+            }
+        },
+        "api.AdminUserUpdateReq": {
+            "type": "object",
+            "required": [
+                "id",
+                "name"
+            ],
+            "properties": {
+                "avatar": {
+                    "description": "头像",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "姓名",
+                    "type": "string"
+                }
+            }
+        },
+        "api.AdminUserUpdateRoleReq": {
+            "type": "object",
+            "required": [
+                "role_ids",
+                "user_id"
+            ],
+            "properties": {
+                "role_ids": {
+                    "description": "角色 ID",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "user_id": {
+                    "description": "用户 ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "api.AdminUserUpdateStatusReq": {
+            "type": "object",
+            "required": [
+                "id",
+                "status"
+            ],
+            "properties": {
+                "id": {
+                    "description": "ID",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "状态 1-解封 2-封禁",
+                    "enum": [
+                        -1,
+                        1
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.AdminUserStatus"
+                        }
+                    ]
                 }
             }
         },
@@ -1913,6 +1876,191 @@ const docTemplate = `{
                 "UserStatusNormal",
                 "UserStatusLocked"
             ]
+        },
+        "controller.CreateCaptchaBodyDto": {
+            "type": "object",
+            "required": [
+                "captcha_key",
+                "captcha_value",
+                "scenes",
+                "type",
+                "value"
+            ],
+            "properties": {
+                "captcha_key": {
+                    "description": "图形验证码的key",
+                    "type": "string"
+                },
+                "captcha_value": {
+                    "description": "输入的图形验证码",
+                    "type": "string"
+                },
+                "scenes": {
+                    "description": "使用场景， 1-注册 2-忘记密码 3-修改手机 4-修改邮箱",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.CaptchaScenes"
+                        }
+                    ]
+                },
+                "type": {
+                    "description": "验证码类型， 1-手机 2-邮箱",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.CaptchaType"
+                        }
+                    ]
+                },
+                "value": {
+                    "description": "手机/邮箱账号",
+                    "type": "string"
+                }
+            }
+        },
+        "controller.CreateNewsBodyDto": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "cover": {
+                    "type": "string"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "push_date": {
+                    "description": "发布日期 YYYY-MM-DD HH:mm:ss",
+                    "type": "string"
+                },
+                "recommend": {
+                    "description": "推荐等级 0 为不推荐，数值越大越靠前",
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "controller.UpdateNewsBodyDto": {
+            "type": "object",
+            "required": [
+                "id",
+                "title"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "cover": {
+                    "type": "string"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "id": {
+                    "description": "角色 ID",
+                    "type": "integer"
+                },
+                "push_date": {
+                    "description": "发布日期 YYYY-MM-DD HH:mm:ss",
+                    "type": "string"
+                },
+                "recommend": {
+                    "description": "推荐等级 0 为不推荐，数值越大越靠前",
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "controller.UpdateUserStatusBodyDto": {
+            "type": "object",
+            "required": [
+                "id",
+                "status"
+            ],
+            "properties": {
+                "id": {
+                    "description": "用户 ID",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "状态 -1封禁 1-正常",
+                    "enum": [
+                        -1,
+                        1
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.UserStatus"
+                        }
+                    ]
+                }
+            }
+        },
+        "controller.loginBodyDto": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "controller.loginSuccessResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "controller.registerBodyDto": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "captcha": {
+                    "description": "邮箱验证码",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "邮箱",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "controller.wxMpLoginBodyDto": {
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "code": {
+                    "description": "code",
+                    "type": "string"
+                }
+            }
         },
         "model.AdminRole": {
             "type": "object",
@@ -2111,7 +2259,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "order_type": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "ase",
+                        "desc"
+                    ]
                 },
                 "page_size": {
                     "type": "integer",
