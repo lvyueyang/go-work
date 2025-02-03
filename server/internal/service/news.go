@@ -3,6 +3,7 @@ package service
 import (
 	"server/dal/dao"
 	"server/dal/model"
+	"server/internal/api"
 	"server/internal/lib/errs"
 	"server/internal/types"
 	"server/internal/utils"
@@ -25,7 +26,7 @@ type FindNewsListOption struct {
 	Keyword string `json:"keyword" form:"keyword"`
 }
 
-func (s *NewsService) FindList(query FindNewsListOption) (utils.ListResult[[]*model.News], error) {
+func (s *NewsService) FindList(query api.NewsListReq) (utils.ListResult[[]*model.News], error) {
 	result := utils.ListResult[[]*model.News]{}
 	n := dao.News
 	q := n.Omit(n.Content).Where(
