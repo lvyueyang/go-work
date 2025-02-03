@@ -4,9 +4,9 @@ import "fmt"
 
 type PermissionInfo struct {
 	// 权限码
-	Code string `json:"code"`
+	Code string `json:"code" binding:"required"`
 	// 权限名称
-	Name string `json:"name"`
+	Name string `json:"name" binding:"required"`
 }
 
 var PermissionList = []PermissionInfo{}

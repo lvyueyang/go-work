@@ -11,7 +11,9 @@ type HomeController struct{}
 func NewHomeController(e *gin.Engine) {
 	c := &HomeController{}
 	router := e.Group("/")
-	router.GET("/", c.HomePage)
+	{
+		router.GET("/", c.HomePage)
+	}
 }
 
 // HomePage 主页

@@ -5,12 +5,12 @@ import { message } from '@/utils/notice';
 import { useRequest } from 'ahooks';
 import { Button, Card, DatePicker, Form, Input, InputNumber, Row } from 'antd';
 import dayjs from 'dayjs';
-import { ApiUpdateNewsBodyDto } from 'interface/serverApi';
 import { useEffect } from 'react';
 import { history, useParams } from 'umi';
 import { createApi, getDetailApi, updateApi } from './module';
+import { ApiNewsUpdateReq } from '@/interface/serverApi';
 
-type FormValues = ApiUpdateNewsBodyDto;
+type FormValues = ApiNewsUpdateReq;
 
 export default function NewsForm() {
   const { id } = useParams();
@@ -24,7 +24,6 @@ export default function NewsForm() {
         await updateApi({
           ...values,
           id: Number(id),
-          push_date: dayjs(values.push_date).format('YYYY-MM-DD HH:mm:ss'),
         });
         message.success('更新成功');
       } else {
@@ -39,7 +38,6 @@ export default function NewsForm() {
   useEffect(() => {
     if (id) {
       getDetailApi(Number(id)).then((res) => {
-        console.log('res: ', res);
         form.setFieldsValue({
           ...res.data.data,
           // @ts-ignore

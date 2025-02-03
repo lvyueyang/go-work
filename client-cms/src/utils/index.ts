@@ -25,7 +25,7 @@ export function transformSort(sort: { [key: string]: SortOrder }) {
     if (!value) return {};
     return {
       order_key: key,
-      order_type: ORDER_ENUM[value],
+      order_type: ORDER_ENUM[value] as 'desc' | 'ase',
     };
   });
 

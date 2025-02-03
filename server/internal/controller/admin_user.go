@@ -31,15 +31,17 @@ func NewAdminUserController(e *gin.Engine) {
 	}
 	admin := e.Group("/api/admin/user")
 
-	admin.GET("/current", middleware.AdminAuth(), c.CurrentInfo)
-	admin.POST("/list", middleware.AdminRole(utils.CreatePermission("admin:user:find:list", "查询管理员列表")), c.FindList)
-	admin.POST("/create", middleware.AdminRole(utils.CreatePermission("admin:user:create", "创建管理员")), c.Create)
-	admin.POST("/update/info", middleware.AdminRole(utils.CreatePermission("admin:user:update:info", "修改管理员基本信息")), c.Update)
-	admin.POST("/update/status", middleware.AdminRole(utils.CreatePermission("admin:user:update:status", "修改管理员状态")), c.UpdateStatus)
-	admin.POST("/update/role", middleware.AdminRole(utils.CreatePermission("admin:user:update:role", "修改管理员角色")), c.UpdateRole)
-	admin.POST("/reset-password", middleware.AdminRole(utils.CreatePermission("admin:user:update:password", "修改管理员密码")), c.ResetPassword)
-	admin.POST("/delete", middleware.AdminRole(utils.CreatePermission("admin:user:delete", "删除管理员")), c.Delete)
-	admin.POST("/upload", middleware.AdminRole(utils.CreatePermission("admin:user:upload:file", "上传文件到本地")), c.Upload)
+	{
+		admin.GET("/current", middleware.AdminAuth(), c.CurrentInfo)
+		admin.POST("/list", middleware.AdminRole(utils.CreatePermission("admin:user:find:list", "查询管理员列表")), c.FindList)
+		admin.POST("/create", middleware.AdminRole(utils.CreatePermission("admin:user:create", "创建管理员")), c.Create)
+		admin.POST("/update/info", middleware.AdminRole(utils.CreatePermission("admin:user:update:info", "修改管理员基本信息")), c.Update)
+		admin.POST("/update/status", middleware.AdminRole(utils.CreatePermission("admin:user:update:status", "修改管理员状态")), c.UpdateStatus)
+		admin.POST("/update/role", middleware.AdminRole(utils.CreatePermission("admin:user:update:role", "修改管理员角色")), c.UpdateRole)
+		admin.POST("/reset-password", middleware.AdminRole(utils.CreatePermission("admin:user:update:password", "修改管理员密码")), c.ResetPassword)
+		admin.POST("/delete", middleware.AdminRole(utils.CreatePermission("admin:user:delete", "删除管理员")), c.Delete)
+		admin.POST("/upload", middleware.AdminRole(utils.CreatePermission("admin:user:upload:file", "上传文件到本地")), c.Upload)
+	}
 }
 
 // FindList

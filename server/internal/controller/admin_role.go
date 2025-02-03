@@ -23,12 +23,14 @@ func NewAdminRoleController(e *gin.Engine) {
 		adminUserService: service.NewAdminUserService(),
 	}
 	group := e.Group("/api/admin/role")
-	group.POST("/list", middleware.AdminRole(utils.CreatePermission("admin:role:find:list", "查询管理员角色列表")), c.FindList)
-	group.POST("/create", middleware.AdminRole(utils.CreatePermission("admin:role:create", "创建管理员角色")), c.Create)
-	group.POST("/update", middleware.AdminRole(utils.CreatePermission("admin:role:update:info", "修改管理员角色信息")), c.Update)
-	group.POST("/delete", middleware.AdminRole(utils.CreatePermission("admin:role:delete", "删除管理员角色")), c.Delete)
-	group.POST("/update/permission-codes", middleware.AdminRole(utils.CreatePermission("admin:role:update:code", "修改管理角色权限码")), c.UpdatePermissionCodes)
-	group.GET("/permission/codes", c.FindPermissionCodes)
+	{
+		group.POST("/list", middleware.AdminRole(utils.CreatePermission("admin:role:find:list", "查询管理员角色列表")), c.FindList)
+		group.POST("/create", middleware.AdminRole(utils.CreatePermission("admin:role:create", "创建管理员角色")), c.Create)
+		group.POST("/update", middleware.AdminRole(utils.CreatePermission("admin:role:update:info", "修改管理员角色信息")), c.Update)
+		group.POST("/delete", middleware.AdminRole(utils.CreatePermission("admin:role:delete", "删除管理员角色")), c.Delete)
+		group.POST("/update/permission-codes", middleware.AdminRole(utils.CreatePermission("admin:role:update:code", "修改管理角色权限码")), c.UpdatePermissionCodes)
+		group.GET("/permission/codes", c.FindPermissionCodes)
+	}
 }
 
 // FindList

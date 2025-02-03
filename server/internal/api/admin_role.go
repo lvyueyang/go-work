@@ -33,7 +33,7 @@ type (
 // 修改角色
 type (
 	AdminRoleUpdateReq struct {
-		ID uint `json:"id"  binding:"required" label:"角色 ID"` // 角色 ID
+		ID uint `json:"id"  binding:"required" label:"角色 ID" required:"true"` // 角色 ID
 		AdminRoleCreateReq
 	}
 	AdminRoleUpdateRes struct {
@@ -64,7 +64,5 @@ type (
 type (
 	AdminPermissionCodeListReq struct {
 	}
-	AdminPermissionCodeListRes struct {
-		List []utils.PermissionInfo `json:"list"`
-	}
+	AdminPermissionCodeListRes = []utils.PermissionInfo
 )

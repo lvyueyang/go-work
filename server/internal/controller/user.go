@@ -21,12 +21,16 @@ func NewUserController(e *gin.Engine) {
 		service: service.NewUserService(),
 	}
 	router := e.Group("/api/user")
-	router.GET("/current", middleware.Auth(), c.CurrentInfo)
+	{
+		router.GET("/current", middleware.Auth(), c.CurrentInfo)
+	}
 
 	// 管理后台使用的路由
 	admin := e.Group("/api/admin/c-user")
-	admin.GET("", middleware.AdminRole(utils.CreatePermission("admin:c_user:find:list", "查询C端用户列表")), c.FindList)
-	admin.PUT("/status", middleware.AdminRole(utils.CreatePermission("admin:c_user:update:status", "修改C端用户状态")), c.UpdateState)
+	{
+		admin.GET("", middleware.AdminRole(utils.CreatePermission("admin:c_user:find:list", "查询C端用户列表")), c.FindList)
+		admin.PUT("/status", middleware.AdminRole(utils.CreatePermission("admin:c_user:update:status", "修改C端用户状态")), c.UpdateState)
+	}
 
 }
 

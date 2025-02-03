@@ -1,33 +1,34 @@
 import { AIP_FIX } from '@/constants';
-import { ListResult, Result, request } from '@/request';
 import {
-  ApiCreateNewsBodyDto,
-  ApiUpdateNewsBodyDto,
-  ModelNews,
-  ServiceFindNewsListOption,
-} from 'interface/serverApi';
-
+  ApiNewsCreateReq,
+  ApiNewsCreateRes,
+  ApiNewsInfoRes,
+  ApiNewsListReq,
+  ApiNewsListRes,
+  ApiNewsUpdateReq,
+} from '@/interface/serverApi';
+import { Result, request } from '@/request';
 /** 列表 */
-export const getListApi = (body: ServiceFindNewsListOption) => {
-  return request.post<ListResult<ModelNews>>(`${AIP_FIX}/news/list`, body);
+export const getListApi = (body: ApiNewsListReq) => {
+  return request.post<Result<ApiNewsListRes>>(`${AIP_FIX}/news/list`, body);
 };
 
 /** 详情 */
 export const getDetailApi = (id: number) => {
-  return request.get<Result<ModelNews>>(`${AIP_FIX}/news/${id}`);
+  return request.post<Result<ApiNewsInfoRes>>(`${AIP_FIX}/news/info`, { id });
 };
 
 /** 创建 */
-export const createApi = (body: ApiCreateNewsBodyDto) => {
-  return request.post<Result<void>>(`${AIP_FIX}/news`, body);
+export const createApi = (body: ApiNewsCreateReq) => {
+  return request.post<Result<ApiNewsCreateRes>>(`${AIP_FIX}/news/create`, body);
 };
 
 /** 修改 */
-export const updateApi = (body: ApiUpdateNewsBodyDto) => {
-  return request.put<Result<void>>(`${AIP_FIX}/news/`, body);
+export const updateApi = (body: ApiNewsUpdateReq) => {
+  return request.post<Result<void>>(`${AIP_FIX}/news/update/info`, body);
 };
 
 /** 删除 */
-export const removeApi = (id: number | string) => {
-  return request.delete<Result<void>>(`${AIP_FIX}/news/${id}`);
+export const removeApi = (id: number) => {
+  return request.post<Result<void>>(`${AIP_FIX}/news/delete`, { id });
 };

@@ -19,9 +19,11 @@ func NewAuthController(e *gin.Engine) {
 		service: service.NewAuthService(),
 	}
 	router := e.Group("/api/auth")
-	router.POST("/login", c.Login)
-	router.POST("/wxmp/login", c.WxMpLogin)
-	router.POST("/register", c.Register)
+	{
+		router.POST("/login", c.Login)
+		router.POST("/wxmp/login", c.WxMpLogin)
+		router.POST("/register", c.Register)
+	}
 }
 
 //

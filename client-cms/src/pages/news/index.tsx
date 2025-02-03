@@ -2,12 +2,12 @@ import { transformPagination, transformSort } from '@/utils';
 import { message } from '@/utils/notice';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button, Input, Popconfirm, Space, Tag } from 'antd';
-import { ModelNews } from 'interface/serverApi';
 import { useRef, useState } from 'react';
 import { Link, history } from 'umi';
 import { getListApi, removeApi } from './module';
+import { ApiNewsInfoRes } from '@/interface/serverApi';
 
-type TableItem = ModelNews;
+type TableItem = ApiNewsInfoRes;
 
 export default function NewsListPage() {
   const [searchForm, setSearchForm] = useState({

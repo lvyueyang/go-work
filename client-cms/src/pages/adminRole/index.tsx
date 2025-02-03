@@ -1,6 +1,5 @@
 import PageTable from '@/components/PageTable';
 import { ModalType, useFormModal } from '@/hooks/useFormModal';
-import { ApiCreateAdminRoleBodyDto, ModelAdminRole } from '@/interface/serverApi';
 import { PERMISSION_CODE, Permission } from '@/permission';
 import { transformPagination } from '@/utils';
 import { message } from '@/utils/notice';
@@ -16,9 +15,10 @@ import {
   updateApi,
   updateCodeApi,
 } from './module';
+import { ApiAdminRoleUpdateReq, ModelAdminRole } from '@/interface/serverApi';
 
-type TableItem = Required<ModelAdminRole>;
-type FormValues = ApiCreateAdminRoleBodyDto & { id?: number };
+type TableItem = ModelAdminRole;
+type FormValues = ApiAdminRoleUpdateReq;
 
 class CodeModalState {
   role?: number;
@@ -43,7 +43,6 @@ export default function AdminRoleList() {
       return list;
     });
   });
-  console.log('codesList: ', codesList);
 
   const infoModal = useFormModal<FormValues & { id?: number }>({
     submit: (values, modal) => {
@@ -119,7 +118,7 @@ export default function AdminRoleList() {
                 onClick={() => {
                   setCodeModal((state) => ({
                     ...state,
-                    values: row.permission_codes,
+                    values: row.permission_codes || [],
                     open: true,
                     role: row.id,
                   }));

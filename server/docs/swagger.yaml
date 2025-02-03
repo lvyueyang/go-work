@@ -24,13 +24,6 @@ definitions:
       token:
         type: string
     type: object
-  api.AdminPermissionCodeListRes:
-    properties:
-      list:
-        items:
-          $ref: '#/definitions/utils.PermissionInfo'
-        type: array
-    type: object
   api.AdminRoleCreateReq:
     properties:
       code:
@@ -179,10 +172,12 @@ definitions:
       avatar:
         type: string
       created_at:
+        description: 创建时间
         type: string
       email:
         type: string
       id:
+        description: ID
         type: integer
       is_root:
         description: 是否是超级管理员
@@ -200,9 +195,16 @@ definitions:
       status:
         $ref: '#/definitions/consts.AdminUserStatus'
       updated_at:
+        description: 更新时间
         type: string
       username:
         type: string
+    required:
+    - created_at
+    - id
+    - name
+    - status
+    - username
     type: object
   api.AdminUserListReq:
     properties:
@@ -303,6 +305,133 @@ definitions:
     - id
     - status
     type: object
+  api.NewsCreateReq:
+    properties:
+      content:
+        type: string
+      cover:
+        type: string
+      desc:
+        type: string
+      is_visible:
+        description: 可见性
+        type: boolean
+      push_date:
+        description: 发布日期 YYYY-MM-DD HH:mm:ss
+        type: string
+      recommend:
+        description: 推荐等级 0 为不推荐，数值越大越靠前
+        type: integer
+      title:
+        type: string
+    required:
+    - title
+    type: object
+  api.NewsCreateRes:
+    properties:
+      id:
+        description: 新闻 ID
+        type: integer
+    required:
+    - id
+    type: object
+  api.NewsInfoRes:
+    properties:
+      author_id:
+        description: 作者
+        type: integer
+      content:
+        description: 内容
+        type: string
+      cover:
+        description: 封面
+        type: string
+      created_at:
+        description: 创建时间
+        type: string
+      desc:
+        description: 简介
+        type: string
+      id:
+        description: ID
+        type: integer
+      is_visible:
+        description: 可见性
+        type: boolean
+      push_date:
+        description: 发布日期
+        type: string
+      recommend:
+        description: 推荐等级
+        type: integer
+      title:
+        description: 新闻标题
+        type: string
+      updated_at:
+        description: 更新时间
+        type: string
+    required:
+    - author_id
+    - created_at
+    - id
+    - is_visible
+    - recommend
+    - title
+    type: object
+  api.NewsListReq:
+    properties:
+      current:
+        minimum: 1
+        type: integer
+      keyword:
+        description: 查询关键字
+        type: string
+      order_key:
+        type: string
+      order_type:
+        enum:
+        - ase
+        - desc
+        type: string
+      page_size:
+        minimum: 0
+        type: integer
+    type: object
+  api.NewsListRes:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/model.News'
+        type: array
+      total:
+        type: integer
+    type: object
+  api.NewsUpdateReq:
+    properties:
+      content:
+        type: string
+      cover:
+        type: string
+      desc:
+        type: string
+      id:
+        description: 新闻 ID
+        type: integer
+      is_visible:
+        description: 可见性
+        type: boolean
+      push_date:
+        description: 发布日期 YYYY-MM-DD HH:mm:ss
+        type: string
+      recommend:
+        description: 推荐等级 0 为不推荐，数值越大越靠前
+        type: integer
+      title:
+        type: string
+    required:
+    - id
+    - title
+    type: object
   consts.AdminUserStatus:
     enum:
     - 1
@@ -379,48 +508,6 @@ definitions:
     - type
     - value
     type: object
-  controller.CreateNewsBodyDto:
-    properties:
-      content:
-        type: string
-      cover:
-        type: string
-      desc:
-        type: string
-      push_date:
-        description: 发布日期 YYYY-MM-DD HH:mm:ss
-        type: string
-      recommend:
-        description: 推荐等级 0 为不推荐，数值越大越靠前
-        type: integer
-      title:
-        type: string
-    required:
-    - title
-    type: object
-  controller.UpdateNewsBodyDto:
-    properties:
-      content:
-        type: string
-      cover:
-        type: string
-      desc:
-        type: string
-      id:
-        description: 角色 ID
-        type: integer
-      push_date:
-        description: 发布日期 YYYY-MM-DD HH:mm:ss
-        type: string
-      recommend:
-        description: 推荐等级 0 为不推荐，数值越大越靠前
-        type: integer
-      title:
-        type: string
-    required:
-    - id
-    - title
-    type: object
   controller.UpdateUserStatusBodyDto:
     properties:
       id:
@@ -484,10 +571,12 @@ definitions:
         description: 角色编号
         type: string
       created_at:
+        description: 创建时间
         type: string
       desc:
         type: string
       id:
+        description: ID
         type: integer
       name:
         type: string
@@ -497,21 +586,30 @@ definitions:
           type: string
         type: array
       updated_at:
+        description: 更新时间
         type: string
       users:
         items:
           $ref: '#/definitions/model.AdminUser'
         type: array
+    required:
+    - code
+    - created_at
+    - id
+    - name
+    - users
     type: object
   model.AdminUser:
     properties:
       avatar:
         type: string
       created_at:
+        description: 创建时间
         type: string
       email:
         type: string
       id:
+        description: ID
         type: integer
       is_root:
         description: 是否是超级管理员
@@ -529,9 +627,16 @@ definitions:
       status:
         $ref: '#/definitions/consts.AdminUserStatus'
       updated_at:
+        description: 更新时间
         type: string
       username:
         type: string
+    required:
+    - created_at
+    - id
+    - name
+    - status
+    - username
     type: object
   model.News:
     properties:
@@ -539,16 +644,23 @@ definitions:
         description: 作者
         type: integer
       content:
+        description: 内容
         type: string
       cover:
         description: 封面
         type: string
       created_at:
+        description: 创建时间
         type: string
       desc:
+        description: 简介
         type: string
       id:
+        description: ID
         type: integer
+      is_visible:
+        description: 可见性
+        type: boolean
       push_date:
         description: 发布日期
         type: string
@@ -556,9 +668,18 @@ definitions:
         description: 推荐等级
         type: integer
       title:
+        description: 新闻标题
         type: string
       updated_at:
+        description: 更新时间
         type: string
+    required:
+    - author_id
+    - created_at
+    - id
+    - is_visible
+    - recommend
+    - title
     type: object
   model.User:
     properties:
@@ -567,16 +688,19 @@ definitions:
       avatar:
         type: string
       created_at:
+        description: 创建时间
         type: string
       email:
         type: string
       id:
+        description: ID
         type: integer
       name:
         type: string
       status:
         $ref: '#/definitions/consts.UserStatus'
       updated_at:
+        description: 更新时间
         type: string
       username:
         type: string
@@ -584,6 +708,12 @@ definitions:
         type: string
       wx_union_id:
         type: string
+    required:
+    - created_at
+    - email
+    - id
+    - status
+    - username
     type: object
   resp.RList:
     properties:
@@ -601,24 +731,6 @@ definitions:
       msg:
         type: string
     type: object
-  service.FindNewsListOption:
-    properties:
-      current:
-        minimum: 1
-        type: integer
-      keyword:
-        type: string
-      order_key:
-        type: string
-      order_type:
-        enum:
-        - ase
-        - desc
-        type: string
-      page_size:
-        minimum: 0
-        type: integer
-    type: object
   utils.PermissionInfo:
     properties:
       code:
@@ -627,6 +739,9 @@ definitions:
       name:
         description: 权限名称
         type: string
+    required:
+    - code
+    - name
     type: object
 info:
   contact: {}
@@ -758,7 +873,7 @@ paths:
       summary: 用户列表
       tags:
       - 管理后台-C端用户管理
-  /api/admin/news:
+  /api/admin/news/create:
     post:
       consumes:
       - application/json
@@ -768,39 +883,24 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/controller.CreateNewsBodyDto'
+          $ref: '#/definitions/api.NewsCreateReq'
       produces:
       - application/json
       responses:
         "200":
           description: resp
           schema:
-            $ref: '#/definitions/resp.Result'
+            allOf:
+            - $ref: '#/definitions/resp.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.NewsCreateRes'
+              type: object
       summary: 新增新闻
       tags:
       - 管理后台-新闻
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: Body
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/controller.UpdateNewsBodyDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: resp
-          schema:
-            $ref: '#/definitions/resp.Result'
-      summary: 修改新闻
-      tags:
-      - 管理后台-新闻
-  /api/admin/news/{id}:
-    delete:
+  /api/admin/news/delete:
+    post:
       consumes:
       - application/json
       parameters:
@@ -819,15 +919,17 @@ paths:
       summary: 删除新闻
       tags:
       - 管理后台-新闻
-    get:
+  /api/admin/news/info:
+    post:
       consumes:
       - application/json
       parameters:
-      - description: ID
-        in: path
-        name: id
+      - description: Body
+        in: body
+        name: req
         required: true
-        type: number
+        schema:
+          $ref: '#/definitions/api.NewsListReq'
       produces:
       - application/json
       responses:
@@ -838,7 +940,7 @@ paths:
             - $ref: '#/definitions/resp.Result'
             - properties:
                 data:
-                  $ref: '#/definitions/model.News'
+                  $ref: '#/definitions/api.NewsInfoRes'
               type: object
       summary: 新闻详情
       tags:
@@ -853,7 +955,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/service.FindNewsListOption'
+          $ref: '#/definitions/api.NewsListReq'
       produces:
       - application/json
       responses:
@@ -864,16 +966,30 @@ paths:
             - $ref: '#/definitions/resp.Result'
             - properties:
                 data:
-                  allOf:
-                  - $ref: '#/definitions/resp.RList'
-                  - properties:
-                      list:
-                        items:
-                          $ref: '#/definitions/model.News'
-                        type: array
-                    type: object
+                  $ref: '#/definitions/api.NewsListRes'
               type: object
       summary: 新闻列表
+      tags:
+      - 管理后台-新闻
+  /api/admin/news/update/info:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.NewsUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 修改新闻
       tags:
       - 管理后台-新闻
   /api/admin/role/create:
@@ -963,7 +1079,9 @@ paths:
             - $ref: '#/definitions/resp.Result'
             - properties:
                 data:
-                  $ref: '#/definitions/api.AdminPermissionCodeListRes'
+                  items:
+                    $ref: '#/definitions/utils.PermissionInfo'
+                  type: array
               type: object
       summary: 管理后台权限码列表
       tags:

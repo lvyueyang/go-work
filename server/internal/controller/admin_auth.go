@@ -23,9 +23,11 @@ func NewAdminAuthController(e *gin.Engine) {
 		captchaService:   service.NewCaptchaService(),
 	}
 	group := e.Group("/api/admin/auth")
-	group.POST("/login", c.Login)
-	group.POST("/init-root-user", c.InitRootUser)
-	group.POST("/forget-password", c.ForgetPassword)
+	{
+		group.POST("/login", c.Login)
+		group.POST("/init-root-user", c.InitRootUser)
+		group.POST("/forget-password", c.ForgetPassword)
+	}
 }
 
 // Login

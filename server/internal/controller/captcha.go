@@ -27,10 +27,12 @@ func NewCaptchaController(e *gin.Engine) {
 	}
 
 	router := e.Group("/api/captcha")
-	router.POST("", c.Create)
-	router.GET("/image", c.CreateImage)
-	router.GET("/image/:key", c.ImageFile)
-	router.GET("/clear", middleware.Auth(), c.Clear)
+	{
+		router.POST("", c.Create)
+		router.GET("/image", c.CreateImage)
+		router.GET("/image/:key", c.ImageFile)
+		router.GET("/clear", middleware.Auth(), c.Clear)
+	}
 
 	c.service.ClearExpiration()
 	cr := cron.New()

@@ -40,7 +40,7 @@ type (
 		Recommend uint   `json:"recommend"`  // 推荐等级 0 为不推荐，数值越大越靠前
 	}
 	NewsCreateRes struct {
-		ID uint `json:"id" label:"新闻 ID"` // 新闻 ID
+		ID uint `json:"id" label:"新闻 ID" binding:"required"` // 新闻 ID
 	}
 )
 

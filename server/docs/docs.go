@@ -226,38 +226,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/news": {
-            "put": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "管理后台-新闻"
-                ],
-                "summary": "修改新闻",
-                "parameters": [
-                    {
-                        "description": "Body",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controller.UpdateNewsBodyDto"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "resp",
-                        "schema": {
-                            "$ref": "#/definitions/resp.Result"
-                        }
-                    }
-                }
-            },
+        "/api/admin/news/create": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -276,7 +245,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.CreateNewsBodyDto"
+                            "$ref": "#/definitions/api.NewsCreateReq"
                         }
                     }
                 ],
@@ -284,7 +253,95 @@ const docTemplate = `{
                     "200": {
                         "description": "resp",
                         "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/resp.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/api.NewsCreateRes"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/news/delete": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理后台-新闻"
+                ],
+                "summary": "删除新闻",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "resp",
+                        "schema": {
                             "$ref": "#/definitions/resp.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/news/info": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理后台-新闻"
+                ],
+                "summary": "新闻详情",
+                "parameters": [
+                    {
+                        "description": "Body",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.NewsListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "resp",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/resp.Result"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/api.NewsInfoRes"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -309,7 +366,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/service.FindNewsListOption"
+                            "$ref": "#/definitions/api.NewsListReq"
                         }
                     }
                 ],
@@ -325,22 +382,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/resp.RList"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "list": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/model.News"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
+                                            "$ref": "#/definitions/api.NewsListRes"
                                         }
                                     }
                                 }
@@ -350,8 +392,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/news/{id}": {
-            "get": {
+        "/api/admin/news/update/info": {
+            "post": {
                 "consumes": [
                     "application/json"
                 ],
@@ -361,55 +403,16 @@ const docTemplate = `{
                 "tags": [
                     "管理后台-新闻"
                 ],
-                "summary": "新闻详情",
+                "summary": "修改新闻",
                 "parameters": [
                     {
-                        "type": "number",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "resp",
+                        "description": "Body",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/resp.Result"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/model.News"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/api.NewsUpdateReq"
                         }
-                    }
-                }
-            },
-            "delete": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "管理后台-新闻"
-                ],
-                "summary": "删除新闻",
-                "parameters": [
-                    {
-                        "type": "number",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -569,7 +572,10 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/api.AdminPermissionCodeListRes"
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/utils.PermissionInfo"
+                                            }
                                         }
                                     }
                                 }
@@ -1407,17 +1413,6 @@ const docTemplate = `{
                 }
             }
         },
-        "api.AdminPermissionCodeListRes": {
-            "type": "object",
-            "properties": {
-                "list": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/utils.PermissionInfo"
-                    }
-                }
-            }
-        },
         "api.AdminRoleCreateReq": {
             "type": "object",
             "required": [
@@ -1623,17 +1618,26 @@ const docTemplate = `{
         },
         "api.AdminUserInfoRes": {
             "type": "object",
+            "required": [
+                "created_at",
+                "id",
+                "name",
+                "status",
+                "username"
+            ],
             "properties": {
                 "avatar": {
                     "type": "string"
                 },
                 "created_at": {
+                    "description": "创建时间",
                     "type": "string"
                 },
                 "email": {
                     "type": "string"
                 },
                 "id": {
+                    "description": "ID",
                     "type": "integer"
                 },
                 "is_root": {
@@ -1659,6 +1663,7 @@ const docTemplate = `{
                     "$ref": "#/definitions/consts.AdminUserStatus"
                 },
                 "updated_at": {
+                    "description": "更新时间",
                     "type": "string"
                 },
                 "username": {
@@ -1811,6 +1816,185 @@ const docTemplate = `{
                 }
             }
         },
+        "api.NewsCreateReq": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "cover": {
+                    "type": "string"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "is_visible": {
+                    "description": "可见性",
+                    "type": "boolean"
+                },
+                "push_date": {
+                    "description": "发布日期 YYYY-MM-DD HH:mm:ss",
+                    "type": "string"
+                },
+                "recommend": {
+                    "description": "推荐等级 0 为不推荐，数值越大越靠前",
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.NewsCreateRes": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "description": "新闻 ID",
+                    "type": "integer"
+                }
+            }
+        },
+        "api.NewsInfoRes": {
+            "type": "object",
+            "required": [
+                "author_id",
+                "created_at",
+                "id",
+                "is_visible",
+                "recommend",
+                "title"
+            ],
+            "properties": {
+                "author_id": {
+                    "description": "作者",
+                    "type": "integer"
+                },
+                "content": {
+                    "description": "内容",
+                    "type": "string"
+                },
+                "cover": {
+                    "description": "封面",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "desc": {
+                    "description": "简介",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID",
+                    "type": "integer"
+                },
+                "is_visible": {
+                    "description": "可见性",
+                    "type": "boolean"
+                },
+                "push_date": {
+                    "description": "发布日期",
+                    "type": "string"
+                },
+                "recommend": {
+                    "description": "推荐等级",
+                    "type": "integer"
+                },
+                "title": {
+                    "description": "新闻标题",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
+        "api.NewsListReq": {
+            "type": "object",
+            "properties": {
+                "current": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "keyword": {
+                    "description": "查询关键字",
+                    "type": "string"
+                },
+                "order_key": {
+                    "type": "string"
+                },
+                "order_type": {
+                    "type": "string",
+                    "enum": [
+                        "ase",
+                        "desc"
+                    ]
+                },
+                "page_size": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "api.NewsListRes": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.News"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.NewsUpdateReq": {
+            "type": "object",
+            "required": [
+                "id",
+                "title"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "cover": {
+                    "type": "string"
+                },
+                "desc": {
+                    "type": "string"
+                },
+                "id": {
+                    "description": "新闻 ID",
+                    "type": "integer"
+                },
+                "is_visible": {
+                    "description": "可见性",
+                    "type": "boolean"
+                },
+                "push_date": {
+                    "description": "发布日期 YYYY-MM-DD HH:mm:ss",
+                    "type": "string"
+                },
+                "recommend": {
+                    "description": "推荐等级 0 为不推荐，数值越大越靠前",
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "consts.AdminUserStatus": {
             "type": "integer",
             "enum": [
@@ -1917,67 +2101,6 @@ const docTemplate = `{
                 }
             }
         },
-        "controller.CreateNewsBodyDto": {
-            "type": "object",
-            "required": [
-                "title"
-            ],
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "cover": {
-                    "type": "string"
-                },
-                "desc": {
-                    "type": "string"
-                },
-                "push_date": {
-                    "description": "发布日期 YYYY-MM-DD HH:mm:ss",
-                    "type": "string"
-                },
-                "recommend": {
-                    "description": "推荐等级 0 为不推荐，数值越大越靠前",
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "controller.UpdateNewsBodyDto": {
-            "type": "object",
-            "required": [
-                "id",
-                "title"
-            ],
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "cover": {
-                    "type": "string"
-                },
-                "desc": {
-                    "type": "string"
-                },
-                "id": {
-                    "description": "角色 ID",
-                    "type": "integer"
-                },
-                "push_date": {
-                    "description": "发布日期 YYYY-MM-DD HH:mm:ss",
-                    "type": "string"
-                },
-                "recommend": {
-                    "description": "推荐等级 0 为不推荐，数值越大越靠前",
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
         "controller.UpdateUserStatusBodyDto": {
             "type": "object",
             "required": [
@@ -2064,18 +2187,27 @@ const docTemplate = `{
         },
         "model.AdminRole": {
             "type": "object",
+            "required": [
+                "code",
+                "created_at",
+                "id",
+                "name",
+                "users"
+            ],
             "properties": {
                 "code": {
                     "description": "角色编号",
                     "type": "string"
                 },
                 "created_at": {
+                    "description": "创建时间",
                     "type": "string"
                 },
                 "desc": {
                     "type": "string"
                 },
                 "id": {
+                    "description": "ID",
                     "type": "integer"
                 },
                 "name": {
@@ -2089,6 +2221,7 @@ const docTemplate = `{
                     }
                 },
                 "updated_at": {
+                    "description": "更新时间",
                     "type": "string"
                 },
                 "users": {
@@ -2101,17 +2234,26 @@ const docTemplate = `{
         },
         "model.AdminUser": {
             "type": "object",
+            "required": [
+                "created_at",
+                "id",
+                "name",
+                "status",
+                "username"
+            ],
             "properties": {
                 "avatar": {
                     "type": "string"
                 },
                 "created_at": {
+                    "description": "创建时间",
                     "type": "string"
                 },
                 "email": {
                     "type": "string"
                 },
                 "id": {
+                    "description": "ID",
                     "type": "integer"
                 },
                 "is_root": {
@@ -2137,6 +2279,7 @@ const docTemplate = `{
                     "$ref": "#/definitions/consts.AdminUserStatus"
                 },
                 "updated_at": {
+                    "description": "更新时间",
                     "type": "string"
                 },
                 "username": {
@@ -2146,12 +2289,21 @@ const docTemplate = `{
         },
         "model.News": {
             "type": "object",
+            "required": [
+                "author_id",
+                "created_at",
+                "id",
+                "is_visible",
+                "recommend",
+                "title"
+            ],
             "properties": {
                 "author_id": {
                     "description": "作者",
                     "type": "integer"
                 },
                 "content": {
+                    "description": "内容",
                     "type": "string"
                 },
                 "cover": {
@@ -2159,13 +2311,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "created_at": {
+                    "description": "创建时间",
                     "type": "string"
                 },
                 "desc": {
+                    "description": "简介",
                     "type": "string"
                 },
                 "id": {
+                    "description": "ID",
                     "type": "integer"
+                },
+                "is_visible": {
+                    "description": "可见性",
+                    "type": "boolean"
                 },
                 "push_date": {
                     "description": "发布日期",
@@ -2176,15 +2335,24 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "title": {
+                    "description": "新闻标题",
                     "type": "string"
                 },
                 "updated_at": {
+                    "description": "更新时间",
                     "type": "string"
                 }
             }
         },
         "model.User": {
             "type": "object",
+            "required": [
+                "created_at",
+                "email",
+                "id",
+                "status",
+                "username"
+            ],
             "properties": {
                 "age": {
                     "type": "integer"
@@ -2193,12 +2361,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "created_at": {
+                    "description": "创建时间",
                     "type": "string"
                 },
                 "email": {
                     "type": "string"
                 },
                 "id": {
+                    "description": "ID",
                     "type": "integer"
                 },
                 "name": {
@@ -2208,6 +2378,7 @@ const docTemplate = `{
                     "$ref": "#/definitions/consts.UserStatus"
                 },
                 "updated_at": {
+                    "description": "更新时间",
                     "type": "string"
                 },
                 "username": {
@@ -2245,34 +2416,12 @@ const docTemplate = `{
                 }
             }
         },
-        "service.FindNewsListOption": {
-            "type": "object",
-            "properties": {
-                "current": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "keyword": {
-                    "type": "string"
-                },
-                "order_key": {
-                    "type": "string"
-                },
-                "order_type": {
-                    "type": "string",
-                    "enum": [
-                        "ase",
-                        "desc"
-                    ]
-                },
-                "page_size": {
-                    "type": "integer",
-                    "minimum": 0
-                }
-            }
-        },
         "utils.PermissionInfo": {
             "type": "object",
+            "required": [
+                "code",
+                "name"
+            ],
             "properties": {
                 "code": {
                     "description": "权限码",

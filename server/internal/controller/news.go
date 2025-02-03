@@ -7,7 +7,6 @@ import (
 	"server/internal/service"
 	"server/internal/utils"
 	"server/internal/utils/resp"
-	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -22,11 +21,13 @@ func NewNewsController(e *gin.Engine) {
 		service: service.NewNewsService(),
 	}
 	admin := e.Group("/api/admin/news")
-	admin.POST("/list", middleware.AdminRole(utils.CreatePermission("admin:news:find:list", "查询新闻列表")), c.FindList)
-	admin.POST("/info", middleware.AdminRole(utils.CreatePermission("admin:news:find:detail", "查询新闻详情")), c.FindDetail)
-	admin.POST("/create", middleware.AdminRole(utils.CreatePermission("admin:news:create", "创建新闻")), c.Create)
-	admin.POST("/updata/info", middleware.AdminRole(utils.CreatePermission("admin:news:update:info", "修改新闻信息")), c.Update)
-	admin.DELETE("/delete", middleware.AdminRole(utils.CreatePermission("admin:news:delete", "删除新闻")), c.Delete)
+	{
+		admin.POST("/list", middleware.AdminRole(utils.CreatePermission("admin:news:find:list", "查询新闻列表")), c.FindList)
+		admin.POST("/info", middleware.AdminRole(utils.CreatePermission("admin:news:find:detail", "查询新闻详情")), c.FindDetail)
+		admin.POST("/create", middleware.AdminRole(utils.CreatePermission("admin:news:create", "创建新闻")), c.Create)
+		admin.POST("/update/info", middleware.AdminRole(utils.CreatePermission("admin:news:update:info", "修改新闻信息")), c.Update)
+		admin.POST("/delete", middleware.AdminRole(utils.CreatePermission("admin:news:delete", "删除新闻")), c.Delete)
+	}
 }
 
 // FindList
@@ -57,12 +58,13 @@ func (c *NewsController) FindList(ctx *gin.Context) {
 //	@Tags		管理后台-新闻
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		api.NewsListReq						true	"Body"
-//	@Success	200	{object}	resp.Result{data=model.News}	"resp"
-//	@Router		/api/admin/news/info [get]
+//	@Param		req	body		api.NewsListReq					true	"Body"
+//	@Success	200	{object}	resp.Result{data=api.NewsInfoRes}	"resp"
+//	@Router		/api/admin/news/info [post]
 func (c *NewsController) FindDetail(ctx *gin.Context) {
-	id, _ := strconv.ParseUint(ctx.Param("id"), 10, 64)
-	info, err := c.service.FindDetail(uint(id))
+	var body api.NewsInfoReq
+	utils.BindBody(ctx, &body)
+	info, err := c.service.FindDetail(body.ID)
 	if err != nil {
 		ctx.JSON(resp.ParseErr(err))
 		return
@@ -76,8 +78,8 @@ func (c *NewsController) FindDetail(ctx *gin.Context) {
 //	@Tags		管理后台-新闻
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		api.NewsCreateReq	true	"Body"
-//	@Success	200	{object}	resp.Result{data=api.NewsCreateRes}			"resp"
+//	@Param		req	body		api.NewsCreateReq					true	"Body"
+//	@Success	200	{object}	resp.Result{data=api.NewsCreateRes}	"resp"
 //	@Router		/api/admin/news/create [post]
 func (c *NewsController) Create(ctx *gin.Context) {
 	var body api.NewsCreateReq
@@ -119,7 +121,7 @@ func (c *NewsController) Create(ctx *gin.Context) {
 //	@Produce	json
 //	@Param		req	body		api.NewsUpdateReq	true	"Body"
 //	@Success	200	{object}	resp.Result			"resp"
-//	@Router		/api/admin/news/update [post]
+//	@Router		/api/admin/news/update/info [post]
 func (c *NewsController) Update(ctx *gin.Context) {
 	var body api.NewsUpdateReq
 	utils.BindBody(ctx, &body)
@@ -167,19 +169,4 @@ func (c *NewsController) Delete(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(resp.Succ(nil))
-}
-
-type CreateNewsBodyDto struct {
-	Title     string `json:"title" binding:"required" label:"新闻名称"`
-	Desc      string `json:"desc"`
-	Cover     string `json:"cover"`
-	Content   string `json:"content"`
-	PushDate  string `json:"push_date"`  // 发布日期 YYYY-MM-DD HH:mm:ss
-	IsVisible string `json:"is_visible"` // 可见性
-	Recommend uint   `json:"recommend"`  // 推荐等级 0 为不推荐，数值越大越靠前
-}
-
-type UpdateNewsBodyDto struct {
-	ID uint `json:"id"  binding:"required" label:"角色 ID"` // 角色 ID
-	CreateNewsBodyDto
 }
