@@ -4,16 +4,34 @@ import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button, Input, Popconfirm, Space, Tag } from 'antd';
 import { useRef, useState } from 'react';
 import { Link, history } from 'umi';
-import { getListApi, removeApi } from './module';
-import { ApiNewsInfoRes } from '@/interface/serverApi';
+import { createApi, getListApi, removeApi, updateApi } from './module';
+import { ApiNewsInfoRes, ApiNewsUpdateReq } from '@/interface/serverApi';
+import { FormModal } from './modal';
+import { ModalType, useFormModal } from '@/hooks/useFormModal';
 
 type TableItem = ApiNewsInfoRes;
+type FormValues = ApiNewsUpdateReq;
 
 export default function NewsListPage() {
   const [searchForm, setSearchForm] = useState({
     keyword: '',
   });
   const tableRef = useRef<ActionType>();
+
+  const formModal = useFormModal<FormValues>({
+    submit: async (values) => {
+      const isUpdate = !!values.id;
+      if (isUpdate) {
+        await updateApi({
+          ...values,
+          id: values.id,
+        });
+      } else {
+        await createApi({ ...values });
+        message.success('创建成功');
+      }
+    },
+  });
 
   const columns: ProColumns<TableItem>[] = [
     {
@@ -70,6 +88,14 @@ export default function NewsListPage() {
       render: (_, row) => {
         return (
           <Space>
+            <a
+              onClick={() => {
+                formModal.form.setFieldsValue(row);
+                formModal.formModalShow(ModalType.UPDATE);
+              }}
+            >
+              编辑
+            </a>
             <Link to={`/news/update/${row.id}`}>编辑</Link>
             <Popconfirm
               title="确定要删除这个新闻吗？"
@@ -133,13 +159,17 @@ export default function NewsListPage() {
             key="create"
             type="primary"
             onClick={() => {
-              history.push('/news/create');
+              // history.push('/news/create');
+              formModal.form.resetFields();
+              formModal.formModalShow();
             }}
           >
             新增新闻
           </Button>,
         ]}
       />
+
+      <FormModal formModal={formModal} />
     </>
   );
 }

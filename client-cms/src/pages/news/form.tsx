@@ -3,12 +3,12 @@ import UploadImage from '@/components/UploadImage';
 import { NEWS_TYPE } from '@/constants';
 import { message } from '@/utils/notice';
 import { useRequest } from 'ahooks';
-import { Button, Card, DatePicker, Form, Input, InputNumber, Row } from 'antd';
-import dayjs from 'dayjs';
+import { Button, Card, Form, Input, InputNumber, Row } from 'antd';
 import { useEffect } from 'react';
 import { history, useParams } from 'umi';
 import { createApi, getDetailApi, updateApi } from './module';
 import { ApiNewsUpdateReq } from '@/interface/serverApi';
+import { StringDatePicker } from '@/components/StringDatePicker';
 
 type FormValues = ApiNewsUpdateReq;
 
@@ -19,7 +19,7 @@ export default function NewsForm() {
   const { run: submitHandler, loading } = useRequest(
     async () => {
       const values = form.getFieldsValue();
-      values.push_date = dayjs(values.push_date).format('YYYY-MM-DD HH:mm:ss');
+      // values.push_date = dayjs(values.push_date).format('YYYY-MM-DD HH:mm:ss');
       if (isUpdate) {
         await updateApi({
           ...values,
@@ -41,7 +41,7 @@ export default function NewsForm() {
         form.setFieldsValue({
           ...res.data.data,
           // @ts-ignore
-          push_date: dayjs(res.data.data.push_date),
+          // push_date: dayjs(res.data.data.push_date),
         });
       });
     }
@@ -60,7 +60,7 @@ export default function NewsForm() {
             <Input />
           </Form.Item>
           <Form.Item label="发布日期" name="push_date">
-            <DatePicker format={'YYYY-MM-DD HH:mm'} showTime />
+            <StringDatePicker format={'YYYY-MM-DD HH:mm'} showTime />
           </Form.Item>
           <Form.Item
             label="推荐等级"
