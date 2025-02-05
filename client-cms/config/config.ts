@@ -2,7 +2,7 @@ import { defineConfig } from 'umi';
 import router from './router';
 
 export default defineConfig({
-  npmClient: 'yarn',
+  npmClient: 'pnpm',
   proxy: {
     '/api': {
       target: 'http://127.0.0.1:4002/',

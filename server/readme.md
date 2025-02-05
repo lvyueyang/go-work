@@ -36,3 +36,15 @@ Models 添加 model.Work
 ```sh
 go run cmd/gen_dao/dao.go
 ```
+
+## 初始化超级管理员用户
+
+### 方式一
+
+1. 启动 client-cms 前端
+2. 打开 init-root-user 页面
+3. 输入表单完成超级管理员初始化
+
+### 方式二
+
+参照 swagger 文档，调用 `/api/admin/auth/init-root-user` 接口完成初始化
