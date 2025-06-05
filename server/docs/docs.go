@@ -139,8 +139,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/c-user": {
-            "get": {
+        "/api/admin/c-user/list": {
+            "post": {
                 "consumes": [
                     "application/json"
                 ],
@@ -153,40 +153,13 @@ const docTemplate = `{
                 "summary": "用户列表",
                 "parameters": [
                     {
-                        "type": "number",
-                        "default": 1,
-                        "description": "当前页",
-                        "name": "current",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "default": 20,
-                        "description": "每页条数",
-                        "name": "page_size",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "需要排序的列",
-                        "name": "order_key",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "ase",
-                            "desc"
-                        ],
-                        "type": "string",
-                        "description": "排序方式",
-                        "name": "order_type",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "按名称或ID搜索",
-                        "name": "keyword",
-                        "in": "query"
+                        "description": "body",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.UserListReq"
+                        }
                     }
                 ],
                 "responses": {
@@ -201,26 +174,44 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/resp.RList"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "list": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/model.User"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
+                                            "$ref": "#/definitions/api.UserListRes"
                                         }
                                     }
                                 }
                             ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/c-user/update/status": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理后台-C端用户管理"
+                ],
+                "summary": "修改用户状态",
+                "parameters": [
+                    {
+                        "description": "Body",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.UserUpdateStatusReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "resp",
+                        "schema": {
+                            "$ref": "#/definitions/resp.Result"
                         }
                     }
                 }
@@ -651,39 +642,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/status": {
-            "put": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "管理后台-C端用户管理"
-                ],
-                "summary": "修改用户状态",
-                "parameters": [
-                    {
-                        "description": "Body",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controller.UpdateUserStatusBodyDto"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "resp",
-                        "schema": {
-                            "$ref": "#/definitions/resp.Result"
-                        }
-                    }
-                }
-            }
-        },
         "/api/admin/user/create": {
             "post": {
                 "consumes": [
@@ -1085,7 +1043,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.loginBodyDto"
+                            "$ref": "#/definitions/api.UserLoginReq"
                         }
                     }
                 ],
@@ -1101,7 +1059,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/controller.loginSuccessResponse"
+                                            "$ref": "#/definitions/api.UserLoginRes"
                                         }
                                     }
                                 }
@@ -1130,7 +1088,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.registerBodyDto"
+                            "$ref": "#/definitions/api.UserRegisterReq"
                         }
                     }
                 ],
@@ -1146,7 +1104,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/controller.loginSuccessResponse"
+                                            "$ref": "#/definitions/api.UserRegisterRes"
                                         }
                                     }
                                 }
@@ -1175,7 +1133,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.wxMpLoginBodyDto"
+                            "$ref": "#/definitions/api.UserLoginByWXMpReq"
                         }
                     }
                 ],
@@ -1191,7 +1149,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/controller.loginSuccessResponse"
+                                            "$ref": "#/definitions/api.UserLoginByWXMpRes"
                                         }
                                     }
                                 }
@@ -1220,7 +1178,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.CreateCaptchaBodyDto"
+                            "$ref": "#/definitions/api.CaptchaSendReq"
                         }
                     }
                 ],
@@ -1816,6 +1774,46 @@ const docTemplate = `{
                 }
             }
         },
+        "api.CaptchaSendReq": {
+            "type": "object",
+            "required": [
+                "captcha_key",
+                "captcha_value",
+                "scenes",
+                "type",
+                "value"
+            ],
+            "properties": {
+                "captcha_key": {
+                    "description": "图形验证码的key",
+                    "type": "string"
+                },
+                "captcha_value": {
+                    "description": "输入的图形验证码",
+                    "type": "string"
+                },
+                "scenes": {
+                    "description": "使用场景， 1-注册 2-忘记密码 3-修改手机 4-修改邮箱",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.CaptchaScenes"
+                        }
+                    ]
+                },
+                "type": {
+                    "description": "验证码类型， 1-手机 2-邮箱",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.CaptchaType"
+                        }
+                    ]
+                },
+                "value": {
+                    "description": "手机/邮箱账号",
+                    "type": "string"
+                }
+            }
+        },
         "api.NewsCreateReq": {
             "type": "object",
             "required": [
@@ -1995,6 +1993,161 @@ const docTemplate = `{
                 }
             }
         },
+        "api.UserListReq": {
+            "type": "object",
+            "properties": {
+                "current": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "keyword": {
+                    "description": "查询关键字",
+                    "type": "string"
+                },
+                "order_key": {
+                    "type": "string"
+                },
+                "order_type": {
+                    "type": "string",
+                    "enum": [
+                        "ase",
+                        "desc"
+                    ]
+                },
+                "page_size": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "api.UserListRes": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.User"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.UserLoginByWXMpReq": {
+            "type": "object",
+            "required": [
+                "code"
+            ],
+            "properties": {
+                "code": {
+                    "description": "code",
+                    "type": "string"
+                }
+            }
+        },
+        "api.UserLoginByWXMpRes": {
+            "type": "object",
+            "required": [
+                "token"
+            ],
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.UserLoginReq": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "api.UserLoginRes": {
+            "type": "object",
+            "required": [
+                "token"
+            ],
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.UserRegisterReq": {
+            "type": "object",
+            "required": [
+                "captcha",
+                "email",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "captcha": {
+                    "description": "邮箱验证码",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "邮箱",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "api.UserRegisterRes": {
+            "type": "object",
+            "required": [
+                "token"
+            ],
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.UserUpdateStatusReq": {
+            "type": "object",
+            "required": [
+                "id",
+                "status"
+            ],
+            "properties": {
+                "id": {
+                    "description": "用户 ID",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "状态 -1封禁 1-正常",
+                    "enum": [
+                        -1,
+                        1
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.UserStatus"
+                        }
+                    ]
+                }
+            }
+        },
         "consts.AdminUserStatus": {
             "type": "integer",
             "enum": [
@@ -2060,130 +2213,6 @@ const docTemplate = `{
                 "UserStatusNormal",
                 "UserStatusLocked"
             ]
-        },
-        "controller.CreateCaptchaBodyDto": {
-            "type": "object",
-            "required": [
-                "captcha_key",
-                "captcha_value",
-                "scenes",
-                "type",
-                "value"
-            ],
-            "properties": {
-                "captcha_key": {
-                    "description": "图形验证码的key",
-                    "type": "string"
-                },
-                "captcha_value": {
-                    "description": "输入的图形验证码",
-                    "type": "string"
-                },
-                "scenes": {
-                    "description": "使用场景， 1-注册 2-忘记密码 3-修改手机 4-修改邮箱",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/consts.CaptchaScenes"
-                        }
-                    ]
-                },
-                "type": {
-                    "description": "验证码类型， 1-手机 2-邮箱",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/consts.CaptchaType"
-                        }
-                    ]
-                },
-                "value": {
-                    "description": "手机/邮箱账号",
-                    "type": "string"
-                }
-            }
-        },
-        "controller.UpdateUserStatusBodyDto": {
-            "type": "object",
-            "required": [
-                "id",
-                "status"
-            ],
-            "properties": {
-                "id": {
-                    "description": "用户 ID",
-                    "type": "integer"
-                },
-                "status": {
-                    "description": "状态 -1封禁 1-正常",
-                    "enum": [
-                        -1,
-                        1
-                    ],
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/consts.UserStatus"
-                        }
-                    ]
-                }
-            }
-        },
-        "controller.loginBodyDto": {
-            "type": "object",
-            "properties": {
-                "password": {
-                    "description": "密码",
-                    "type": "string"
-                },
-                "username": {
-                    "description": "用户名",
-                    "type": "string"
-                }
-            }
-        },
-        "controller.loginSuccessResponse": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string"
-                }
-            }
-        },
-        "controller.registerBodyDto": {
-            "type": "object",
-            "required": [
-                "email",
-                "password",
-                "username"
-            ],
-            "properties": {
-                "captcha": {
-                    "description": "邮箱验证码",
-                    "type": "string"
-                },
-                "email": {
-                    "description": "邮箱",
-                    "type": "string"
-                },
-                "password": {
-                    "description": "密码",
-                    "type": "string"
-                },
-                "username": {
-                    "description": "用户名",
-                    "type": "string"
-                }
-            }
-        },
-        "controller.wxMpLoginBodyDto": {
-            "type": "object",
-            "required": [
-                "code"
-            ],
-            "properties": {
-                "code": {
-                    "description": "code",
-                    "type": "string"
-                }
-            }
         },
         "model.AdminRole": {
             "type": "object",
@@ -2389,18 +2418,6 @@ const docTemplate = `{
                 },
                 "wx_union_id": {
                     "type": "string"
-                }
-            }
-        },
-        "resp.RList": {
-            "type": "object",
-            "properties": {
-                "list": {
-                    "type": "array",
-                    "items": {}
-                },
-                "total": {
-                    "type": "integer"
                 }
             }
         },

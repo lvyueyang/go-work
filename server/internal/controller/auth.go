@@ -1,13 +1,12 @@
 package controller
 
 import (
-	"fmt"
-	"server/internal/lib/valid"
+	"server/internal/api"
 	"server/internal/service"
+	"server/internal/utils"
 	"server/internal/utils/resp"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 )
 
 type AuthController struct {
@@ -39,20 +38,20 @@ func NewAuthController(e *gin.Engine) {
 //	@Tags		前台-用户
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		loginBodyDto							true	"body"
-//	@Success	200	{object}	resp.Result{data=loginSuccessResponse}	"resp"
+//	@Param		req	body		api.UserLoginReq					true	"body"
+//	@Success	200	{object}	resp.Result{data=api.UserLoginRes}	"resp"
 //	@Router		/api/auth/login [post]
 func (c *AuthController) Login(ctx *gin.Context) {
-	var body = new(loginBodyDto)
-	if err := ctx.ShouldBindBodyWith(body, binding.JSON); err != nil {
-		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
+	var body api.UserLoginReq
+	if err := utils.BindBody(ctx, &body); err != nil {
 		return
 	}
+
 	token, err := c.service.UsernameAndPasswordLogin(body.Username, body.Password)
 	if err != nil {
 		ctx.JSON(resp.ParseErr(err))
 	} else {
-		ctx.JSON(resp.Success(loginSuccessResponse{Token: token}, "登录成功"))
+		ctx.JSON(resp.Success(api.UserLoginRes{Token: token}, "登录成功"))
 	}
 }
 
@@ -62,13 +61,12 @@ func (c *AuthController) Login(ctx *gin.Context) {
 //	@Tags		前台-用户
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		registerBodyDto							true	"body"
-//	@Success	200	{object}	resp.Result{data=loginSuccessResponse}	"resp"
+//	@Param		req	body		api.UserRegisterReq						true	"body"
+//	@Success	200	{object}	resp.Result{data=api.UserRegisterRes}	"resp"
 //	@Router		/api/auth/register [post]
 func (c *AuthController) Register(ctx *gin.Context) {
-	var body = new(registerBodyDto)
-	if err := ctx.ShouldBindBodyWith(body, binding.JSON); err != nil {
-		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
+	var body api.UserRegisterReq
+	if err := utils.BindBody(ctx, &body); err != nil {
 		return
 	}
 
@@ -76,7 +74,7 @@ func (c *AuthController) Register(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(resp.ParseErr(err))
 	} else {
-		ctx.JSON(resp.Success(loginSuccessResponse{Token: token}, "注册成功"))
+		ctx.JSON(resp.Success(api.UserRegisterRes{Token: token}, "注册成功"))
 	}
 }
 
@@ -86,40 +84,18 @@ func (c *AuthController) Register(ctx *gin.Context) {
 //	@Tags		前台-用户
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		wxMpLoginBodyDto						true	"body"
-//	@Success	200	{object}	resp.Result{data=loginSuccessResponse}	"resp"
+//	@Param		req	body		api.UserLoginByWXMpReq						true	"body"
+//	@Success	200	{object}	resp.Result{data=api.UserLoginByWXMpRes}	"resp"
 //	@Router		/api/auth/wxmp/login [post]
 func (c *AuthController) WxMpLogin(ctx *gin.Context) {
-	var body = new(wxMpLoginBodyDto)
-	if err := ctx.ShouldBindBodyWith(body, binding.JSON); err != nil {
-		fmt.Println(err)
-		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
+	var body api.UserLoginByWXMpReq
+	if err := utils.BindBody(ctx, &body); err != nil {
 		return
 	}
 	token, err := c.service.WxMpOpenidLogin(body.Code)
 	if err != nil {
 		ctx.JSON(resp.ParseErr(err))
 	} else {
-		ctx.JSON(resp.Success(loginSuccessResponse{Token: token}, "登录成功"))
+		ctx.JSON(resp.Success(api.UserLoginByWXMpRes{Token: token}, "登录成功"))
 	}
-}
-
-type loginBodyDto struct {
-	Username string `json:"username"` // 用户名
-	Password string `json:"password"` // 密码
-}
-
-type wxMpLoginBodyDto struct {
-	Code string `json:"code" binding:"required"` // code
-}
-
-type registerBodyDto struct {
-	Username string `json:"username" binding:"required" label:"用户名"` // 用户名
-	Password string `json:"password" binding:"required" label:"密码"`  // 密码
-	Email    string `json:"email" binding:"required" label:"邮箱"`     // 邮箱
-	Captcha  string `json:"captcha"`                                 // 邮箱验证码
-}
-
-type loginSuccessResponse struct {
-	Token string `json:"token"`
 }

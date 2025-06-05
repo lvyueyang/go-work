@@ -3,9 +3,9 @@ package service
 import (
 	"server/dal/dao"
 	"server/dal/model"
+	"server/internal/api"
 	"server/internal/consts"
 	"server/internal/lib/errs"
-	"server/internal/types"
 	"server/internal/utils"
 	"strconv"
 	"strings"
@@ -20,13 +20,7 @@ func NewUserService() *UserService {
 	return userService
 }
 
-type FindUserListOption struct {
-	types.Pagination
-	types.Order
-	Keyword string `json:"keyword" form:"keyword"`
-}
-
-func (s *UserService) FindList(query FindUserListOption) (utils.ListResult[[]*model.User], error) {
+func (s *UserService) FindList(query api.UserListReq) (utils.ListResult[[]*model.User], error) {
 	result := utils.ListResult[[]*model.User]{}
 	n := dao.User
 	q := n.Where(

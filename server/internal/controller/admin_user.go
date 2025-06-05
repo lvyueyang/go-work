@@ -55,7 +55,9 @@ func NewAdminUserController(e *gin.Engine) {
 //	@Router		/api/admin/user/list [post]
 func (c *AdminUserController) FindList(ctx *gin.Context) {
 	var body api.AdminUserListReq
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 
 	result, err := c.service.FindList(body)
 	if err != nil {
@@ -76,7 +78,9 @@ func (c *AdminUserController) FindList(ctx *gin.Context) {
 //	@Router		/api/admin/user/create [post]
 func (c *AdminUserController) Create(ctx *gin.Context) {
 	var body api.AdminUserCreateReq
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 	info, err := c.service.Create(model.AdminUser{
 		Name:     body.Name,
 		Username: body.Username,
@@ -103,7 +107,9 @@ func (c *AdminUserController) Create(ctx *gin.Context) {
 //	@Router		/api/admin/user/update/info [post]
 func (c *AdminUserController) Update(ctx *gin.Context) {
 	var body api.AdminUserUpdateReq
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 
 	if err := c.service.Update(body); err != nil {
 		ctx.JSON(resp.ParseErr(err))
@@ -123,7 +129,9 @@ func (c *AdminUserController) Update(ctx *gin.Context) {
 //	@Router		/api/admin/user/update/status [post]
 func (c *AdminUserController) UpdateStatus(ctx *gin.Context) {
 	var body api.AdminUserUpdateStatusReq
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 	if err := c.service.UpdateStatus(body.ID, body.Status); err != nil {
 		ctx.JSON(resp.ParseErr(err))
 		return
@@ -142,7 +150,9 @@ func (c *AdminUserController) UpdateStatus(ctx *gin.Context) {
 //	@Router		/api/admin/user/delete [post]
 func (c *AdminUserController) Delete(ctx *gin.Context) {
 	var body api.AdminUserDeleteReq
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 	if err := c.service.Delete(body.ID); err != nil {
 		ctx.JSON(resp.ParseErr(err))
 		return
@@ -161,7 +171,9 @@ func (c *AdminUserController) Delete(ctx *gin.Context) {
 //	@Router		/api/admin/user/reset-password [post]
 func (c *AdminUserController) ResetPassword(ctx *gin.Context) {
 	var body api.AdminUserResetPasswordReq
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 	currentUser := utils.GetCurrentAdminUser(ctx)
 
 	if err := c.service.OnlyRootAdminUser(body.ID, currentUser.ID); err != nil {
@@ -188,7 +200,9 @@ func (c *AdminUserController) ResetPassword(ctx *gin.Context) {
 func (c *AdminUserController) UpdateRole(ctx *gin.Context) {
 	var body api.AdminUserUpdateRoleReq
 
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 
 	if err := c.service.UpdateRole(body.UserId, body.RoleIds); err != nil {
 		ctx.JSON(resp.ParseErr(err))

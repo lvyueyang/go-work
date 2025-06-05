@@ -21,7 +21,7 @@ type (
 // 新闻详情
 type (
 	NewsInfoReq struct {
-		ID uint `json:"id"  binding:"required" label:"新闻 ID"` // 新闻 ID
+		ID uint `json:"id" binding:"required" label:"新闻 ID"` // 新闻 ID
 	}
 	NewsInfoRes struct {
 		model.News

@@ -41,7 +41,9 @@ func NewAdminAuthController(e *gin.Engine) {
 //	@Router		/api/admin/auth/login [post]
 func (c *AdminAuthController) Login(ctx *gin.Context) {
 	var body api.AdminUserLoginReq
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 
 	token, err := c.service.UsernameAndPasswordLogin(body.Username, body.Password)
 	if err != nil {
@@ -62,7 +64,9 @@ func (c *AdminAuthController) Login(ctx *gin.Context) {
 //	@Router		/api/admin/auth/init-root-user [post]
 func (c *AdminAuthController) InitRootUser(ctx *gin.Context) {
 	var body api.AdminInitRootUserReq
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 
 	token, err := c.adminUserService.CreateRootUser(body.Username, body.Name, body.Password, body.Email)
 	if err != nil {
@@ -83,7 +87,9 @@ func (c *AdminAuthController) InitRootUser(ctx *gin.Context) {
 //	@Router		/api/admin/auth/forget-password [post]
 func (c *AdminAuthController) ForgetPassword(ctx *gin.Context) {
 	var body api.AdminUserForgetPasswordReq
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 
 	if ok, err := c.captchaService.Validate(body.Email, consts.CaptchaTypeEmail, body.Captcha, consts.CaptchaScenesForgetPassword); ok == false {
 		ctx.JSON(resp.ParamErr(err.Error()))

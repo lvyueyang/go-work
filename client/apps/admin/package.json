@@ -1,0 +1,34 @@
+{
+  "name": "admin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "后台管理系统",
+  "author": "lvyueyang <975794403@qq.com>",
+  "scripts": {
+    "analyze": "cross-env ANALYZE=1 umi build",
+    "build": "umi build",
+    "dev": "umi dev",
+    "gapi": "node scripts/genSwaggerApi.js",
+    "gperm": "node scripts/genPermission.js",
+    "postinstall": "umi setup",
+    "lint": "umi lint",
+    "serverBuild": "umi build",
+    "setup": "umi setup",
+    "start": "npm run dev"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.2.6",
+    "@ant-design/pro-components": "^2.5.4",
+    "@wangeditor/editor": "^5.1.23",
+    "@wangeditor/editor-for-react": "^1.0.6",
+    "@wangeditor/plugin-upload-attachment": "^1.1.0",
+    "path-to-regexp": "^6.2.1",
+    "react-json-view": "^1.21.3",
+    "@opd/api-interface": "workspace:*"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "swagger-typescript-api": "^13.0.3",
+    "umi": "^4.4.10"
+  }
+}

@@ -1,15 +1,13 @@
 package controller
 
 import (
-	"server/internal/consts"
-	"server/internal/lib/valid"
+	"server/internal/api"
 	"server/internal/middleware"
 	"server/internal/service"
 	"server/internal/utils"
 	"server/internal/utils/resp"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 )
 
 type UserController struct {
@@ -28,8 +26,8 @@ func NewUserController(e *gin.Engine) {
 	// 管理后台使用的路由
 	admin := e.Group("/api/admin/c-user")
 	{
-		admin.GET("", middleware.AdminRole(utils.CreatePermission("admin:c_user:find:list", "查询C端用户列表")), c.FindList)
-		admin.PUT("/status", middleware.AdminRole(utils.CreatePermission("admin:c_user:update:status", "修改C端用户状态")), c.UpdateState)
+		admin.POST("/list", middleware.AdminRole(utils.CreatePermission("admin:c_user:find:list", "查询C端用户列表")), c.FindList)
+		admin.POST("/update/status", middleware.AdminRole(utils.CreatePermission("admin:c_user:update:status", "修改C端用户状态")), c.UpdateState)
 	}
 
 }
@@ -53,20 +51,15 @@ func (c *UserController) CurrentInfo(ctx *gin.Context) {
 //	@Tags		管理后台-C端用户管理
 //	@Accept		json
 //	@Produce	json
-//	@Param		current		query		number											false	"当前页"	default(1)
-//	@Param		page_size	query		number											false	"每页条数"	default(20)
-//	@Param		order_key	query		string											false	"需要排序的列"
-//	@Param		order_type	query		string											false	"排序方式"	Enums(ase,desc)
-//	@Param		keyword		query		string											false	"按名称或ID搜索"
-//	@Success	200			{object}	resp.Result{data=resp.RList{list=[]model.User}}	"resp"
-//	@Router		/api/admin/c-user [get]
+//	@Param		req	body		api.UserListReq	true	"body"
+//	@Success	200			{object}	resp.Result{data=api.UserListRes}	"resp"
+//	@Router		/api/admin/c-user/list [post]
 func (c *UserController) FindList(ctx *gin.Context) {
-	query := service.FindUserListOption{}
-	if err := ctx.ShouldBindQuery(&query); err != nil {
-		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
+	var body api.UserListReq
+	if err := utils.BindBody(ctx, &body); err != nil {
 		return
 	}
-	result, _ := c.service.FindList(query)
+	result, _ := c.service.FindList(body)
 	ctx.JSON(resp.Succ(result))
 }
 
@@ -76,13 +69,12 @@ func (c *UserController) FindList(ctx *gin.Context) {
 //	@Tags		管理后台-C端用户管理
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		UpdateUserStatusBodyDto	true	"Body"
+//	@Param		req	body		api.UserUpdateStatusReq	true	"Body"
 //	@Success	200	{object}	resp.Result				"resp"
-//	@Router		/api/admin/status [put]
+//	@Router		/api/admin/c-user/update/status [post]
 func (c *UserController) UpdateState(ctx *gin.Context) {
-	var body UpdateUserStatusBodyDto
-	if err := ctx.ShouldBindBodyWith(&body, binding.JSON); err != nil {
-		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
+	var body api.UserUpdateStatusReq
+	if err := utils.BindBody(ctx, &body); err != nil {
 		return
 	}
 
@@ -91,14 +83,4 @@ func (c *UserController) UpdateState(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(resp.Succ(nil))
-}
-
-type CreateUserBodyDto struct {
-	Name string `json:"name" binding:"required" label:"姓名"` // 姓名
-	Sex  string `json:"sex" binding:"required" label:"性别"`  // 性别
-}
-
-type UpdateUserStatusBodyDto struct {
-	ID     uint              `json:"id" binding:"required"`                  // 用户 ID
-	Status consts.UserStatus `json:"status" binding:"required" enums:"-1,1"` // 状态 -1封禁 1-正常
 }

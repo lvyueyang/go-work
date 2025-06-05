@@ -1,0 +1,23 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "private": true,
+  "description": "前端",
+  "author": "lvyueyang <975794403@qq.com>",
+  "scripts": {
+    "analyze": "cross-env ANALYZE=1 umi build",
+    "build": "umi build",
+    "dev": "umi dev",
+    "postinstall": "umi setup",
+    "lint": "umi lint",
+    "serverBuild": "umi build",
+    "setup": "umi setup",
+    "start": "npm run dev"
+  },
+  "dependencies": {
+    "@opd/api-interface": "workspace:*"
+  },
+  "devDependencies": {
+    "umi": "^4.4.10"
+  }
+}

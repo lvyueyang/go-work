@@ -41,7 +41,9 @@ func NewNewsController(e *gin.Engine) {
 //	@Router		/api/admin/news/list [post]
 func (c *NewsController) FindList(ctx *gin.Context) {
 	var body api.NewsListReq
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 
 	result, err := c.service.FindList(body)
 	if err != nil {
@@ -58,12 +60,14 @@ func (c *NewsController) FindList(ctx *gin.Context) {
 //	@Tags		管理后台-新闻
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		api.NewsListReq					true	"Body"
+//	@Param		req	body		api.NewsListReq						true	"Body"
 //	@Success	200	{object}	resp.Result{data=api.NewsInfoRes}	"resp"
 //	@Router		/api/admin/news/info [post]
 func (c *NewsController) FindDetail(ctx *gin.Context) {
 	var body api.NewsInfoReq
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 	info, err := c.service.FindDetail(body.ID)
 	if err != nil {
 		ctx.JSON(resp.ParseErr(err))
@@ -83,7 +87,9 @@ func (c *NewsController) FindDetail(ctx *gin.Context) {
 //	@Router		/api/admin/news/create [post]
 func (c *NewsController) Create(ctx *gin.Context) {
 	var body api.NewsCreateReq
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 	user := utils.GetCurrentAdminUser(ctx)
 
 	data := model.News{
@@ -124,7 +130,9 @@ func (c *NewsController) Create(ctx *gin.Context) {
 //	@Router		/api/admin/news/update/info [post]
 func (c *NewsController) Update(ctx *gin.Context) {
 	var body api.NewsUpdateReq
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 
 	data := model.News{
 		Title:     body.Title,
@@ -162,7 +170,9 @@ func (c *NewsController) Update(ctx *gin.Context) {
 //	@Router		/api/admin/news/delete [post]
 func (c *NewsController) Delete(ctx *gin.Context) {
 	var body api.NewsDeleteReq
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 
 	if err := c.service.Delete(body.ID); err != nil {
 		ctx.JSON(resp.ParseErr(err))

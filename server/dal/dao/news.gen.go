@@ -38,6 +38,7 @@ func newNews(db *gorm.DB, opts ...gen.DOOption) news {
 	_news.Content = field.NewString(tableName, "content")
 	_news.PushDate = field.NewTime(tableName, "push_date")
 	_news.Recommend = field.NewUint(tableName, "recommend")
+	_news.IsVisible = field.NewBool(tableName, "is_visible")
 	_news.AuthorID = field.NewUint(tableName, "author_id")
 
 	_news.fillFieldMap()
@@ -59,6 +60,7 @@ type news struct {
 	Content   field.String
 	PushDate  field.Time
 	Recommend field.Uint
+	IsVisible field.Bool
 	AuthorID  field.Uint
 
 	fieldMap map[string]field.Expr
@@ -86,6 +88,7 @@ func (n *news) updateTableName(table string) *news {
 	n.Content = field.NewString(table, "content")
 	n.PushDate = field.NewTime(table, "push_date")
 	n.Recommend = field.NewUint(table, "recommend")
+	n.IsVisible = field.NewBool(table, "is_visible")
 	n.AuthorID = field.NewUint(table, "author_id")
 
 	n.fillFieldMap()
@@ -103,7 +106,7 @@ func (n *news) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (n *news) fillFieldMap() {
-	n.fieldMap = make(map[string]field.Expr, 11)
+	n.fieldMap = make(map[string]field.Expr, 12)
 	n.fieldMap["id"] = n.ID
 	n.fieldMap["created_at"] = n.CreatedAt
 	n.fieldMap["updated_at"] = n.UpdatedAt
@@ -114,6 +117,7 @@ func (n *news) fillFieldMap() {
 	n.fieldMap["content"] = n.Content
 	n.fieldMap["push_date"] = n.PushDate
 	n.fieldMap["recommend"] = n.Recommend
+	n.fieldMap["is_visible"] = n.IsVisible
 	n.fieldMap["author_id"] = n.AuthorID
 }
 

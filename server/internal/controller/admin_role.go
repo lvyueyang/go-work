@@ -44,7 +44,9 @@ func NewAdminRoleController(e *gin.Engine) {
 //	@Router		/api/admin/role/list [post]
 func (c *AdminRoleController) FindList(ctx *gin.Context) {
 	var body api.AdminRoleListReq
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 
 	result, err := c.service.FindList(body)
 	if err != nil {
@@ -65,7 +67,9 @@ func (c *AdminRoleController) FindList(ctx *gin.Context) {
 //	@Router		/api/admin/role/create [post]
 func (c *AdminRoleController) Create(ctx *gin.Context) {
 	var body api.AdminRoleCreateReq
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 
 	info, err := c.service.Create(body)
 	if err != nil {
@@ -86,7 +90,9 @@ func (c *AdminRoleController) Create(ctx *gin.Context) {
 //	@Router		/api/admin/role/update [post]
 func (c *AdminRoleController) Update(ctx *gin.Context) {
 	var body api.AdminRoleUpdateReq
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 	if _, err := c.service.Update(body); err != nil {
 		ctx.JSON(resp.ParseErr(err))
 		return
@@ -105,7 +111,9 @@ func (c *AdminRoleController) Update(ctx *gin.Context) {
 //	@Router		/api/admin/role/delete [post]
 func (c *AdminRoleController) Delete(ctx *gin.Context) {
 	var body api.AdminRoleDeleteReq
-	utils.BindBody(ctx, &body)
+	if err := utils.BindBody(ctx, &body); err != nil {
+		return
+	}
 
 	if err := c.service.Delete(body.ID); err != nil {
 		ctx.JSON(resp.ParseErr(err))

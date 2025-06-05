@@ -1,16 +1,15 @@
 package controller
 
 import (
-	"fmt"
+	"server/internal/api"
 	"server/internal/consts"
-	"server/internal/lib/valid"
 	"server/internal/middleware"
 	"server/internal/service"
+	"server/internal/utils"
 	"server/internal/utils/resp"
 
 	"github.com/dchest/captcha"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"github.com/robfig/cron/v3"
 	"golang.org/x/exp/slog"
 )
@@ -49,14 +48,12 @@ func NewCaptchaController(e *gin.Engine) {
 //	@Tags		验证码
 //	@Accept		json
 //	@Produce	json
-//	@Param		req	body		CreateCaptchaBodyDto	true	"body"
+//	@Param		req	body		api.CaptchaSendReq	true	"body"
 //	@Success	200	{object}	resp.Result{data=int}	"验证码 ID"
 //	@Router		/api/captcha [post]
 func (c *CaptchaController) Create(ctx *gin.Context) {
-	var body = new(CreateCaptchaBodyDto)
-	if err := ctx.ShouldBindBodyWith(body, binding.JSON); err != nil {
-		fmt.Printf("%+v\n", err)
-		ctx.JSON(resp.ParamErr(valid.ErrTransform(err)))
+	var body api.CaptchaSendReq
+	if err := utils.BindBody(ctx, &body); err != nil {
 		return
 	}
 
@@ -122,12 +119,4 @@ func (c *CaptchaController) ImageFile(ctx *gin.Context) {
 //	@Router		/api/captcha/clear [get]
 func (c *CaptchaController) Clear(ctx *gin.Context) {
 	c.service.ClearExpiration()
-}
-
-type CreateCaptchaBodyDto struct {
-	Type         consts.CaptchaType   `json:"type" binding:"required"`                        // 验证码类型， 1-手机 2-邮箱
-	Value        string               `json:"value" binding:"required" label:"手机/邮箱账号"`       // 手机/邮箱账号
-	Scenes       consts.CaptchaScenes `json:"scenes" binding:"required"`                      // 使用场景， 1-注册 2-忘记密码 3-修改手机 4-修改邮箱
-	CaptchaKey   string               `json:"captcha_key" binding:"required"`                 // 图形验证码的key
-	CaptchaValue string               `json:"captcha_value" binding:"required" label:"图形验证码"` // 输入的图形验证码
 }

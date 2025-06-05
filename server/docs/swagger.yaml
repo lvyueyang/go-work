@@ -305,6 +305,32 @@ definitions:
     - id
     - status
     type: object
+  api.CaptchaSendReq:
+    properties:
+      captcha_key:
+        description: 图形验证码的key
+        type: string
+      captcha_value:
+        description: 输入的图形验证码
+        type: string
+      scenes:
+        allOf:
+        - $ref: '#/definitions/consts.CaptchaScenes'
+        description: 使用场景， 1-注册 2-忘记密码 3-修改手机 4-修改邮箱
+      type:
+        allOf:
+        - $ref: '#/definitions/consts.CaptchaType'
+        description: 验证码类型， 1-手机 2-邮箱
+      value:
+        description: 手机/邮箱账号
+        type: string
+    required:
+    - captcha_key
+    - captcha_value
+    - scenes
+    - type
+    - value
+    type: object
   api.NewsCreateReq:
     properties:
       content:
@@ -432,6 +458,111 @@ definitions:
     - id
     - title
     type: object
+  api.UserListReq:
+    properties:
+      current:
+        minimum: 1
+        type: integer
+      keyword:
+        description: 查询关键字
+        type: string
+      order_key:
+        type: string
+      order_type:
+        enum:
+        - ase
+        - desc
+        type: string
+      page_size:
+        minimum: 0
+        type: integer
+    type: object
+  api.UserListRes:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+      total:
+        type: integer
+    type: object
+  api.UserLoginByWXMpReq:
+    properties:
+      code:
+        description: code
+        type: string
+    required:
+    - code
+    type: object
+  api.UserLoginByWXMpRes:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
+  api.UserLoginReq:
+    properties:
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  api.UserLoginRes:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
+  api.UserRegisterReq:
+    properties:
+      captcha:
+        description: 邮箱验证码
+        type: string
+      email:
+        description: 邮箱
+        type: string
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    required:
+    - captcha
+    - email
+    - password
+    - username
+    type: object
+  api.UserRegisterRes:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
+  api.UserUpdateStatusReq:
+    properties:
+      id:
+        description: 用户 ID
+        type: integer
+      status:
+        allOf:
+        - $ref: '#/definitions/consts.UserStatus'
+        description: 状态 -1封禁 1-正常
+        enum:
+        - -1
+        - 1
+    required:
+    - id
+    - status
+    type: object
   consts.AdminUserStatus:
     enum:
     - 1
@@ -482,89 +613,6 @@ definitions:
     x-enum-varnames:
     - UserStatusNormal
     - UserStatusLocked
-  controller.CreateCaptchaBodyDto:
-    properties:
-      captcha_key:
-        description: 图形验证码的key
-        type: string
-      captcha_value:
-        description: 输入的图形验证码
-        type: string
-      scenes:
-        allOf:
-        - $ref: '#/definitions/consts.CaptchaScenes'
-        description: 使用场景， 1-注册 2-忘记密码 3-修改手机 4-修改邮箱
-      type:
-        allOf:
-        - $ref: '#/definitions/consts.CaptchaType'
-        description: 验证码类型， 1-手机 2-邮箱
-      value:
-        description: 手机/邮箱账号
-        type: string
-    required:
-    - captcha_key
-    - captcha_value
-    - scenes
-    - type
-    - value
-    type: object
-  controller.UpdateUserStatusBodyDto:
-    properties:
-      id:
-        description: 用户 ID
-        type: integer
-      status:
-        allOf:
-        - $ref: '#/definitions/consts.UserStatus'
-        description: 状态 -1封禁 1-正常
-        enum:
-        - -1
-        - 1
-    required:
-    - id
-    - status
-    type: object
-  controller.loginBodyDto:
-    properties:
-      password:
-        description: 密码
-        type: string
-      username:
-        description: 用户名
-        type: string
-    type: object
-  controller.loginSuccessResponse:
-    properties:
-      token:
-        type: string
-    type: object
-  controller.registerBodyDto:
-    properties:
-      captcha:
-        description: 邮箱验证码
-        type: string
-      email:
-        description: 邮箱
-        type: string
-      password:
-        description: 密码
-        type: string
-      username:
-        description: 用户名
-        type: string
-    required:
-    - email
-    - password
-    - username
-    type: object
-  controller.wxMpLoginBodyDto:
-    properties:
-      code:
-        description: code
-        type: string
-    required:
-    - code
-    type: object
   model.AdminRole:
     properties:
       code:
@@ -715,14 +763,6 @@ definitions:
     - status
     - username
     type: object
-  resp.RList:
-    properties:
-      list:
-        items: {}
-        type: array
-      total:
-        type: integer
-    type: object
   resp.Result:
     properties:
       code:
@@ -821,36 +861,17 @@ paths:
       summary: 用户登录
       tags:
       - 管理后台-用户认证
-  /api/admin/c-user:
-    get:
+  /api/admin/c-user/list:
+    post:
       consumes:
       - application/json
       parameters:
-      - default: 1
-        description: 当前页
-        in: query
-        name: current
-        type: number
-      - default: 20
-        description: 每页条数
-        in: query
-        name: page_size
-        type: number
-      - description: 需要排序的列
-        in: query
-        name: order_key
-        type: string
-      - description: 排序方式
-        enum:
-        - ase
-        - desc
-        in: query
-        name: order_type
-        type: string
-      - description: 按名称或ID搜索
-        in: query
-        name: keyword
-        type: string
+      - description: body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.UserListReq'
       produces:
       - application/json
       responses:
@@ -861,16 +882,30 @@ paths:
             - $ref: '#/definitions/resp.Result'
             - properties:
                 data:
-                  allOf:
-                  - $ref: '#/definitions/resp.RList'
-                  - properties:
-                      list:
-                        items:
-                          $ref: '#/definitions/model.User'
-                        type: array
-                    type: object
+                  $ref: '#/definitions/api.UserListRes'
               type: object
       summary: 用户列表
+      tags:
+      - 管理后台-C端用户管理
+  /api/admin/c-user/update/status:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Body
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/api.UserUpdateStatusReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: resp
+          schema:
+            $ref: '#/definitions/resp.Result'
+      summary: 修改用户状态
       tags:
       - 管理后台-C端用户管理
   /api/admin/news/create:
@@ -1128,27 +1163,6 @@ paths:
       summary: 修改管理员角色权限
       tags:
       - 管理后台-管理员角色
-  /api/admin/status:
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: Body
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/controller.UpdateUserStatusBodyDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: resp
-          schema:
-            $ref: '#/definitions/resp.Result'
-      summary: 修改用户状态
-      tags:
-      - 管理后台-C端用户管理
   /api/admin/user/create:
     post:
       consumes:
@@ -1390,7 +1404,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/controller.loginBodyDto'
+          $ref: '#/definitions/api.UserLoginReq'
       produces:
       - application/json
       responses:
@@ -1401,7 +1415,7 @@ paths:
             - $ref: '#/definitions/resp.Result'
             - properties:
                 data:
-                  $ref: '#/definitions/controller.loginSuccessResponse'
+                  $ref: '#/definitions/api.UserLoginRes'
               type: object
       summary: 用户登录
       tags:
@@ -1416,7 +1430,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/controller.registerBodyDto'
+          $ref: '#/definitions/api.UserRegisterReq'
       produces:
       - application/json
       responses:
@@ -1427,7 +1441,7 @@ paths:
             - $ref: '#/definitions/resp.Result'
             - properties:
                 data:
-                  $ref: '#/definitions/controller.loginSuccessResponse'
+                  $ref: '#/definitions/api.UserRegisterRes'
               type: object
       summary: 用户注册
       tags:
@@ -1442,7 +1456,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/controller.wxMpLoginBodyDto'
+          $ref: '#/definitions/api.UserLoginByWXMpReq'
       produces:
       - application/json
       responses:
@@ -1453,7 +1467,7 @@ paths:
             - $ref: '#/definitions/resp.Result'
             - properties:
                 data:
-                  $ref: '#/definitions/controller.loginSuccessResponse'
+                  $ref: '#/definitions/api.UserLoginByWXMpRes'
               type: object
       summary: 微信小程序登录
       tags:
@@ -1468,7 +1482,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/controller.CreateCaptchaBodyDto'
+          $ref: '#/definitions/api.CaptchaSendReq'
       produces:
       - application/json
       responses:
