@@ -3,6 +3,7 @@ package service
 import (
 	"server/dal/dao"
 	"server/dal/model"
+	"server/internal/api"
 	"server/internal/lib/errs"
 	"server/internal/types"
 	"server/internal/utils"
@@ -25,7 +26,7 @@ type Find{{.Name}}ListOption struct {
 	Keyword string `json:"keyword" form:"keyword"`
 }
 
-func (s *{{.Name}}Service) FindList(query Find{{.Name}}ListOption) (utils.ListResult[[]*model.{{.Name}}], error) {
+func (s *{{.Name}}Service) FindList(query api.{{.Name}}ListReq) (utils.ListResult[[]*model.{{.Name}}], error) {
 	result := utils.ListResult[[]*model.{{.Name}}]{}
 	n := dao.{{.Name}}
 	q := n.Omit(n.Content).Where(
@@ -42,8 +43,6 @@ func (s *{{.Name}}Service) FindList(query Find{{.Name}}ListOption) (utils.ListRe
 		} else {
 			q = q.Order(col)
 		}
-	} else {
-		q.Order(n.CreatedAt.Desc())
 	}
 
 	if list, total, err := q.FindByPage(utils.PageTrans(query.Pagination)); err != nil {

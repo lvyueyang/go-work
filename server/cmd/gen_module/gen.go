@@ -51,7 +51,7 @@ func genServer(name, cname string) error {
 	// 	fileutil.CreateDir(dir)
 	// }
 
-	modNames := []string{"api", "service", "model"}
+	modNames := []string{"api", "controller", "service", "model"}
 	for _, modName := range modNames {
 		// 生成的文件
 		var filePath, _ = filepath.Abs(path.Join("internal", modName, info.DbName+".go"))
